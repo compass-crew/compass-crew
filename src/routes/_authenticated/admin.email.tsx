@@ -344,7 +344,7 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
                     <p className="mb-2 text-xs text-muted-foreground">Subject</p>
                     <p className="font-semibold">{previewSubject}</p>
                     <div className="mt-4 border-t border-border pt-4">
-                      <Markdown content={previewBody} />
+                      <Markdown>{previewBody}</Markdown>
                     </div>
                   </div>
                 </div>
