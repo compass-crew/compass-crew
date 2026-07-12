@@ -71,7 +71,7 @@ function VerifyPage() {
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Hackathon</dt>
-                  <dd className="mt-0.5">{hackQ.data?.title ?? "—"}</dd>
+                  <dd className="mt-0.5">{hack?.title ?? "—"}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Issued</dt>
@@ -92,9 +92,9 @@ function VerifyPage() {
                     <Download className="mr-2 h-4 w-4" /> View PDF
                   </a>
                 </Button>
-                {hackQ.data?.slug && (
+                {hack?.slug && (
                   <Button asChild variant="outline">
-                    <a href={`/hackathons/${hackQ.data.slug}`}>
+                    <a href={`/hackathons/${hack.slug}`}>
                       <ExternalLink className="mr-2 h-4 w-4" /> Hackathon
                     </a>
                   </Button>
