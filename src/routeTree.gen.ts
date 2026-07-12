@@ -53,6 +53,7 @@ import { Route as AuthenticatedAdminPlatformSettingsRouteImport } from './routes
 import { Route as AuthenticatedAdminEmailRouteImport } from './routes/_authenticated/admin.email'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
+import { Route as AuthenticatedAdminAdminNotificationsRouteImport } from './routes/_authenticated/admin.admin-notifications'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
@@ -291,6 +292,12 @@ const AuthenticatedAdminAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAdminNotificationsRoute =
+  AuthenticatedAdminAdminNotificationsRouteImport.update({
+    id: '/admin-notifications',
+    path: '/admin-notifications',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourceRoute =
   AuthenticatedAdminResourceRouteImport.update({
     id: '/$resource',
@@ -387,6 +394,7 @@ export interface FileRoutesByFullPath {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
@@ -441,6 +449,7 @@ export interface FileRoutesByTo {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
@@ -498,6 +507,7 @@ export interface FileRoutesById {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/_authenticated/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/admin-notifications'
     | '/admin/analytics'
     | '/admin/audit'
     | '/admin/email'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/admin-notifications'
     | '/admin/analytics'
     | '/admin/audit'
     | '/admin/email'
@@ -665,6 +677,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/_authenticated/admin/$resource'
+    | '/_authenticated/admin/admin-notifications'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/email'
@@ -1021,6 +1034,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/admin-notifications': {
+      id: '/_authenticated/admin/admin-notifications'
+      path: '/admin-notifications'
+      fullPath: '/admin/admin-notifications'
+      preLoaderRoute: typeof AuthenticatedAdminAdminNotificationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/$resource': {
       id: '/_authenticated/admin/$resource'
       path: '/$resource'
@@ -1113,6 +1133,7 @@ const AuthenticatedAdminResourceRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRouteWithChildren
+  AuthenticatedAdminAdminNotificationsRoute: typeof AuthenticatedAdminAdminNotificationsRoute
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminEmailRoute: typeof AuthenticatedAdminEmailRoute
@@ -1122,6 +1143,8 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRouteWithChildren,
+  AuthenticatedAdminAdminNotificationsRoute:
+    AuthenticatedAdminAdminNotificationsRoute,
   AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
   AuthenticatedAdminEmailRoute: AuthenticatedAdminEmailRoute,
