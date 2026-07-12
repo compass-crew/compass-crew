@@ -39,6 +39,7 @@ import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackathons.$slug.leaderboard'
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
@@ -202,6 +203,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const HackathonsSlugLeaderboardRoute =
   HackathonsSlugLeaderboardRouteImport.update({
     id: '/leaderboard',
@@ -278,7 +284,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -296,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
@@ -319,7 +326,6 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -337,6 +343,7 @@ export interface FileRoutesByTo {
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
@@ -362,7 +369,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
@@ -380,6 +387,7 @@ export interface FileRoutesById {
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/_authenticated/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
@@ -423,6 +431,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/admin/'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
@@ -446,7 +455,6 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
-    | '/admin'
     | '/certificates'
     | '/dashboard'
     | '/invitations'
@@ -464,6 +472,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/admin'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
@@ -506,6 +515,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/_authenticated/admin/'
     | '/_authenticated/judge/hackathons/$hackathonId'
     | '/_authenticated/judge/submissions/$submissionId'
     | '/_authenticated/organizer/hackathons/$hackathonId'
@@ -747,6 +757,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/hackathons/$slug/leaderboard': {
       id: '/hackathons/$slug/leaderboard'
       path: '/leaderboard'
@@ -820,6 +837,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedJudgeRouteChildren {
   AuthenticatedJudgeHackathonsHackathonIdRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   AuthenticatedJudgeSubmissionsSubmissionIdRoute: typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
@@ -882,7 +910,7 @@ const AuthenticatedOrganizerHackathonsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedCertificatesRoute: typeof AuthenticatedCertificatesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
@@ -895,7 +923,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedCertificatesRoute: AuthenticatedCertificatesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
