@@ -1,33 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Compass, Target, Eye, HeartHandshake, Users, Route as RouteIcon } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Section, SectionHeading } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
-import { STATS } from "@/data/site";
+import { Button } from "@/components/ui/button";
+import { MISSION } from "@/data/site";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Compass Crew" },
-      { name: "description", content: "The story, mission and team behind Compass Crew — India's student-led AI, tech and startup community." },
+      { name: "description", content: "Compass Crew is India's student-led community for AI, technology, innovation and startups. Read our mission, vision and roadmap." },
       { property: "og:title", content: "About Compass Crew" },
-      { property: "og:description", content: "Student-led. India-first. Building since 2022." },
+      { property: "og:description", content: "Student-led. India-first. Built for the next generation of builders." },
     ],
   }),
   component: AboutPage,
 });
 
-const team = [
-  { name: "Aarav Mehta", role: "Founder", campus: "IIT Bombay" },
-  { name: "Sana Iyer", role: "Head of Community", campus: "BITS Pilani" },
-  { name: "Rohan Das", role: "Head of Hackathons", campus: "IIIT Hyderabad" },
-  { name: "Kavya Shah", role: "Head of Learning", campus: "IIT Delhi" },
-];
-
-const timeline = [
-  { year: "2022", body: "Started as a WhatsApp group of 40 students who wanted to build things together." },
-  { year: "2023", body: "Ran our first flagship hackathon, BuildHack, with 300 hackers across 8 cities." },
-  { year: "2024", body: "Crossed 5,000 members. Launched Compass Learn bootcamps and the mentor network." },
-  { year: "2025", body: "48 campus chapters. Studio program helped 22 student startups reach first users." },
+const pillars = [
+  { icon: Compass, eyebrow: "What we are", body: MISSION.what },
+  { icon: Target, eyebrow: "Mission", body: MISSION.mission },
+  { icon: Eye, eyebrow: "Vision", body: MISSION.vision },
+  { icon: HeartHandshake, eyebrow: "Why we exist", body: MISSION.why },
+  { icon: Users, eyebrow: "Who can join", body: MISSION.who },
 ];
 
 function AboutPage() {
@@ -36,16 +32,28 @@ function AboutPage() {
       <PageHeader
         eyebrow="About"
         title={<>Built by students, <span className="text-gradient-brand">for students.</span></>}
-        description="Compass Crew started in a hostel room in 2022. Today we're India's largest student-led community for AI, technology and startups — still run by students, still free to join."
-      />
+        description="Compass Crew is India's student-led community for AI, technology, innovation and startups — an open, national platform for every student who wants to build."
+      >
+        <Button asChild size="lg" className="bg-gradient-brand text-white hover:opacity-90">
+          <Link to="/community">Join the crew</Link>
+        </Button>
+        <Button asChild size="lg" variant="outline">
+          <Link to="/partner">Partner with us</Link>
+        </Button>
+      </PageHeader>
 
       <Section>
-        <div className="grid gap-4 sm:grid-cols-4">
-          {STATS.map((s) => (
-            <Card key={s.label}>
-              <CardContent className="p-6 text-center">
-                <div className="font-display text-3xl font-semibold text-gradient-brand">{s.value}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {pillars.map((p) => (
+            <Card key={p.eyebrow} className="transition hover:-translate-y-0.5 hover:shadow-elegant">
+              <CardContent className="space-y-4 p-6">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-brand text-white shadow-elegant">
+                  <p.icon className="h-5 w-5" />
+                </span>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                  {p.eyebrow}
+                </p>
+                <p className="text-sm leading-relaxed text-foreground/90">{p.body}</p>
               </CardContent>
             </Card>
           ))}
@@ -53,31 +61,33 @@ function AboutPage() {
       </Section>
 
       <Section className="border-t border-border bg-muted/30">
-        <SectionHeading eyebrow="Timeline" title="How we got here." />
+        <SectionHeading
+          eyebrow="Roadmap"
+          title="What we're building next."
+          description="A rolling roadmap of programs Compass Crew is preparing for the community. Timelines will be announced as each program opens."
+        />
         <ol className="mt-10 space-y-6 border-l border-border pl-6">
-          {timeline.map((t) => (
-            <li key={t.year} className="relative">
-              <span className="absolute -left-[31px] top-1 grid h-4 w-4 place-items-center rounded-full bg-gradient-brand ring-4 ring-background" />
-              <p className="font-display text-sm font-semibold text-primary">{t.year}</p>
-              <p className="mt-1 text-base text-muted-foreground">{t.body}</p>
+          {MISSION.roadmap.map((step, i) => (
+            <li key={step} className="relative">
+              <span className="absolute -left-[31px] top-1 grid h-6 w-6 place-items-center rounded-full bg-gradient-brand text-[10px] font-semibold text-white ring-4 ring-background">
+                {i + 1}
+              </span>
+              <p className="font-display text-base font-semibold">{step}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Timeline announced soon — join the community to be first in line.
+              </p>
             </li>
           ))}
         </ol>
-      </Section>
-
-      <Section>
-        <SectionHeading eyebrow="Core team" title="The people behind the crew." />
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {team.map((m) => (
-            <Card key={m.name}>
-              <CardContent className="p-6">
-                <div className="mb-4 h-16 w-16 rounded-full bg-gradient-brand" />
-                <p className="font-display text-lg font-semibold">{m.name}</p>
-                <p className="text-sm text-muted-foreground">{m.role}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{m.campus}</p>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="mt-10 flex flex-wrap gap-3">
+          <Button asChild className="bg-gradient-brand text-white hover:opacity-90">
+            <Link to="/community">Join the crew</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/contact">
+              <RouteIcon className="mr-1.5 h-4 w-4" /> Get in touch
+            </Link>
+          </Button>
         </div>
       </Section>
     </>
