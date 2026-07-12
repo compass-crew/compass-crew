@@ -625,16 +625,100 @@ function Marquee() {
             </span>
           ))}
         </div>
-        <div aria-hidden className="flex shrink-0 animate-marquee items-center gap-10 pr-10">
-          {items.concat(items).map((label, i) => (
-            <span
+      </div>
+    </div>
+  );
+}
+
+/* Halftone compass — editorial dotted illustration */
+function HalftoneCompass({ className = "", glow = false }: { className?: string; glow?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 320 320"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <defs>
+        <radialGradient id="hc-fade" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
+          <stop offset="70%" stopColor="currentColor" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </radialGradient>
+        <pattern id="hc-dots" x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
+          <circle cx="1.4" cy="1.4" r="1.2" fill="currentColor" />
+        </pattern>
+        <mask id="hc-mask">
+          <rect width="320" height="320" fill="url(#hc-fade)" />
+        </mask>
+      </defs>
+      <g className="text-foreground">
+        {/* Halftone disc */}
+        <circle cx="160" cy="160" r="150" fill="url(#hc-dots)" mask="url(#hc-mask)" opacity="0.55" />
+        {/* Compass ring */}
+        <circle cx="160" cy="160" r="96" stroke="currentColor" strokeWidth="1.25" opacity="0.85" />
+        <circle cx="160" cy="160" r="72" stroke="currentColor" strokeWidth="0.75" opacity="0.4" />
+        {/* Compass needle */}
+        <path
+          d="M160 78 L178 160 L160 172 Z"
+          fill="currentColor"
+          opacity="0.95"
+        />
+        <path
+          d="M160 242 L142 160 L160 148 Z"
+          fill="currentColor"
+          opacity="0.35"
+        />
+        <circle cx="160" cy="160" r="4.5" fill="currentColor" />
+        {/* Tick marks */}
+        {Array.from({ length: 24 }).map((_, i) => {
+          const a = (i * Math.PI) / 12;
+          const x1 = 160 + Math.cos(a) * 100;
+          const y1 = 160 + Math.sin(a) * 100;
+          const x2 = 160 + Math.cos(a) * (i % 6 === 0 ? 112 : 106);
+          const y2 = 160 + Math.sin(a) * (i % 6 === 0 ? 112 : 106);
+          return (
+            <line
               key={i}
-              className="whitespace-nowrap font-display text-[11.5px] font-semibold uppercase tracking-[0.28em] text-muted-foreground/80"
-            >
-              <span className="text-gradient-brand">◆</span>&nbsp;&nbsp;{label}
-            </span>
-          ))}
-        </div>
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="currentColor"
+              strokeWidth={i % 6 === 0 ? 1.4 : 0.7}
+              opacity={i % 6 === 0 ? 0.9 : 0.5}
+            />
+          );
+        })}
+      </g>
+      {glow && (
+        <circle cx="160" cy="160" r="6" className="text-primary" fill="currentColor">
+          <animate attributeName="r" values="4;8;4" dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;1;0.6" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+      )}
+    </svg>
+  );
+}
+
+const TRUSTED = ["IIT", "NIT", "BITS", "IIIT", "VIT", "SRM", "Manipal"];
+
+function TrustedStrip() {
+  return (
+    <div className="mt-14 border-t border-border/60 pt-8">
+      <p className="text-center text-[11px] font-medium uppercase tracking-[0.28em] text-muted-foreground">
+        Trusted by student builders across every campus
+      </p>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-80">
+        {TRUSTED.map((t) => (
+          <span
+            key={t}
+            className="font-display text-[15px] font-semibold tracking-[0.18em] text-muted-foreground/90"
+          >
+            {t}
+          </span>
+        ))}
       </div>
     </div>
   );
