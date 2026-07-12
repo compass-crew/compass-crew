@@ -67,8 +67,9 @@ const PARTICIPANT: Widget[] = [
 ];
 
 const ORGANIZER: Widget[] = [
-  { icon: Trophy, title: "Manage hackathons", body: "Create, publish and monitor Compass Crew hackathons.", cta: { label: "Open hackathons", to: "/hackathons" } },
-  { icon: Calendar, title: "Manage events", body: "Publish workshops, AMAs, meetups and bootcamps.", cta: { label: "Open events", to: "/events" } },
+  { icon: Trophy, title: "Your hackathons", body: "Create, publish and manage the hackathons you run.", cta: { label: "Open organizer console", to: "/organizer/hackathons" } },
+  { icon: Sparkles, title: "New hackathon", body: "Ship a hackathon in minutes. Add tracks, prizes and judges as you go.", cta: { label: "Create hackathon", to: "/organizer/hackathons/new" } },
+  { icon: Calendar, title: "Public hackathons", body: "See what's live across the platform.", cta: { label: "Browse hackathons", to: "/hackathons" } },
   { icon: Users, title: "Community", body: "Grow campus chapters and community programs.", cta: { label: "Open community", to: "/community" } },
 ];
 
