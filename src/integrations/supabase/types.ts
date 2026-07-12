@@ -827,6 +827,8 @@ export type Database = {
         | "judge"
         | "organizer"
         | "campus_ambassador"
+        | "special_mention"
+        | "volunteer"
       hackathon_mode: "online" | "hybrid" | "in_person"
       hackathon_status:
         | "draft"
@@ -848,6 +850,8 @@ export type Database = {
         | "certificate_ready"
         | "announcement"
         | "generic"
+        | "scores_published"
+        | "judge_assigned"
       registration_status:
         | "pending"
         | "approved"
@@ -1008,6 +1012,8 @@ export const Constants = {
         "judge",
         "organizer",
         "campus_ambassador",
+        "special_mention",
+        "volunteer",
       ],
       hackathon_mode: ["online", "hybrid", "in_person"],
       hackathon_status: [
@@ -1031,6 +1037,8 @@ export const Constants = {
         "certificate_ready",
         "announcement",
         "generic",
+        "scores_published",
+        "judge_assigned",
       ],
       registration_status: [
         "pending",
