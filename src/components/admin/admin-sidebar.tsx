@@ -15,6 +15,8 @@ import {
   MessageSquare,
   MailPlus,
   LayoutTemplate,
+  Settings,
+  Mail,
   ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
@@ -84,6 +86,31 @@ export function AdminSidebar() {
             </Link>
           );
         })}
+        <div className="mt-3 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          System
+        </div>
+        <Link
+          to="/admin/platform-settings"
+          className={cn(
+            "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition",
+            path.startsWith("/admin/platform-settings")
+              ? "bg-muted font-semibold text-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
+          )}
+        >
+          <Settings className="h-4 w-4" /> Platform Settings
+        </Link>
+        <Link
+          to="/admin/email"
+          className={cn(
+            "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition",
+            path.startsWith("/admin/email")
+              ? "bg-muted font-semibold text-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
+          )}
+        >
+          <Mail className="h-4 w-4" /> Email
+        </Link>
       </div>
     </aside>
   );

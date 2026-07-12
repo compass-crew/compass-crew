@@ -467,6 +467,84 @@ export type Database = {
         }
         Relationships: []
       }
+      email_provider_settings: {
+        Row: {
+          config: Json
+          from_email: string
+          from_name: string
+          id: string
+          is_active: boolean
+          provider: string
+          reply_to: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          config?: Json
+          from_email?: string
+          from_name?: string
+          id?: string
+          is_active?: boolean
+          provider?: string
+          reply_to?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          config?: Json
+          from_email?: string
+          from_name?: string
+          id?: string
+          is_active?: boolean
+          provider?: string
+          reply_to?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          body_markdown: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+          variables: string[]
+        }
+        Insert: {
+          body_markdown?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+          variables?: string[]
+        }
+        Update: {
+          body_markdown?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+          variables?: string[]
+        }
+        Relationships: []
+      }
       hackathon_tracks: {
         Row: {
           created_at: string
@@ -910,6 +988,27 @@ export type Database = {
           status?: Database["public"]["Enums"]["content_status"]
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          data: Json
+          section: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          data?: Json
+          section: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          data?: Json
+          section?: string
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }
