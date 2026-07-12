@@ -49,6 +49,7 @@ import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackatho
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as AuthenticatedAdminPlatformSettingsRouteImport } from './routes/_authenticated/admin.platform-settings'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
@@ -265,6 +266,12 @@ const AuthenticatedOrganizerHackathonsRoute =
     path: '/organizer/hackathons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminPlatformSettingsRoute =
+  AuthenticatedAdminPlatformSettingsRouteImport.update({
+    id: '/platform-settings',
+    path: '/platform-settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourceRoute =
   AuthenticatedAdminResourceRouteImport.update({
     id: '/$resource',
@@ -361,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -411,6 +419,7 @@ export interface FileRoutesByTo {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -464,6 +473,7 @@ export interface FileRoutesById {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/_authenticated/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/platform-settings'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -567,6 +578,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/platform-settings'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -619,6 +631,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/_authenticated/admin/$resource'
+    | '/_authenticated/admin/platform-settings'
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
@@ -943,6 +956,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/platform-settings': {
+      id: '/_authenticated/admin/platform-settings'
+      path: '/platform-settings'
+      fullPath: '/admin/platform-settings'
+      preLoaderRoute: typeof AuthenticatedAdminPlatformSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/$resource': {
       id: '/_authenticated/admin/$resource'
       path: '/$resource'
@@ -1035,11 +1055,14 @@ const AuthenticatedAdminResourceRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRouteWithChildren
+  AuthenticatedAdminPlatformSettingsRoute: typeof AuthenticatedAdminPlatformSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRouteWithChildren,
+  AuthenticatedAdminPlatformSettingsRoute:
+    AuthenticatedAdminPlatformSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
