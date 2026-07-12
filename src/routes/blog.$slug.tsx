@@ -101,7 +101,7 @@ function BlogPostPage() {
           </div>
           {post.tags && post.tags.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-2 border-t border-border pt-6">
-              {post.tags.map((t) => <Badge key={t} variant="outline">#{t}</Badge>)}
+              {post.tags.map((t: string) => <Badge key={t} variant="outline">#{t}</Badge>)}
             </div>
           )}
         </article>
