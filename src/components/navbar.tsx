@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, LogOut, Menu, Settings, User as UserIcon, X, Users, Mail } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Settings, Shield, User as UserIcon, X, Users, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
