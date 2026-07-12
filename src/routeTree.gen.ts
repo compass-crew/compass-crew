@@ -50,6 +50,7 @@ import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
 import { Route as AuthenticatedAdminPlatformSettingsRouteImport } from './routes/_authenticated/admin.platform-settings'
+import { Route as AuthenticatedAdminEmailRouteImport } from './routes/_authenticated/admin.email'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
@@ -272,6 +273,11 @@ const AuthenticatedAdminPlatformSettingsRoute =
     path: '/platform-settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEmailRoute = AuthenticatedAdminEmailRouteImport.update({
+  id: '/email',
+  path: '/email',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminResourceRoute =
   AuthenticatedAdminResourceRouteImport.update({
     id: '/$resource',
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
@@ -419,6 +426,7 @@ export interface FileRoutesByTo {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
@@ -473,6 +481,7 @@ export interface FileRoutesById {
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
+  '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
   '/_authenticated/admin/platform-settings': typeof AuthenticatedAdminPlatformSettingsRoute
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
@@ -527,6 +536,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/email'
     | '/admin/platform-settings'
     | '/organizer/hackathons'
     | '/teams/$teamId'
@@ -578,6 +588,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/admin/$resource'
+    | '/admin/email'
     | '/admin/platform-settings'
     | '/organizer/hackathons'
     | '/teams/$teamId'
@@ -631,6 +642,7 @@ export interface FileRouteTypes {
     | '/hackathons/$slug'
     | '/verify/$code'
     | '/_authenticated/admin/$resource'
+    | '/_authenticated/admin/email'
     | '/_authenticated/admin/platform-settings'
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
@@ -963,6 +975,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPlatformSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/email': {
+      id: '/_authenticated/admin/email'
+      path: '/email'
+      fullPath: '/admin/email'
+      preLoaderRoute: typeof AuthenticatedAdminEmailRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/$resource': {
       id: '/_authenticated/admin/$resource'
       path: '/$resource'
@@ -1055,12 +1074,14 @@ const AuthenticatedAdminResourceRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRouteWithChildren
+  AuthenticatedAdminEmailRoute: typeof AuthenticatedAdminEmailRoute
   AuthenticatedAdminPlatformSettingsRoute: typeof AuthenticatedAdminPlatformSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRouteWithChildren,
+  AuthenticatedAdminEmailRoute: AuthenticatedAdminEmailRoute,
   AuthenticatedAdminPlatformSettingsRoute:
     AuthenticatedAdminPlatformSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
