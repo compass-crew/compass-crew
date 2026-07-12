@@ -15,6 +15,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as MentorsRouteImport } from './routes/mentors'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as EventsRouteImport } from './routes/events'
@@ -85,6 +86,11 @@ const PartnersRoute = PartnersRouteImport.update({
 const PartnerRoute = PartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorsRoute = MentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HackathonsRoute = HackathonsRouteImport.update({
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
+  '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
@@ -366,6 +373,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
+  '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
+  '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
@@ -465,6 +474,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faqs'
     | '/hackathons'
+    | '/mentors'
     | '/partner'
     | '/partners'
     | '/privacy'
@@ -513,6 +523,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faqs'
     | '/hackathons'
+    | '/mentors'
     | '/partner'
     | '/partners'
     | '/privacy'
@@ -561,6 +572,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faqs'
     | '/hackathons'
+    | '/mentors'
     | '/partner'
     | '/partners'
     | '/privacy'
@@ -611,6 +623,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FaqsRoute: typeof FaqsRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
+  MentorsRoute: typeof MentorsRoute
   PartnerRoute: typeof PartnerRoute
   PartnersRoute: typeof PartnersRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -664,6 +677,13 @@ declare module '@tanstack/react-router' {
       path: '/partner'
       fullPath: '/partner'
       preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentors': {
+      id: '/mentors'
+      path: '/mentors'
+      fullPath: '/mentors'
+      preLoaderRoute: typeof MentorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hackathons': {
@@ -1137,6 +1157,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FaqsRoute: FaqsRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
+  MentorsRoute: MentorsRoute,
   PartnerRoute: PartnerRoute,
   PartnersRoute: PartnersRoute,
   PrivacyRoute: PrivacyRoute,
