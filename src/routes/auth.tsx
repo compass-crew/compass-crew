@@ -86,7 +86,7 @@ const signupSchema = z
       .refine((v) => !v || /^https?:\/\/.+/i.test(v), "Must be a URL"),
     agree_privacy: z.boolean().refine((v) => v === true, "You must agree"),
     agree_conduct: z.boolean().refine((v) => v === true, "You must agree"),
-    newsletter: z.boolean().default(false),
+    newsletter: z.boolean(),
   })
   .refine((d) => d.password === d.confirm_password, {
     message: "Passwords do not match",
