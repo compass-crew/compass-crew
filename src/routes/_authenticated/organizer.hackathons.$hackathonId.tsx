@@ -585,7 +585,8 @@ function AnnouncementsTab({ hackathonId, authorId }: { hackathonId: string; auth
                 <SelectItem value="all">Everyone</SelectItem>
                 <SelectItem value="participants">Participants</SelectItem>
                 <SelectItem value="judges">Judges</SelectItem>
-                <SelectItem value="organizers">Organizers</SelectItem>
+                <SelectItem value="mentors">Mentors</SelectItem>
+                <SelectItem value="teams">Teams</SelectItem>
               </SelectContent>
             </Select>
           </div>
