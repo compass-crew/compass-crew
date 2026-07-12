@@ -15,6 +15,8 @@ import {
   MessageSquare,
   MailPlus,
   LayoutTemplate,
+  Settings,
+  Mail,
   ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
