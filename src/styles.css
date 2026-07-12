@@ -13,6 +13,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -56,31 +57,32 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.875rem;
 
-  /* Compass Crew — Light */
-  --background: oklch(0.99 0.003 250);
-  --foreground: oklch(0.18 0.03 260);
+  /* Compass Crew — Light (soft neutral surfaces, per spec) */
+  --background: oklch(0.985 0.003 265);         /* #FAFAFC */
+  --surface: oklch(0.985 0.003 265);
+  --foreground: oklch(0.201 0.032 262);         /* #0F172A */
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.03 260);
+  --card: oklch(1 0 0);                          /* #FFFFFF */
+  --card-foreground: oklch(0.201 0.032 262);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.03 260);
+  --popover-foreground: oklch(0.201 0.032 262);
 
-  /* Deep Blue */
-  --primary: oklch(0.48 0.19 265);
+  /* Brand blue — refined */
+  --primary: oklch(0.51 0.19 265);
   --primary-foreground: oklch(0.99 0.005 250);
 
   /* Purple */
-  --secondary: oklch(0.55 0.22 300);
+  --secondary: oklch(0.57 0.22 300);
   --secondary-foreground: oklch(0.99 0.005 250);
 
-  --muted: oklch(0.96 0.008 260);
-  --muted-foreground: oklch(0.48 0.02 260);
+  --muted: oklch(0.962 0.005 260);
+  --muted-foreground: oklch(0.446 0.028 260);   /* #475569 */
 
   /* Cyan accent */
-  --accent: oklch(0.75 0.14 210);
-  --accent-foreground: oklch(0.18 0.03 260);
+  --accent: oklch(0.76 0.13 210);
+  --accent-foreground: oklch(0.201 0.032 262);
 
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
@@ -91,48 +93,53 @@
   --warning: oklch(0.78 0.15 65);
   --warning-foreground: oklch(0.2 0.04 60);
 
-  --border: oklch(0.92 0.008 260);
-  --input: oklch(0.92 0.008 260);
-  --ring: oklch(0.55 0.22 300);
+  --border: oklch(0.918 0.005 258);              /* #E5E7EB */
+  --input: oklch(0.918 0.005 258);
+  --ring: oklch(0.51 0.19 265);
 
-  --chart-1: oklch(0.48 0.19 265);
-  --chart-2: oklch(0.55 0.22 300);
-  --chart-3: oklch(0.75 0.14 210);
+  --chart-1: oklch(0.51 0.19 265);
+  --chart-2: oklch(0.57 0.22 300);
+  --chart-3: oklch(0.76 0.13 210);
   --chart-4: oklch(0.68 0.16 155);
   --chart-5: oklch(0.78 0.15 65);
 
-  --sidebar: oklch(0.98 0.005 260);
-  --sidebar-foreground: oklch(0.18 0.03 260);
-  --sidebar-primary: oklch(0.48 0.19 265);
+  --sidebar: oklch(0.985 0.003 265);
+  --sidebar-foreground: oklch(0.201 0.032 262);
+  --sidebar-primary: oklch(0.51 0.19 265);
   --sidebar-primary-foreground: oklch(0.99 0.005 250);
-  --sidebar-accent: oklch(0.94 0.01 260);
-  --sidebar-accent-foreground: oklch(0.18 0.03 260);
-  --sidebar-border: oklch(0.92 0.008 260);
-  --sidebar-ring: oklch(0.55 0.22 300);
+  --sidebar-accent: oklch(0.94 0.008 260);
+  --sidebar-accent-foreground: oklch(0.201 0.032 262);
+  --sidebar-border: oklch(0.918 0.005 258);
+  --sidebar-ring: oklch(0.51 0.19 265);
+
+  /* Grid line color — very faint */
+  --grid-line: oklch(0.201 0.032 262 / 3%);
 }
 
 .dark {
-  --background: oklch(0.14 0.02 265);
-  --foreground: oklch(0.97 0.006 250);
+  /* Compass Crew — Dark (layered surfaces, per spec) */
+  --background: oklch(0.126 0.03 265);           /* #020617 */
+  --surface: oklch(0.201 0.032 262);             /* #0F172A */
+  --foreground: oklch(0.983 0.003 249);          /* #F8FAFC */
 
-  --card: oklch(0.18 0.025 265);
-  --card-foreground: oklch(0.97 0.006 250);
-  --popover: oklch(0.18 0.025 265);
-  --popover-foreground: oklch(0.97 0.006 250);
+  --card: oklch(0.222 0.032 264);                /* #111827 */
+  --card-foreground: oklch(0.983 0.003 249);
+  --popover: oklch(0.222 0.032 264);
+  --popover-foreground: oklch(0.983 0.003 249);
 
-  --primary: oklch(0.68 0.17 265);
-  --primary-foreground: oklch(0.14 0.02 265);
+  --primary: oklch(0.7 0.17 265);
+  --primary-foreground: oklch(0.126 0.03 265);
 
-  --secondary: oklch(0.7 0.19 300);
-  --secondary-foreground: oklch(0.14 0.02 265);
+  --secondary: oklch(0.72 0.19 300);
+  --secondary-foreground: oklch(0.126 0.03 265);
 
-  --muted: oklch(0.24 0.02 265);
-  --muted-foreground: oklch(0.7 0.02 260);
+  --muted: oklch(0.24 0.025 262);
+  --muted-foreground: oklch(0.842 0.014 249);    /* #CBD5E1 */
 
-  --accent: oklch(0.8 0.14 210);
-  --accent-foreground: oklch(0.14 0.02 265);
+  --accent: oklch(0.8 0.13 210);
+  --accent-foreground: oklch(0.126 0.03 265);
 
-  --destructive: oklch(0.65 0.22 25);
+  --destructive: oklch(0.66 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
   --success: oklch(0.72 0.17 155);
@@ -141,24 +148,27 @@
   --warning: oklch(0.82 0.15 65);
   --warning-foreground: oklch(0.2 0.04 60);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.7 0.19 300);
+  --border: oklch(1 0 0 / 8%);                   /* rgba(255,255,255,.08) */
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.7 0.17 265);
 
-  --chart-1: oklch(0.68 0.17 265);
-  --chart-2: oklch(0.7 0.19 300);
-  --chart-3: oklch(0.8 0.14 210);
+  --chart-1: oklch(0.7 0.17 265);
+  --chart-2: oklch(0.72 0.19 300);
+  --chart-3: oklch(0.8 0.13 210);
   --chart-4: oklch(0.72 0.17 155);
   --chart-5: oklch(0.82 0.15 65);
 
-  --sidebar: oklch(0.16 0.02 265);
-  --sidebar-foreground: oklch(0.97 0.006 250);
-  --sidebar-primary: oklch(0.68 0.17 265);
-  --sidebar-primary-foreground: oklch(0.14 0.02 265);
-  --sidebar-accent: oklch(0.22 0.02 265);
-  --sidebar-accent-foreground: oklch(0.97 0.006 250);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.7 0.19 300);
+  --sidebar: oklch(0.16 0.028 264);
+  --sidebar-foreground: oklch(0.983 0.003 249);
+  --sidebar-primary: oklch(0.7 0.17 265);
+  --sidebar-primary-foreground: oklch(0.126 0.03 265);
+  --sidebar-accent: oklch(0.22 0.028 264);
+  --sidebar-accent-foreground: oklch(0.983 0.003 249);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.7 0.17 265);
+
+  /* Grid line color — slightly brighter than light, still subtle */
+  --grid-line: oklch(1 0 0 / 5%);
 }
 
 @layer base {
@@ -168,26 +178,40 @@
 
   html {
     scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
   }
 
   ::selection {
     background-color: color-mix(in oklab, var(--color-primary) 25%, transparent);
   }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 }
 
+/* Extremely subtle grid — never competes with content */
 @utility bg-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px;
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
 }
 
 @utility bg-gradient-brand {
@@ -211,30 +235,70 @@
   color: transparent;
 }
 
+/* Refined elevation — layered, subtle, feels handcrafted */
 @utility shadow-elegant {
   box-shadow:
-    0 1px 2px 0 color-mix(in oklab, var(--color-foreground) 6%, transparent),
-    0 10px 30px -12px color-mix(in oklab, var(--color-primary) 22%, transparent);
+    0 1px 2px 0 color-mix(in oklab, var(--color-foreground) 4%, transparent),
+    0 8px 24px -12px color-mix(in oklab, var(--color-foreground) 8%, transparent);
+}
+
+@utility shadow-elevated {
+  box-shadow:
+    0 1px 2px 0 color-mix(in oklab, var(--color-foreground) 5%, transparent),
+    0 4px 12px -4px color-mix(in oklab, var(--color-foreground) 6%, transparent),
+    0 16px 40px -12px color-mix(in oklab, var(--color-primary) 18%, transparent);
 }
 
 @utility shadow-glow {
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 20%, transparent),
-    0 20px 60px -20px color-mix(in oklab, var(--color-secondary) 40%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-primary) 14%, transparent),
+    0 12px 40px -12px color-mix(in oklab, var(--color-secondary) 32%, transparent);
+}
+
+@utility ring-focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-ring);
 }
 
 @utility marquee-mask {
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
-@keyframes blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -20px) scale(1.05); }
-  66% { transform: translate(-20px, 25px) scale(0.97); }
+/* Premium primary CTA */
+@utility btn-premium {
+  position: relative;
+  isolation: isolate;
+  background-image: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 60%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  color: var(--color-primary-foreground);
+  transition: background-position 400ms ease, transform 200ms ease, box-shadow 300ms ease;
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, white 22%, transparent),
+    0 1px 2px 0 color-mix(in oklab, var(--color-foreground) 8%, transparent),
+    0 8px 24px -8px color-mix(in oklab, var(--color-primary) 45%, transparent);
+}
+@utility btn-premium-hover {
+  background-position: 100% 50%;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, white 28%, transparent),
+    0 2px 4px 0 color-mix(in oklab, var(--color-foreground) 10%, transparent),
+    0 14px 32px -8px color-mix(in oklab, var(--color-primary) 55%, transparent);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-14px); }
+/* Soft hero glow — replaces animated blobs */
+@utility hero-glow {
+  background:
+    radial-gradient(60% 60% at 50% 0%, color-mix(in oklab, var(--color-primary) 22%, transparent) 0%, transparent 70%),
+    radial-gradient(50% 50% at 90% 20%, color-mix(in oklab, var(--color-secondary) 18%, transparent) 0%, transparent 70%),
+    radial-gradient(45% 45% at 10% 30%, color-mix(in oklab, var(--color-accent) 14%, transparent) 0%, transparent 70%);
 }
 
 @keyframes marquee {
@@ -242,8 +306,12 @@
   to   { transform: translateX(-100%); }
 }
 
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @theme {
-  --animate-blob: blob 18s ease-in-out infinite;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee: marquee 45s linear infinite;
+  --animate-fade-up: fade-up 500ms ease-out both;
 }
