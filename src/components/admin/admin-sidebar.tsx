@@ -23,6 +23,10 @@ import {
   Bell,
   Activity,
   HeartPulse,
+  Users,
+  Image as ImageIcon,
+  ShieldAlert,
+  HardDrive,
   type LucideIcon,
 } from "lucide-react";
 import { RESOURCES } from "@/lib/admin-config";
@@ -98,6 +102,10 @@ export function AdminSidebar() {
           { to: "/admin/analytics" as const, icon: BarChart3, label: "Analytics" },
           { to: "/admin/activity" as const, icon: Activity, label: "Activity Feed" },
           { to: "/admin/admin-notifications" as const, icon: Bell, label: "Notifications" },
+          { to: "/admin/users" as const, icon: Users, label: "Users" },
+          { to: "/admin/media" as const, icon: ImageIcon, label: "Media Library" },
+          { to: "/admin/storage" as const, icon: HardDrive, label: "Storage" },
+          { to: "/admin/security" as const, icon: ShieldAlert, label: "Security" },
           { to: "/admin/audit" as const, icon: ShieldCheck, label: "Audit Logs" },
           { to: "/admin/system" as const, icon: HeartPulse, label: "System Health" },
         ].map((item) => {
