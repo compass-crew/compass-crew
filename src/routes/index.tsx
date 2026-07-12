@@ -10,7 +10,6 @@ import {
   Users,
   Rocket,
   Github,
-  BookOpen,
   Brain,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -676,5 +675,3 @@ function Marquee() {
   );
 }
 
-// Unused imports safeguard — kept for future sections
-void BookOpen;
