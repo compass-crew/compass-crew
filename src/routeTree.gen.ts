@@ -32,6 +32,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-pas
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedJudgeRouteImport } from './routes/_authenticated/judge'
 import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenticated/invitations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -160,6 +161,12 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedJudgeRoute = AuthenticatedJudgeRouteImport.update({
   id: '/judge',
   path: '/judge',
@@ -256,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
   '/judge': typeof AuthenticatedJudgeRouteWithChildren
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -293,6 +301,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
   '/judge': typeof AuthenticatedJudgeRouteWithChildren
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -332,6 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
   '/_authenticated/judge': typeof AuthenticatedJudgeRouteWithChildren
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/invitations'
     | '/judge'
+    | '/notifications'
     | '/profile'
     | '/settings'
     | '/teams'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/invitations'
     | '/judge'
+    | '/notifications'
     | '/profile'
     | '/settings'
     | '/teams'
@@ -446,6 +458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/invitations'
     | '/_authenticated/judge'
+    | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
@@ -647,6 +660,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/judge': {
       id: '/_authenticated/judge'
       path: '/judge'
@@ -807,6 +827,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
   AuthenticatedJudgeRoute: typeof AuthenticatedJudgeRouteWithChildren
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
@@ -818,6 +839,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
   AuthenticatedJudgeRoute: AuthenticatedJudgeRouteWithChildren,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
