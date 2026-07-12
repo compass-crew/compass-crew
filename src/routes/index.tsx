@@ -213,7 +213,7 @@ function Home() {
             <SectionHeading
               eyebrow="Community benefits"
               title="Perks that actually move the needle."
-              description="Real mentorship, real invites, real opportunities — not just another Discord server."
+              description="Real mentorship, real invites, real opportunities — a national community for student builders."
             />
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild className="bg-gradient-brand text-white hover:opacity-90">
