@@ -18,6 +18,11 @@ import {
   Settings,
   Mail,
   ArrowLeft,
+  BarChart3,
+  ShieldCheck,
+  Bell,
+  Activity,
+  HeartPulse,
   type LucideIcon,
 } from "lucide-react";
 import { RESOURCES } from "@/lib/admin-config";
