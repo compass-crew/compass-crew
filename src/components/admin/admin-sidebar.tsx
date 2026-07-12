@@ -23,6 +23,10 @@ import {
   Bell,
   Activity,
   HeartPulse,
+  Users,
+  Image as ImageIcon,
+  ShieldAlert,
+  HardDrive,
   type LucideIcon,
 } from "lucide-react";
 import { RESOURCES } from "@/lib/admin-config";
