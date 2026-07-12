@@ -28,15 +28,9 @@ function VerifyPage() {
     queryKey: ["cert", code],
     queryFn: () => getCertificateByCode(code),
   });
-  const hackQ = useQuery({
-    queryKey: ["cert", code, "hackathon"],
-    queryFn: async () => {
-      if (!certQ.data?.hackathon_id) return null;
-      const { data } = await supabase.from("hackathons").select("title, slug").eq("id", certQ.data.hackathon_id).maybeSingle();
-      return data;
-    },
-    enabled: !!certQ.data,
-  });
+  const hack = certQ.data
+    ? { title: certQ.data.hackathon_title, slug: certQ.data.hackathon_slug }
+    : null;
 
   return (
     <>
