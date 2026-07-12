@@ -68,6 +68,7 @@ export function Turnstile({
   const ref = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [errored, setErrored] = useState(false);
   const getKey = useServerFn(getTurnstileSiteKey);
 
   const { data } = useQuery({
@@ -92,16 +93,32 @@ export function Turnstile({
   }, [siteKey]);
 
   useEffect(() => {
-    if (!ready || !siteKey || !ref.current || !window.turnstile) return;
+    if (!ready || !siteKey || !ref.current || !window.turnstile || errored) return;
+    let removed = false;
     const id = window.turnstile.render(ref.current, {
       sitekey: siteKey,
       size,
       callback: (t) => onToken(t),
       "expired-callback": () => onToken(null),
-      "error-callback": () => onToken(null),
+      "error-callback": () => {
+        // Stop the retry loop — an invalid sitekey / non-allow-listed hostname
+        // (Turnstile error 400020) keeps re-rendering otherwise. Fail-open on
+        // the client; the server-side verifier is authoritative.
+        if (removed) return;
+        removed = true;
+        setErrored(true);
+        try {
+          if (widgetId.current) window.turnstile?.remove(widgetId.current);
+        } catch {
+          /* noop */
+        }
+        widgetId.current = null;
+        onToken(null);
+      },
     });
     widgetId.current = id;
     return () => {
+      removed = true;
       try {
         if (widgetId.current) window.turnstile?.remove(widgetId.current);
       } catch {
@@ -110,8 +127,16 @@ export function Turnstile({
       widgetId.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, siteKey, size]);
+  }, [ready, siteKey, size, errored]);
 
   if (!siteKey) return null;
+  if (errored) {
+    return (
+      <p className="text-xs text-muted-foreground" role="status">
+        Bot-check unavailable on this host; submission will still be verified server-side.
+      </p>
+    );
+  }
   return <div ref={ref} className="cf-turnstile" data-testid="cf-turnstile" />;
 }
+
