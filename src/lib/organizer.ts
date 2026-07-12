@@ -106,11 +106,18 @@ export async function savePrizes(hackathonId: string, prizes: Prize[]) {
 export async function listRegistrations(hackathonId: string): Promise<RegistrationWithProfile[]> {
   const { data, error } = await supabase
     .from("registrations")
-    .select("*, profile:profiles(id, full_name, username, college, branch, year_of_study)")
+    .select("*")
     .eq("hackathon_id", hackathonId)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as RegistrationWithProfile[];
+  const rows = data ?? [];
+  if (!rows.length) return [];
+  const { data: profs } = await supabase
+    .from("profiles")
+    .select("id, full_name, username, college, branch, year_of_study")
+    .in("id", rows.map((r) => r.user_id));
+  const map = new Map((profs ?? []).map((p) => [p.id, p]));
+  return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
 }
 export async function updateRegistrationStatus(id: string, status: Database["public"]["Enums"]["registration_status"]) {
   const { error } = await supabase.from("registrations").update({ status }).eq("id", id);
@@ -124,11 +131,18 @@ export interface JudgeAssignmentWithProfile extends JudgeAssignment {
 export async function listJudgeAssignments(hackathonId: string): Promise<JudgeAssignmentWithProfile[]> {
   const { data, error } = await supabase
     .from("judge_assignments")
-    .select("*, profile:profiles!judge_assignments_judge_id_fkey(id, full_name, username, avatar_url)")
+    .select("*")
     .eq("hackathon_id", hackathonId)
-    .is("submission_id", null); // just hackathon-level assignments
+    .is("submission_id", null);
   if (error) throw error;
-  return (data ?? []) as never;
+  const rows = data ?? [];
+  if (!rows.length) return [];
+  const { data: profs } = await supabase
+    .from("profiles")
+    .select("id, full_name, username, avatar_url")
+    .in("id", rows.map((r) => r.judge_id));
+  const map = new Map((profs ?? []).map((p) => [p.id, p]));
+  return rows.map((r) => ({ ...r, profile: map.get(r.judge_id) ?? null }));
 }
 export async function assignJudgeByEmail(hackathonId: string, email: string) {
   const { data: userId } = await supabase.rpc("find_user_id_by_email", { _email: email.trim().toLowerCase() });

@@ -50,11 +50,19 @@ export async function getTeam(teamId: string): Promise<TeamWithHackathon | null>
 export async function listTeamMembers(teamId: string): Promise<TeamMemberWithProfile[]> {
   const { data, error } = await supabase
     .from("team_members")
-    .select("*, profile:profiles(id, full_name, username, avatar_url)")
+    .select("*")
     .eq("team_id", teamId)
     .order("created_at", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as TeamMemberWithProfile[];
+  const rows = data ?? [];
+  const userIds = rows.map((r) => r.user_id);
+  if (!userIds.length) return [];
+  const { data: profs } = await supabase
+    .from("profiles")
+    .select("id, full_name, username, avatar_url")
+    .in("id", userIds);
+  const map = new Map((profs ?? []).map((p) => [p.id, p]));
+  return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
 }
 
 export async function listTeamInvitations(teamId: string): Promise<TeamInvitation[]> {
