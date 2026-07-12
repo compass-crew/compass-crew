@@ -44,6 +44,7 @@ import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackatho
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
@@ -231,6 +232,12 @@ const AuthenticatedOrganizerHackathonsRoute =
     path: '/organizer/hackathons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminResourceRoute =
+  AuthenticatedAdminResourceRouteImport.update({
+    id: '/$resource',
+    path: '/$resource',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicCertificatesCodeRoute =
   ApiPublicCertificatesCodeRouteImport.update({
     id: '/api/public/certificates/$code',
@@ -298,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -339,6 +347,7 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -383,6 +392,7 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -427,6 +437,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/admin/$resource'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -468,6 +479,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/admin/$resource'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -511,6 +523,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/_authenticated/admin/$resource'
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
@@ -792,6 +805,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/$resource': {
+      id: '/_authenticated/admin/$resource'
+      path: '/$resource'
+      fullPath: '/admin/$resource'
+      preLoaderRoute: typeof AuthenticatedAdminResourceRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/certificates/$code': {
       id: '/api/public/certificates/$code'
       path: '/api/public/certificates/$code'
@@ -838,10 +858,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
