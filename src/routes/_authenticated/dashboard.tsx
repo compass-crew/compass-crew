@@ -61,6 +61,18 @@ const PARTICIPANT: Widget[] = [
     cta: { label: "View invitations", to: "/invitations" },
   },
   {
+    icon: Award,
+    title: "Certificates",
+    body: "Download and share every certificate issued in your name.",
+    cta: { label: "Open certificates", to: "/certificates" },
+  },
+  {
+    icon: Bell,
+    title: "Notifications",
+    body: "Registrations, invitations, scores and certificates — all in one inbox.",
+    cta: { label: "Open notifications", to: "/notifications" },
+  },
+  {
     icon: Calendar,
     title: "Events",
     body: "Workshops, AMAs and campus meetups — announced weekly.",
@@ -71,13 +83,14 @@ const PARTICIPANT: Widget[] = [
 const ORGANIZER: Widget[] = [
   { icon: Trophy, title: "Your hackathons", body: "Create, publish and manage the hackathons you run.", cta: { label: "Open organizer console", to: "/organizer/hackathons" } },
   { icon: Sparkles, title: "New hackathon", body: "Ship a hackathon in minutes. Add tracks, prizes and judges as you go.", cta: { label: "Create hackathon", to: "/organizer/hackathons/new" } },
-  { icon: Calendar, title: "Public hackathons", body: "See what's live across the platform.", cta: { label: "Browse hackathons", to: "/hackathons" } },
+  { icon: Award, title: "Certificates & results", body: "Publish leaderboards and issue certificates from the organizer console.", cta: { label: "Open organizer console", to: "/organizer/hackathons" } },
   { icon: Users, title: "Community", body: "Grow campus chapters and community programs.", cta: { label: "Open community", to: "/community" } },
 ];
 
 const JUDGE: Widget[] = [
-  { icon: Gavel, title: "Judging queues", body: "Projects assigned to you will appear here during active hackathons.", cta: { label: "Learn how it works", to: "/hackathons" } },
-  { icon: Trophy, title: "Hackathons", body: "See the hackathons you're judging or have judged.", cta: { label: "Open hackathons", to: "/hackathons" } },
+  { icon: Gavel, title: "Judging queue", body: "Review and score submissions assigned to you.", cta: { label: "Open judge console", to: "/judge" } },
+  { icon: Trophy, title: "Hackathons", body: "Explore the full slate of Compass Crew hackathons.", cta: { label: "Browse hackathons", to: "/hackathons" } },
+  { icon: Award, title: "Certificates", body: "Your judge certificates land here after events wrap up.", cta: { label: "Open certificates", to: "/certificates" } },
 ];
 
 const MENTOR: Widget[] = [
