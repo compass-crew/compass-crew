@@ -1,202 +1,221 @@
-import { Trophy, Users, Rocket, Sparkles, Code2, GraduationCap, Handshake, Globe2 } from "lucide-react";
+import {
+  Trophy,
+  Users,
+  Rocket,
+  Sparkles,
+  Code2,
+  GraduationCap,
+  Handshake,
+  Globe2,
+  BookOpen,
+  Briefcase,
+  Award,
+  Flag,
+  Brain,
+  GitBranch,
+} from "lucide-react";
 
+/**
+ * Trust pillars shown in the hero. No fabricated numbers — these are
+ * qualitative promises until real metrics exist in the database.
+ */
 export const STATS = [
-  { label: "Student members", value: "12k+" },
-  { label: "Campus chapters", value: "48" },
-  { label: "Hackathons hosted", value: "60+" },
-  { label: "Startups launched", value: "22" },
+  { label: "Community", value: "Growing" },
+  { label: "Access", value: "Pan-India" },
+  { label: "Opportunities", value: "Monthly" },
+  { label: "Tracks", value: "Multiple" },
+];
+
+export const TRUST_BADGES = [
+  "AI",
+  "Open Source",
+  "Innovation",
+  "Hackathons",
+  "Workshops",
+  "Research",
+  "Community",
 ];
 
 export const FEATURES = [
   {
     icon: Trophy,
-    title: "National hackathons",
-    body: "Weekend sprints and month-long build seasons with mentors, prizes and pilot opportunities.",
+    title: "Hackathons",
+    body: "Weekend sprints and season-long build programs where student teams ship real products with mentors and industry judges.",
+  },
+  {
+    icon: Brain,
+    title: "AI & Applied Research",
+    body: "Reading groups, paper clubs and applied AI tracks — from prompt engineering to fine-tuning small models.",
   },
   {
     icon: GraduationCap,
-    title: "Bootcamps & workshops",
-    body: "Learning tracks in AI, product, design and engineering — taught by builders shipping in the real world.",
+    title: "Workshops & Bootcamps",
+    body: "Structured learning tracks in AI, product, design and engineering — taught by builders shipping in production.",
   },
   {
     icon: Rocket,
-    title: "Startup studio",
-    body: "From idea to first users. We help student teams validate, prototype and pitch to real investors.",
+    title: "Startup Studio",
+    body: "A path from idea to first users. We help student teams validate, prototype and pitch — with mentorship, not fluff.",
+  },
+  {
+    icon: GitBranch,
+    title: "Open-Source Labs",
+    body: "Contribute to community-maintained repositories, land your first PR, and build a portfolio recruiters actually read.",
   },
   {
     icon: Users,
-    title: "Campus chapters",
-    body: "Local crews at 48 campuses running meetups, hack nights and speaker sessions every month.",
-  },
-  {
-    icon: Code2,
-    title: "Open-source labs",
-    body: "Contribute to community-maintained repos, publish under Compass Labs, and land your first PR.",
-  },
-  {
-    icon: Sparkles,
-    title: "Mentor network",
-    body: "Founders, engineers and designers from India's leading startups review your work and open doors.",
+    title: "Campus Chapters",
+    body: "Student-run crews on campus running meetups, hack nights and speaker sessions — with a national community behind them.",
   },
 ];
 
+/**
+ * Hackathons are intentionally not populated with fake dates, prizes or
+ * locations. These entries render as elegant "coming soon" cards and will
+ * be replaced by database rows once Compass Cloud is wired up.
+ */
 export const HACKATHONS = [
   {
-    slug: "buildhack-2026",
-    title: "BuildHack 2026",
-    tag: "Flagship",
-    location: "Bengaluru · Hybrid",
-    date: "Feb 14 – 16, 2026",
-    prize: "₹8L pool",
-    theme: "AI-native products for Bharat",
-    status: "Registrations open",
+    slug: "flagship-hackathon",
+    title: "Flagship Hackathon",
+    tag: "Coming Soon",
+    theme: "A national-scale build weekend for student teams across India.",
+    status: "Registration opening soon",
     color: "from-primary to-secondary",
   },
   {
-    slug: "ai-frontier",
-    title: "AI Frontier Hack",
-    tag: "48h Sprint",
-    location: "Online",
-    date: "Mar 22 – 24, 2026",
-    prize: "₹3L pool",
-    theme: "Agents, evals and small models",
-    status: "Registrations open",
+    slug: "ai-sprint",
+    title: "AI Sprint",
+    tag: "Upcoming",
+    theme: "A short-form sprint focused on agents, evals and small models.",
+    status: "Registration opening soon",
     color: "from-secondary to-accent",
   },
   {
-    slug: "campus-cup",
-    title: "Campus Cup",
-    tag: "Season",
-    location: "12 campuses",
-    date: "Apr – Jun, 2026",
-    prize: "₹5L + pilots",
-    theme: "Student products, real users",
-    status: "Coming soon",
+    slug: "campus-season",
+    title: "Campus Season",
+    tag: "Upcoming",
+    theme: "A multi-campus season where student products meet real users.",
+    status: "Announcement coming soon",
     color: "from-accent to-primary",
   },
 ];
 
+/**
+ * Empty-state event cards. No fake dates or hosts.
+ */
 export const EVENTS = [
   {
-    slug: "founder-office-hours",
-    title: "Founder Office Hours",
-    kind: "AMA",
-    date: "Jan 24, 2026",
-    time: "7:00 PM IST",
-    mode: "Online",
-    host: "with Aditi R., YC founder",
-  },
-  {
-    slug: "design-clinic",
-    title: "Design Clinic: Portfolios",
+    slug: "upcoming-workshop",
+    title: "Upcoming Workshop",
     kind: "Workshop",
-    date: "Feb 02, 2026",
-    time: "6:30 PM IST",
-    mode: "Online",
-    host: "with Compass Design",
+    status: "Coming Soon",
+    body: "A hands-on session on AI, product or open-source — announced soon.",
   },
   {
-    slug: "delhi-meetup",
-    title: "Delhi Chapter Meetup",
+    slug: "upcoming-ama",
+    title: "Founder AMA",
+    kind: "AMA",
+    status: "Stay Tuned",
+    body: "Live conversations with founders and engineers — dates to be announced.",
+  },
+  {
+    slug: "upcoming-meetup",
+    title: "Campus Meetup",
     kind: "Meetup",
-    date: "Feb 08, 2026",
-    time: "5:00 PM",
-    mode: "IIT Delhi",
-    host: "Delhi crew",
+    status: "Coming Soon",
+    body: "In-person meetups hosted by Compass campus chapters across India.",
   },
   {
-    slug: "ai-bootcamp",
-    title: "AI Engineering Bootcamp",
+    slug: "upcoming-bootcamp",
+    title: "AI Bootcamp",
     kind: "Bootcamp",
-    date: "Mar 04 – 20, 2026",
-    time: "Evenings",
-    mode: "Cohort",
-    host: "Compass Learn",
+    status: "Coming Soon",
+    body: "A cohort-based intensive on shipping AI-native products end to end.",
   },
 ];
 
 export const BENEFITS = [
-  { icon: Handshake, title: "Mentorship 1:1", body: "Get matched with a mentor for your goals — resume, product, research or startup." },
-  { icon: Globe2, title: "Global network", body: "Community members from 200+ campuses and 40+ partner companies." },
-  { icon: Sparkles, title: "Exclusive drops", body: "Credits, invites and job leads from partners like Vercel, Notion, GitHub and more." },
-  { icon: Trophy, title: "Recognition", body: "Ship in public, earn badges, and get spotlighted in our monthly build digest." },
+  { icon: Trophy, title: "Hackathons", body: "Compete in national hackathons and build seasons with mentors, prizes and pilot opportunities." },
+  { icon: Handshake, title: "Networking", body: "Meet builders, founders, engineers and researchers across India in one active community." },
+  { icon: Briefcase, title: "Internships", body: "Get referred and shortlisted for internships with partner startups and product companies." },
+  { icon: Brain, title: "AI Workshops", body: "Hands-on sessions on LLMs, agents, evals, retrieval and applied ML — with real projects." },
+  { icon: BookOpen, title: "Research Opportunities", body: "Join paper reading groups and applied research pods with student and faculty collaborators." },
+  { icon: GitBranch, title: "Open Source", body: "Contribute to community-maintained repos and land your first meaningful pull request." },
+  { icon: Rocket, title: "Startup Mentorship", body: "1:1 mentorship for student founders — from idea validation to first users and first pitch." },
+  { icon: Award, title: "Certificates", body: "Earn verifiable participation and completion certificates for programs and bootcamps." },
+  { icon: Sparkles, title: "Portfolio Building", body: "Ship in public, document your work and build a portfolio that recruiters actually read." },
+  { icon: Flag, title: "Campus Ambassador", body: "Represent Compass Crew on your campus, run local events and grow into a community leader." },
 ];
 
-export const SPONSORS = [
-  "Vercel", "Notion", "GitHub", "Figma", "MongoDB", "Postman", "Cloudflare", "Razorpay",
-];
+/**
+ * Sponsors are intentionally empty. The homepage renders a "partner with us"
+ * empty state instead of fabricated logos.
+ */
+export const SPONSORS: string[] = [];
 
-export const TESTIMONIALS = [
-  {
-    quote: "Compass Crew took me from writing my first line of code to leading a hackathon team. The mentors are unreal.",
-    name: "Ishaan M.",
-    role: "CS undergrad · BITS Pilani",
-  },
-  {
-    quote: "I met my co-founder at a Compass hack night. Six months later we shipped our beta to 3,000 students.",
-    name: "Priya K.",
-    role: "Founder · Notedeck",
-  },
-  {
-    quote: "The most legit student community in India for AI and product. It's how I found my first internship.",
-    name: "Rahul S.",
-    role: "AI intern · Sarvam",
-  },
-];
+/**
+ * Testimonials are intentionally empty until real community stories exist.
+ * The homepage hides the section when this array is empty.
+ */
+export const TESTIMONIALS: { quote: string; name: string; role: string }[] = [];
 
 export const FAQS = [
   {
     q: "Who can join Compass Crew?",
-    a: "Any student in India — school, undergrad or grad — passionate about tech, AI, design or startups. Membership is free.",
+    a: "Any student in India — school, undergrad or grad — who is curious about AI, technology, innovation, open source or startups. Membership is free.",
   },
   {
     q: "Do I need to know how to code?",
-    a: "No. Our community includes designers, product folks, researchers, storytellers and operators. We'll help you find your track.",
+    a: "No. Our community welcomes designers, product folks, researchers, writers and operators. We'll help you find a track that fits you.",
   },
   {
-    q: "How do hackathons work?",
-    a: "You register solo or as a team, pick a theme, build for the given duration, and demo to a panel of judges. Prizes, offers and pilots are on the line.",
+    q: "How do Compass Crew hackathons work?",
+    a: "You register solo or as a team, pick a theme, build for the given duration and demo to a panel of judges. Details for each hackathon are announced ahead of time.",
   },
   {
     q: "Can my campus start a chapter?",
-    a: "Yes. Fill out the partner form and our chapter team will reach out with the playbook.",
+    a: "Yes. Reach out via the Partner With Us page and our chapter team will share the playbook and next steps.",
   },
   {
-    q: "Is there a fee?",
-    a: "Core membership and most events are free. Some intensive bootcamps have a nominal cohort fee with scholarships available.",
+    q: "Is there a fee to join?",
+    a: "Core membership and most events are free. Some intensive bootcamps may have a nominal cohort fee, with scholarships available.",
   },
   {
-    q: "How do sponsorships work?",
-    a: "We partner with companies on hackathons, workshops and campus tours. Reach out via the Partner With Us page.",
+    q: "How can companies partner with Compass Crew?",
+    a: "We partner with companies on hackathons, workshops and campus programs. Reach out via the Partner With Us page to start a conversation.",
   },
 ];
 
-export const BLOG_POSTS = [
-  {
-    slug: "state-of-student-ai-2026",
-    title: "State of Student AI in India, 2026",
-    excerpt: "What 12,000 students told us about building with LLMs, agents and open models this year.",
-    date: "Jan 08, 2026",
-    author: "Compass Research",
-    readTime: "8 min read",
-    tag: "Report",
-  },
-  {
-    slug: "how-to-win-a-hackathon",
-    title: "How to actually win a hackathon (from 12 winners)",
-    excerpt: "Scope, storytelling and shipping — the playbook we wish someone gave us in year one.",
-    date: "Dec 22, 2025",
-    author: "Ananya P.",
-    readTime: "6 min read",
-    tag: "Playbook",
-  },
-  {
-    slug: "starting-campus-chapter",
-    title: "Starting a Compass chapter on your campus",
-    excerpt: "A step-by-step guide to launching, growing and running a Compass chapter in your college.",
-    date: "Dec 04, 2025",
-    author: "Chapter Team",
-    readTime: "5 min read",
-    tag: "Guide",
-  },
-];
+/**
+ * Blog posts are empty until real editorial content exists.
+ */
+export const BLOG_POSTS: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  author: string;
+  readTime: string;
+  tag: string;
+}[] = [];
+
+export const MISSION = {
+  what:
+    "Compass Crew is a student-led community for AI, technology, innovation and startups — a home for the next generation of Indian builders.",
+  mission:
+    "To give every student in India a real path into building — through hackathons, workshops, open-source, research and startup programs.",
+  vision:
+    "A generation of Indian students who don't just learn technology, but ship it — and build companies, tools and research that matter globally.",
+  why:
+    "Talent is everywhere. Opportunity isn't. Compass Crew exists to close that gap — with community, mentorship and programs that any student can access.",
+  who:
+    "Any student in India — from tier-1 colleges to smaller campuses — curious about AI, engineering, design, product, research or startups.",
+  roadmap: [
+    "Launch flagship hackathon season",
+    "Open campus chapters across India",
+    "Ship the Compass Crew learning tracks",
+    "Kick off the Compass startup studio cohort",
+    "Publish community research and open-source projects",
+  ],
+};

@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,8 +24,8 @@ function EventsPage() {
     <>
       <PageHeader
         eyebrow="Events"
-        title="Something to attend, every week."
-        description="Workshops, AMAs, meetups and bootcamps — online and across campuses in India."
+        title="Workshops, meetups & AMAs."
+        description="Compass Crew events are announced here — workshops, AMAs, meetups and bootcamps for student builders across India."
       />
       <Section>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -34,15 +34,19 @@ function EventsPage() {
               <CardContent className="space-y-4 p-6">
                 <div className="flex items-center justify-between">
                   <Badge variant="secondary">{e.kind}</Badge>
-                  <span className="text-xs text-muted-foreground">{e.mode}</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">
+                    {e.status}
+                  </span>
                 </div>
                 <h3 className="font-display text-lg font-semibold leading-snug">{e.title}</h3>
-                <ul className="space-y-1.5 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2"><Calendar className="h-4 w-4" />{e.date}</li>
-                  <li className="flex items-center gap-2"><Clock className="h-4 w-4" />{e.time}</li>
-                  <li className="flex items-center gap-2"><MapPin className="h-4 w-4" />{e.host}</li>
-                </ul>
-                <Button className="w-full" variant="outline">RSVP</Button>
+                <p className="text-sm text-muted-foreground">{e.body}</p>
+                <div className="flex items-center gap-2 rounded-lg border border-dashed border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Details announced soon
+                </div>
+                <Button asChild className="w-full" variant="outline">
+                  <Link to="/community">Get notified</Link>
+                </Button>
               </CardContent>
             </Card>
           ))}
