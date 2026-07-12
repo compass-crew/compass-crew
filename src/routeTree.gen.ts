@@ -23,6 +23,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CodeOfConductRouteImport } from './routes/code-of-conduct'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -127,6 +128,11 @@ const CommunityRoute = CommunityRouteImport.update({
 const CodeOfConductRoute = CodeOfConductRouteImport.update({
   id: '/code-of-conduct',
   path: '/code-of-conduct',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -324,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/careers': typeof CareersRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
@@ -374,6 +381,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/careers': typeof CareersRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
@@ -425,6 +433,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/careers': typeof CareersRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
@@ -477,6 +486,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/blog'
+    | '/careers'
     | '/code-of-conduct'
     | '/community'
     | '/contact'
@@ -527,6 +537,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/blog'
+    | '/careers'
     | '/code-of-conduct'
     | '/community'
     | '/contact'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/blog'
+    | '/careers'
     | '/code-of-conduct'
     | '/community'
     | '/contact'
@@ -629,6 +641,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
+  CareersRoute: typeof CareersRoute
   CodeOfConductRoute: typeof CodeOfConductRoute
   CommunityRoute: typeof CommunityRoute
   ContactRoute: typeof ContactRoute
@@ -746,6 +759,13 @@ declare module '@tanstack/react-router' {
       path: '/code-of-conduct'
       fullPath: '/code-of-conduct'
       preLoaderRoute: typeof CodeOfConductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1171,6 +1191,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
+  CareersRoute: CareersRoute,
   CodeOfConductRoute: CodeOfConductRoute,
   CommunityRoute: CommunityRoute,
   ContactRoute: ContactRoute,
