@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/empty-state";
-import { supabase } from "@/integrations/supabase/client";
 import { getCertificateByCode, CERT_TYPE_LABEL, certPdfUrl } from "@/lib/certificates";
 
 export const Route = createFileRoute("/verify/$code")({
@@ -28,15 +27,9 @@ function VerifyPage() {
     queryKey: ["cert", code],
     queryFn: () => getCertificateByCode(code),
   });
-  const hackQ = useQuery({
-    queryKey: ["cert", code, "hackathon"],
-    queryFn: async () => {
-      if (!certQ.data?.hackathon_id) return null;
-      const { data } = await supabase.from("hackathons").select("title, slug").eq("id", certQ.data.hackathon_id).maybeSingle();
-      return data;
-    },
-    enabled: !!certQ.data,
-  });
+  const hack = certQ.data
+    ? { title: certQ.data.hackathon_title, slug: certQ.data.hackathon_slug }
+    : null;
 
   return (
     <>
@@ -77,7 +70,7 @@ function VerifyPage() {
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Hackathon</dt>
-                  <dd className="mt-0.5">{hackQ.data?.title ?? "—"}</dd>
+                  <dd className="mt-0.5">{hack?.title ?? "—"}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Issued</dt>
@@ -98,9 +91,9 @@ function VerifyPage() {
                     <Download className="mr-2 h-4 w-4" /> View PDF
                   </a>
                 </Button>
-                {hackQ.data?.slug && (
+                {hack?.slug && (
                   <Button asChild variant="outline">
-                    <a href={`/hackathons/${hackQ.data.slug}`}>
+                    <a href={`/hackathons/${hack.slug}`}>
                       <ExternalLink className="mr-2 h-4 w-4" /> Hackathon
                     </a>
                   </Button>
