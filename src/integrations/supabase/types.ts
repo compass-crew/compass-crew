@@ -14,16 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          branch: string | null
+          college: string | null
+          country: string | null
+          created_at: string
+          degree: string | null
+          full_name: string | null
+          github_url: string | null
+          id: string
+          is_public: boolean
+          linkedin_url: string | null
+          newsletter_opt_in: boolean
+          portfolio_url: string | null
+          skills: string[]
+          state: string | null
+          updated_at: string
+          username: string | null
+          year_of_study: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          branch?: string | null
+          college?: string | null
+          country?: string | null
+          created_at?: string
+          degree?: string | null
+          full_name?: string | null
+          github_url?: string | null
+          id: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          newsletter_opt_in?: boolean
+          portfolio_url?: string | null
+          skills?: string[]
+          state?: string | null
+          updated_at?: string
+          username?: string | null
+          year_of_study?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          branch?: string | null
+          college?: string | null
+          country?: string | null
+          created_at?: string
+          degree?: string | null
+          full_name?: string | null
+          github_url?: string | null
+          id?: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          newsletter_opt_in?: boolean
+          portfolio_url?: string | null
+          skills?: string[]
+          state?: string | null
+          updated_at?: string
+          username?: string | null
+          year_of_study?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "super_admin"
+        | "organizer"
+        | "judge"
+        | "mentor"
+        | "campus_ambassador"
+        | "participant"
+        | "guest"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +249,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "super_admin",
+        "organizer",
+        "judge",
+        "mentor",
+        "campus_ambassador",
+        "participant",
+        "guest",
+      ],
+    },
   },
 } as const
