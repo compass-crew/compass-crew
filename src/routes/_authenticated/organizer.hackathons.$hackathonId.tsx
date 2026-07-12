@@ -686,8 +686,6 @@ function ResultsTab({ hackathonId, slug, publishedAt }: { hackathonId: string; s
 /* ============================== Certificates ============================== */
 function CertificatesTab({ hackathonId }: { hackathonId: string }) {
   const qc = useQueryClient();
-  const { generateCertificate, bulkGenerateParticipation, revokeCertificate } =
-    require("@/lib/certificates.functions") as typeof import("@/lib/certificates.functions");
   const genFn = useServerFn(generateCertificate);
   const bulkFn = useServerFn(bulkGenerateParticipation);
   const revokeFn = useServerFn(revokeCertificate);
