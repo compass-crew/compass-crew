@@ -33,7 +33,7 @@ function CocPage() {
             <li>Spam, phishing, or misuse of member data.</li>
           </ul>
           <h2 className="font-display text-xl font-semibold text-foreground">Reporting</h2>
-          <p>Reach out privately to any core team member on Discord, or write to conduct@compasscrew.in. Reports are handled confidentially.</p>
+          <p>Write to <a href="mailto:conduct@compasscrew.in" className="text-primary">conduct@compasscrew.in</a> or reach out privately to any core team member. Reports are handled confidentially.</p>
         </article>
       </Section>
     </>
