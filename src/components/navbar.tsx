@@ -51,37 +51,41 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ${
-        scrolled
-          ? "border-b border-border/70 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70"
-          : "border-b border-transparent bg-transparent"
+      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+        scrolled ? "pt-3" : "pt-5"
       }`}
     >
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
-        <Logo />
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div
+          className={`flex w-full items-center justify-between gap-3 rounded-full border px-3 py-2 transition-all duration-300 ${
+            scrolled
+              ? "border-border/60 bg-background/70 shadow-elegant backdrop-blur-xl supports-[backdrop-filter]:bg-background/55"
+              : "border-transparent bg-background/40 backdrop-blur-md supports-[backdrop-filter]:bg-background/30"
+          }`}
+        >
+          <Logo />
 
-        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-          {NAV_LINKS.slice(1).map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              activeOptions={{ exact: l.to === "/" }}
-              className="group relative rounded-md px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground data-[status=active]:text-foreground"
-            >
-              <span className="relative z-10">{l.label}</span>
-              {/* Hover pill */}
-              <span
-                aria-hidden
-                className="absolute inset-x-1.5 inset-y-1 -z-0 rounded-md bg-muted opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-data-[status=active]:opacity-100"
-              />
-              {/* Active underline */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-4 -bottom-[1px] h-[2px] rounded-full bg-gradient-brand opacity-0 transition-opacity duration-200 group-data-[status=active]:opacity-100"
-              />
-            </Link>
-          ))}
-        </nav>
+          <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+            {NAV_LINKS.slice(1).map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                activeOptions={{ exact: l.to === "/" }}
+                className="group relative rounded-full px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground data-[status=active]:text-foreground"
+              >
+                <span className="relative z-10">{l.label}</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -z-0 rounded-full bg-muted/60 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-data-[status=active]:opacity-100"
+                />
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-4 -bottom-[3px] h-[2px] rounded-full bg-gradient-brand opacity-0 transition-opacity duration-200 group-data-[status=active]:opacity-100"
+                />
+              </Link>
+            ))}
+          </nav>
+
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
@@ -235,7 +239,9 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
         </div>
+        </div>
       </div>
     </header>
+
   );
 }
