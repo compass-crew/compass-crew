@@ -148,6 +148,7 @@ export type Database = {
           faqs: Json
           id: string
           is_featured: boolean
+          leaderboard_frozen: boolean
           location: string | null
           max_team_size: number
           min_team_size: number
@@ -157,6 +158,7 @@ export type Database = {
           registration_opens_at: string | null
           resources_content: Json
           results_at: string | null
+          results_published_at: string | null
           rules: string | null
           slug: string
           sponsors_content: Json
@@ -178,6 +180,7 @@ export type Database = {
           faqs?: Json
           id?: string
           is_featured?: boolean
+          leaderboard_frozen?: boolean
           location?: string | null
           max_team_size?: number
           min_team_size?: number
@@ -187,6 +190,7 @@ export type Database = {
           registration_opens_at?: string | null
           resources_content?: Json
           results_at?: string | null
+          results_published_at?: string | null
           rules?: string | null
           slug: string
           sponsors_content?: Json
@@ -208,6 +212,7 @@ export type Database = {
           faqs?: Json
           id?: string
           is_featured?: boolean
+          leaderboard_frozen?: boolean
           location?: string | null
           max_team_size?: number
           min_team_size?: number
@@ -217,6 +222,7 @@ export type Database = {
           registration_opens_at?: string | null
           resources_content?: Json
           results_at?: string | null
+          results_published_at?: string | null
           rules?: string | null
           slug?: string
           sponsors_content?: Json
@@ -504,8 +510,10 @@ export type Database = {
       submissions: {
         Row: {
           ai_models: string[]
+          award: string | null
           created_at: string
           description: string | null
+          final_rank: number | null
           future_scope: string | null
           github_url: string | null
           hackathon_id: string
@@ -526,8 +534,10 @@ export type Database = {
         }
         Insert: {
           ai_models?: string[]
+          award?: string | null
           created_at?: string
           description?: string | null
+          final_rank?: number | null
           future_scope?: string | null
           github_url?: string | null
           hackathon_id: string
@@ -548,8 +558,10 @@ export type Database = {
         }
         Update: {
           ai_models?: string[]
+          award?: string | null
           created_at?: string
           description?: string | null
+          final_rank?: number | null
           future_scope?: string | null
           github_url?: string | null
           hackathon_id?: string
