@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/empty-state";
-import { supabase } from "@/integrations/supabase/client";
 import { getCertificateByCode, CERT_TYPE_LABEL, certPdfUrl } from "@/lib/certificates";
 
 export const Route = createFileRoute("/verify/$code")({
