@@ -592,6 +592,53 @@ export type Database = {
           },
         ]
       }
+      team_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          responded_at: string | null
+          status: string
+          team_id: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          responded_at?: string | null
+          status?: string
+          team_id: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          responded_at?: string | null
+          status?: string
+          team_id?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_invitations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           created_at: string
@@ -643,6 +690,7 @@ export type Database = {
           id: string
           invite_code: string
           is_locked: boolean
+          is_open: boolean
           leader_id: string
           name: string
           tagline: string | null
@@ -655,6 +703,7 @@ export type Database = {
           id?: string
           invite_code?: string
           is_locked?: boolean
+          is_open?: boolean
           leader_id: string
           name: string
           tagline?: string | null
@@ -667,6 +716,7 @@ export type Database = {
           id?: string
           invite_code?: string
           is_locked?: boolean
+          is_open?: boolean
           leader_id?: string
           name?: string
           tagline?: string | null
@@ -716,6 +766,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_user_email: { Args: never; Returns: string }
+      find_user_id_by_email: { Args: { _email: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
