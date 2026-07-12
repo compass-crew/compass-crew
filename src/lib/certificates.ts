@@ -26,10 +26,21 @@ export async function listMyCertificates(userId: string): Promise<Certificate[]>
   return data ?? [];
 }
 
-export async function getCertificateByCode(code: string): Promise<Certificate | null> {
-  const { data, error } = await supabase.from("certificates").select("*").eq("code", code).maybeSingle();
+export type VerifiedCertificate = {
+  code: string;
+  recipient_name: string;
+  type: CertificateType;
+  subtitle: string;
+  issued_at: string;
+  hackathon_title: string | null;
+  hackathon_slug: string | null;
+};
+
+export async function getCertificateByCode(code: string): Promise<VerifiedCertificate | null> {
+  const { data, error } = await supabase.rpc("verify_certificate", { _code: code });
   if (error) throw error;
-  return data;
+  const row = Array.isArray(data) ? data[0] : data;
+  return (row as VerifiedCertificate | null) ?? null;
 }
 
 export function certPdfUrl(code: string): string {
