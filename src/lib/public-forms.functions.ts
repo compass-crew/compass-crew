@@ -26,7 +26,10 @@ const partnerSchema = z.object({
   contact_name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(40).nullable().optional(),
-  website: z.string().trim().max(255).url().nullable().optional().or(z.literal("").transform(() => null)),
+  website: z
+    .union([z.string().trim().url().max(255), z.literal(""), z.null()])
+    .optional()
+    .transform((v) => (v ? v : null)),
   partnership_type: z.string().trim().max(80).nullable().optional(),
   message: z.string().trim().min(5).max(4000),
   turnstileToken: z.string().min(1).max(4096).nullable().optional(),
