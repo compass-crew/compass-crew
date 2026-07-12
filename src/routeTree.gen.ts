@@ -52,6 +52,7 @@ import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from 
 import { Route as AuthenticatedJudgeSubmissionsSubmissionIdRouteImport } from './routes/_authenticated/judge.submissions.$submissionId'
 import { Route as AuthenticatedJudgeHackathonsHackathonIdRouteImport } from './routes/_authenticated/judge.hackathons.$hackathonId'
 import { Route as AuthenticatedAdminResourceNewRouteImport } from './routes/_authenticated/admin.$resource.new'
+import { Route as AuthenticatedAdminResourceItemIdRouteImport } from './routes/_authenticated/admin.$resource.$itemId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -281,6 +282,12 @@ const AuthenticatedAdminResourceNewRoute =
     path: '/new',
     getParentRoute: () => AuthenticatedAdminResourceRoute,
   } as any)
+const AuthenticatedAdminResourceItemIdRoute =
+  AuthenticatedAdminResourceItemIdRouteImport.update({
+    id: '/$itemId',
+    path: '/$itemId',
+    getParentRoute: () => AuthenticatedAdminResourceRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -318,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
   '/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
@@ -361,6 +369,7 @@ export interface FileRoutesByTo {
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
   '/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
@@ -407,6 +416,7 @@ export interface FileRoutesById {
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
   '/_authenticated/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/_authenticated/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/_authenticated/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
@@ -453,6 +463,7 @@ export interface FileRouteTypes {
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
     | '/admin/'
+    | '/admin/$resource/$itemId'
     | '/admin/$resource/new'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
@@ -496,6 +507,7 @@ export interface FileRouteTypes {
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
     | '/admin'
+    | '/admin/$resource/$itemId'
     | '/admin/$resource/new'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
@@ -541,6 +553,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teams/new'
     | '/hackathons/$slug/leaderboard'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/$resource/$itemId'
     | '/_authenticated/admin/$resource/new'
     | '/_authenticated/judge/hackathons/$hackathonId'
     | '/_authenticated/judge/submissions/$submissionId'
@@ -874,15 +887,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourceNewRouteImport
       parentRoute: typeof AuthenticatedAdminResourceRoute
     }
+    '/_authenticated/admin/$resource/$itemId': {
+      id: '/_authenticated/admin/$resource/$itemId'
+      path: '/$itemId'
+      fullPath: '/admin/$resource/$itemId'
+      preLoaderRoute: typeof AuthenticatedAdminResourceItemIdRouteImport
+      parentRoute: typeof AuthenticatedAdminResourceRoute
+    }
   }
 }
 
 interface AuthenticatedAdminResourceRouteChildren {
+  AuthenticatedAdminResourceItemIdRoute: typeof AuthenticatedAdminResourceItemIdRoute
   AuthenticatedAdminResourceNewRoute: typeof AuthenticatedAdminResourceNewRoute
 }
 
 const AuthenticatedAdminResourceRouteChildren: AuthenticatedAdminResourceRouteChildren =
   {
+    AuthenticatedAdminResourceItemIdRoute:
+      AuthenticatedAdminResourceItemIdRoute,
     AuthenticatedAdminResourceNewRoute: AuthenticatedAdminResourceNewRoute,
   }
 
