@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Calendar, MapPin, Trophy, Users } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,19 +20,13 @@ export const Route = createFileRoute("/hackathons")({
   component: HackathonsPage,
 });
 
-const PAST = [
-  { title: "BuildHack 2025", date: "Feb 2025", winners: "Team Notedeck", stat: "1,200 hackers" },
-  { title: "AI Frontier 2025", date: "Aug 2025", winners: "Team Reagent", stat: "600 hackers" },
-  { title: "Campus Cup 2025", date: "May 2025", winners: "IIT Delhi", stat: "12 campuses" },
-];
-
 function HackathonsPage() {
   return (
     <>
       <PageHeader
         eyebrow="Hackathons"
         title={<>Build in a weekend. <span className="text-gradient-brand">Ship in a season.</span></>}
-        description="From 48-hour sprints to multi-week campus seasons — our hackathons pair students with mentors, real users and prizes worth chasing."
+        description="From short-form sprints to multi-week campus seasons — our hackathons pair students with mentors, real users and opportunities worth chasing."
       >
         <Button asChild size="lg" className="bg-gradient-brand text-white hover:opacity-90">
           <Link to="/community">Register interest</Link>
@@ -62,13 +56,14 @@ function HackathonsPage() {
                       <h3 className="font-display text-xl font-semibold">{h.title}</h3>
                       <p className="mt-1 text-sm text-muted-foreground">{h.theme}</p>
                     </div>
-                    <ul className="space-y-1.5 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><Calendar className="h-4 w-4" />{h.date}</li>
-                      <li className="flex items-center gap-2"><MapPin className="h-4 w-4" />{h.location}</li>
-                      <li className="flex items-center gap-2"><Trophy className="h-4 w-4" />{h.prize}</li>
-                    </ul>
+                    <div className="flex items-center gap-2 rounded-lg border border-dashed border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      {h.status}
+                    </div>
                     <div className="border-t border-border pt-4">
-                      <Button className="w-full bg-gradient-brand text-white hover:opacity-90">Register</Button>
+                      <Button asChild className="w-full bg-gradient-brand text-white hover:opacity-90">
+                        <Link to="/community">Register interest</Link>
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -77,18 +72,17 @@ function HackathonsPage() {
           </TabsContent>
 
           <TabsContent value="past" className="mt-8">
-            <div className="grid gap-6 md:grid-cols-3">
-              {PAST.map((p) => (
-                <Card key={p.title}>
-                  <CardContent className="space-y-3 p-6">
-                    <p className="text-xs uppercase tracking-widest text-muted-foreground">{p.date}</p>
-                    <h3 className="font-display text-lg font-semibold">{p.title}</h3>
-                    <p className="flex items-center gap-2 text-sm text-muted-foreground"><Users className="h-4 w-4" />{p.stat}</p>
-                    <p className="text-sm">Winner: <span className="font-medium">{p.winners}</span></p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <h3 className="font-display text-xl font-semibold">Recap coming soon</h3>
+                <p className="max-w-md text-sm text-muted-foreground">
+                  We'll publish recaps, winners and highlights from our hackathons here as soon as the first season wraps.
+                </p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </Section>
