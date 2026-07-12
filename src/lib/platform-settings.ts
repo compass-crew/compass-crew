@@ -118,7 +118,7 @@ export async function fetchSettingsSection<K extends SettingsSection>(
     .eq("section", section)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return (data?.data as SettingsMap[K]) ?? null;
+  return (data?.data as unknown as SettingsMap[K]) ?? null;
 }
 
 export async function updateSettingsSection<K extends SettingsSection>(
@@ -129,7 +129,7 @@ export async function updateSettingsSection<K extends SettingsSection>(
   const { error } = await supabase
     .from("platform_settings")
     .upsert(
-      { section, data: data as unknown as Record<string, unknown>, updated_by: userRes.user?.id ?? null },
+      { section, data: data as never, updated_by: userRes.user?.id ?? null },
       { onConflict: "section" },
     );
   if (error) throw new Error(error.message);
