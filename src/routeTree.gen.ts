@@ -25,12 +25,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HackathonsSlugRouteImport } from './routes/hackathons.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -111,6 +114,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HackathonsSlugRoute = HackathonsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HackathonsRoute,
+} as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
@@ -141,6 +149,18 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrganizerHackathonsRoute =
+  AuthenticatedOrganizerHackathonsRouteImport.update({
+    id: '/organizer/hackathons',
+    path: '/organizer/hackathons',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrganizerHackathonsNewRoute =
+  AuthenticatedOrganizerHackathonsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedOrganizerHackathonsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -152,7 +172,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
-  '/hackathons': typeof HackathonsRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -164,6 +184,9 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/hackathons/$slug': typeof HackathonsSlugRoute
+  '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
+  '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -175,7 +198,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
-  '/hackathons': typeof HackathonsRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -187,6 +210,9 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/hackathons/$slug': typeof HackathonsSlugRoute
+  '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
+  '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,7 +226,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
-  '/hackathons': typeof HackathonsRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -212,6 +238,9 @@ export interface FileRoutesById {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/hackathons/$slug': typeof HackathonsSlugRoute
+  '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
+  '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -237,6 +266,9 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/hackathons/$slug'
+    | '/organizer/hackathons'
+    | '/organizer/hackathons/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -260,6 +292,9 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/hackathons/$slug'
+    | '/organizer/hackathons'
+    | '/organizer/hackathons/new'
   id:
     | '__root__'
     | '/'
@@ -284,6 +319,9 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/hackathons/$slug'
+    | '/_authenticated/organizer/hackathons'
+    | '/_authenticated/organizer/hackathons/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -297,7 +335,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   EventsRoute: typeof EventsRoute
   FaqsRoute: typeof FaqsRoute
-  HackathonsRoute: typeof HackathonsRoute
+  HackathonsRoute: typeof HackathonsRouteWithChildren
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
@@ -419,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hackathons/$slug': {
+      id: '/hackathons/$slug'
+      path: '/$slug'
+      fullPath: '/hackathons/$slug'
+      preLoaderRoute: typeof HackathonsSlugRouteImport
+      parentRoute: typeof HackathonsRoute
+    }
     '/auth/verify-email': {
       id: '/auth/verify-email'
       path: '/verify-email'
@@ -461,19 +506,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/organizer/hackathons': {
+      id: '/_authenticated/organizer/hackathons'
+      path: '/organizer/hackathons'
+      fullPath: '/organizer/hackathons'
+      preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/organizer/hackathons/new': {
+      id: '/_authenticated/organizer/hackathons/new'
+      path: '/new'
+      fullPath: '/organizer/hackathons/new'
+      preLoaderRoute: typeof AuthenticatedOrganizerHackathonsNewRouteImport
+      parentRoute: typeof AuthenticatedOrganizerHackathonsRoute
+    }
   }
 }
+
+interface AuthenticatedOrganizerHackathonsRouteChildren {
+  AuthenticatedOrganizerHackathonsNewRoute: typeof AuthenticatedOrganizerHackathonsNewRoute
+}
+
+const AuthenticatedOrganizerHackathonsRouteChildren: AuthenticatedOrganizerHackathonsRouteChildren =
+  {
+    AuthenticatedOrganizerHackathonsNewRoute:
+      AuthenticatedOrganizerHackathonsNewRoute,
+  }
+
+const AuthenticatedOrganizerHackathonsRouteWithChildren =
+  AuthenticatedOrganizerHackathonsRoute._addFileChildren(
+    AuthenticatedOrganizerHackathonsRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedOrganizerHackathonsRoute: typeof AuthenticatedOrganizerHackathonsRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedOrganizerHackathonsRoute:
+    AuthenticatedOrganizerHackathonsRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -493,6 +570,18 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface HackathonsRouteChildren {
+  HackathonsSlugRoute: typeof HackathonsSlugRoute
+}
+
+const HackathonsRouteChildren: HackathonsRouteChildren = {
+  HackathonsSlugRoute: HackathonsSlugRoute,
+}
+
+const HackathonsRouteWithChildren = HackathonsRoute._addFileChildren(
+  HackathonsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -504,7 +593,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   EventsRoute: EventsRoute,
   FaqsRoute: FaqsRoute,
-  HackathonsRoute: HackathonsRoute,
+  HackathonsRoute: HackathonsRouteWithChildren,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
