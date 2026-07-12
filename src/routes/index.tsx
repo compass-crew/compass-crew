@@ -68,127 +68,92 @@ const ROADMAP = [
 function Home() {
   return (
     <>
-      {/* ============================ HERO ============================ */}
+      {/* ============================ HERO — editorial ============================ */}
       <section className="relative overflow-hidden border-b border-border/60">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-70" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid" />
+        {/* Soft radial wash */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-60" />
+        {/* Grain / grid whisper */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-70" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-background"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-b from-transparent to-background"
         />
 
-        <div className="relative mx-auto max-w-7xl px-5 pb-20 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
-            {/* Left: headline */}
-            <div className="animate-fade-up">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1 text-[11px] font-medium tracking-wide text-muted-foreground shadow-elegant backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                India's student innovation platform
-              </span>
-
-              <h1 className="mt-6 font-display font-semibold tracking-[-0.035em] text-[2.5rem] leading-[1.02] sm:text-[3.5rem] lg:text-[4.5rem]">
-                Where India's
-                <br className="hidden sm:block" />
-                <span className="text-gradient-brand">student builders</span>{" "}
-                <span className="whitespace-nowrap">ship real work.</span>
-              </h1>
-
-              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-[17px]">
-                Compass Crew is a home for hackathons, AI, open-source, research and startup
-                programs — designed for students, run by students, open across every campus.
-              </p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Button
-                  asChild
-                  size="lg"
-                  className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:btn-premium-hover"
-                >
-                  <Link to="/community">
-                    Join the crew <ArrowRight className="ml-1.5 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="group h-11 rounded-lg border-border/70 px-5 text-sm font-semibold"
-                >
-                  <Link to="/hackathons">
-                    Explore hackathons
-                    <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </Link>
-                </Button>
-              </div>
-
-              {/* Tag row */}
-              <div className="mt-10 flex flex-wrap gap-1.5">
-                {TAG_ROW.map((t) => (
-                  <span
-                    key={t}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card/60 px-2.5 py-1 text-[11.5px] font-medium text-muted-foreground backdrop-blur"
-                  >
-                    <span className="h-1 w-1 rounded-full bg-gradient-brand" />
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: pillar card */}
-            <aside className="relative">
-              <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/70 p-6 shadow-elegant backdrop-blur sm:p-7">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-gradient-brand opacity-20 blur-3xl"
-                />
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-primary">
-                      At a glance
-                    </span>
-                    <span className="inline-flex h-6 items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-2 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                      Live
-                    </span>
-                  </div>
-
-                  <div className="mt-5 grid grid-cols-2 gap-4">
-                    {PILLARS.map((p) => (
-                      <div
-                        key={p.label}
-                        className="rounded-2xl border border-border/60 bg-background/60 p-4"
-                      >
-                        <div className="font-display text-[22px] font-semibold text-gradient-brand">
-                          {p.value}
-                        </div>
-                        <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                          {p.label}
-                        </div>
-                        <div className="mt-2 text-[12px] text-foreground/70">{p.hint}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between rounded-2xl border border-dashed border-border/70 bg-background/50 px-4 py-3">
-                    <div className="flex items-center gap-2 text-[13px] text-foreground/80">
-                      <Compass className="h-4 w-4 text-primary" />
-                      Free to join — every student welcome.
-                    </div>
-                    <Link
-                      to="/about"
-                      className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-primary hover:underline"
-                    >
-                      Our story <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </aside>
+        <div className="relative mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
+          {/* Eyebrow */}
+          <div className="flex justify-center animate-fade-up">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1 text-[11px] font-medium tracking-wide text-muted-foreground shadow-elegant backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              India's student innovation platform
+            </span>
           </div>
-        </div>
 
-        <Marquee />
+          {/* Editorial headline */}
+          <h1
+            className="mx-auto mt-8 max-w-5xl text-center font-display font-bold tracking-[-0.045em] text-[2.75rem] leading-[0.98] sm:text-[4.5rem] lg:text-[6rem] animate-fade-up"
+            style={{ animationDelay: "60ms" }}
+          >
+            Bold Ideas That
+            <br />
+            <span className="italic font-light text-foreground/90">Start</span> With{" "}
+            <span className="text-gradient-brand">Vision.</span>
+          </h1>
+
+          <p
+            className="mx-auto mt-6 max-w-xl text-center text-[15px] leading-relaxed text-muted-foreground sm:text-[17px] animate-fade-up"
+            style={{ animationDelay: "120ms" }}
+          >
+            Compass Crew helps India's student builders craft hackathons, AI, open-source and
+            startup stories that inspire action — and ship real work.
+          </p>
+
+          <div
+            className="mt-9 flex flex-wrap items-center justify-center gap-3 animate-fade-up"
+            style={{ animationDelay: "180ms" }}
+          >
+            <Button
+              asChild
+              size="lg"
+              className="group h-12 rounded-full bg-foreground px-6 text-sm font-semibold text-background shadow-elegant hover:-translate-y-px hover:bg-foreground/90"
+            >
+              <Link to="/community">
+                Join The Crew
+                <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="lg"
+              className="h-12 rounded-full px-5 text-sm font-semibold text-muted-foreground hover:text-foreground"
+            >
+              <Link to="/hackathons">
+                Explore hackathons <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Editorial imagery band — two compass symbols reaching, halftone feel via SVG */}
+          <div
+            aria-hidden
+            className="relative mx-auto mt-14 grid max-w-6xl grid-cols-2 items-end gap-6 sm:gap-12 animate-fade-up"
+            style={{ animationDelay: "240ms" }}
+          >
+            <div className="relative flex h-40 items-end justify-end sm:h-56 lg:h-72">
+              <HalftoneCompass className="h-full w-auto opacity-90 -scale-x-100" />
+            </div>
+            <div className="relative flex h-40 items-end justify-start sm:h-56 lg:h-72">
+              <HalftoneCompass className="h-full w-auto opacity-90" glow />
+            </div>
+            {/* Center spark */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="h-16 w-16 rounded-full bg-gradient-brand opacity-40 blur-2xl sm:h-24 sm:w-24" />
+            </div>
+          </div>
+
+          {/* Trusted-by strip */}
+          <TrustedStrip />
+        </div>
       </section>
 
       {/* ============================ BENTO / WHAT WE DO ============================ */}
@@ -660,16 +625,100 @@ function Marquee() {
             </span>
           ))}
         </div>
-        <div aria-hidden className="flex shrink-0 animate-marquee items-center gap-10 pr-10">
-          {items.concat(items).map((label, i) => (
-            <span
+      </div>
+    </div>
+  );
+}
+
+/* Halftone compass — editorial dotted illustration */
+function HalftoneCompass({ className = "", glow = false }: { className?: string; glow?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 320 320"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <defs>
+        <radialGradient id="hc-fade" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
+          <stop offset="70%" stopColor="currentColor" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </radialGradient>
+        <pattern id="hc-dots" x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
+          <circle cx="1.4" cy="1.4" r="1.2" fill="currentColor" />
+        </pattern>
+        <mask id="hc-mask">
+          <rect width="320" height="320" fill="url(#hc-fade)" />
+        </mask>
+      </defs>
+      <g className="text-foreground">
+        {/* Halftone disc */}
+        <circle cx="160" cy="160" r="150" fill="url(#hc-dots)" mask="url(#hc-mask)" opacity="0.55" />
+        {/* Compass ring */}
+        <circle cx="160" cy="160" r="96" stroke="currentColor" strokeWidth="1.25" opacity="0.85" />
+        <circle cx="160" cy="160" r="72" stroke="currentColor" strokeWidth="0.75" opacity="0.4" />
+        {/* Compass needle */}
+        <path
+          d="M160 78 L178 160 L160 172 Z"
+          fill="currentColor"
+          opacity="0.95"
+        />
+        <path
+          d="M160 242 L142 160 L160 148 Z"
+          fill="currentColor"
+          opacity="0.35"
+        />
+        <circle cx="160" cy="160" r="4.5" fill="currentColor" />
+        {/* Tick marks */}
+        {Array.from({ length: 24 }).map((_, i) => {
+          const a = (i * Math.PI) / 12;
+          const x1 = 160 + Math.cos(a) * 100;
+          const y1 = 160 + Math.sin(a) * 100;
+          const x2 = 160 + Math.cos(a) * (i % 6 === 0 ? 112 : 106);
+          const y2 = 160 + Math.sin(a) * (i % 6 === 0 ? 112 : 106);
+          return (
+            <line
               key={i}
-              className="whitespace-nowrap font-display text-[11.5px] font-semibold uppercase tracking-[0.28em] text-muted-foreground/80"
-            >
-              <span className="text-gradient-brand">◆</span>&nbsp;&nbsp;{label}
-            </span>
-          ))}
-        </div>
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="currentColor"
+              strokeWidth={i % 6 === 0 ? 1.4 : 0.7}
+              opacity={i % 6 === 0 ? 0.9 : 0.5}
+            />
+          );
+        })}
+      </g>
+      {glow && (
+        <circle cx="160" cy="160" r="6" className="text-primary" fill="currentColor">
+          <animate attributeName="r" values="4;8;4" dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;1;0.6" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+      )}
+    </svg>
+  );
+}
+
+const TRUSTED = ["IIT", "NIT", "BITS", "IIIT", "VIT", "SRM", "Manipal"];
+
+function TrustedStrip() {
+  return (
+    <div className="mt-14 border-t border-border/60 pt-8">
+      <p className="text-center text-[11px] font-medium uppercase tracking-[0.28em] text-muted-foreground">
+        Trusted by student builders across every campus
+      </p>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-80">
+        {TRUSTED.map((t) => (
+          <span
+            key={t}
+            className="font-display text-[15px] font-semibold tracking-[0.18em] text-muted-foreground/90"
+          >
+            {t}
+          </span>
+        ))}
       </div>
     </div>
   );
