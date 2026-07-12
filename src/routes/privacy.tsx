@@ -18,7 +18,7 @@ function PrivacyPage() {
     <>
       <PageHeader eyebrow="Legal" title="Privacy Policy" description="Last updated: January 2026" />
       <Section className="max-w-3xl">
-        <article className="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-muted-foreground">
+        <article className="space-y-6 text-muted-foreground leading-relaxed">
           <p>This page is maintained by the Compass Crew team to explain what data we collect, how we use it, and the controls you have. Compass Crew is a student-run community; we take privacy seriously and only collect what we need to operate.</p>
           <h2 className="font-display text-xl font-semibold text-foreground">Information we collect</h2>
           <p>When you sign up, register for a hackathon, or subscribe to our newsletter, we collect your name, email address, campus and (optionally) links to your public work. Event registrations may include additional information relevant to that event.</p>
