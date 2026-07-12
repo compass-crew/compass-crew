@@ -33,7 +33,7 @@ export async function getCertificateByCode(code: string): Promise<Certificate | 
 }
 
 export function certPdfUrl(code: string): string {
-  return `/api/public/certificates/${code}.pdf`;
+  return `/api/public/certificates/${code}`;
 }
 
 export function certVerifyUrl(code: string, origin?: string): string {

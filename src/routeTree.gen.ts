@@ -37,6 +37,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
 import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from './routes/_authenticated/organizer.hackathons.$hackathonId'
@@ -183,6 +184,12 @@ const AuthenticatedOrganizerHackathonsRoute =
     path: '/organizer/hackathons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicCertificatesCodeRoute =
+  ApiPublicCertificatesCodeRouteImport.update({
+    id: '/api/public/certificates/$code',
+    path: '/api/public/certificates/$code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedTeamsTeamIdSubmissionRoute =
   AuthenticatedTeamsTeamIdSubmissionRouteImport.update({
     id: '/submission',
@@ -233,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
+  '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -265,6 +273,7 @@ export interface FileRoutesByTo {
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
+  '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -299,6 +308,7 @@ export interface FileRoutesById {
   '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
+  '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
+    | '/api/public/certificates/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
+    | '/api/public/certificates/$code'
   id:
     | '__root__'
     | '/'
@@ -398,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organizer/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/new'
     | '/_authenticated/teams/$teamId/submission'
+    | '/api/public/certificates/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -417,6 +430,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SponsorsRoute: typeof SponsorsRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -617,6 +631,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/certificates/$code': {
+      id: '/api/public/certificates/$code'
+      path: '/api/public/certificates/$code'
+      fullPath: '/api/public/certificates/$code'
+      preLoaderRoute: typeof ApiPublicCertificatesCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/teams/$teamId/submission': {
       id: '/_authenticated/teams/$teamId/submission'
       path: '/submission'
@@ -752,6 +773,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SponsorsRoute: SponsorsRoute,
   TermsRoute: TermsRoute,
+  ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
