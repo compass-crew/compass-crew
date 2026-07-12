@@ -70,14 +70,17 @@ function Home() {
     <>
       {/* ============================ HERO — editorial ============================ */}
       <section className="relative overflow-hidden border-b border-border/60">
-        {/* Soft radial wash */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-60" />
-        {/* Grain / grid whisper */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-70" />
+        {/* Mesh gradient + soft radial wash */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-mesh opacity-70" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-50" />
+        {/* Grid whisper + film noise */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-60" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-noise opacity-[0.35] mix-blend-overlay" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-b from-transparent to-background"
         />
+
 
         <div className="relative mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
           {/* Eyebrow */}
