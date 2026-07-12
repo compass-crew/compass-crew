@@ -1084,6 +1084,27 @@ export type Database = {
         }
         Relationships: []
       }
+      public_form_events: {
+        Row: {
+          created_at: string
+          form_kind: string
+          id: string
+          ip_hash: string
+        }
+        Insert: {
+          created_at?: string
+          form_kind: string
+          id?: string
+          ip_hash: string
+        }
+        Update: {
+          created_at?: string
+          form_kind?: string
+          id?: string
+          ip_hash?: string
+        }
+        Relationships: []
+      }
       public_judges: {
         Row: {
           avatar_url: string | null
