@@ -615,14 +615,12 @@ function AnnouncementsTab({ hackathonId, authorId }: { hackathonId: string; auth
 /* ============================== Results ============================== */
 function ResultsTab({ hackathonId, slug, publishedAt }: { hackathonId: string; slug: string; publishedAt: string | null }) {
   const qc = useQueryClient();
-  const { publishResults } = require("@/lib/certificates.functions") as typeof import("@/lib/certificates.functions");
   const publish = useServerFn(publishResults);
   const [busy, setBusy] = useState(false);
 
   const lbQ = useQuery({
     queryKey: ["organizer", "leaderboard-preview", hackathonId],
-    queryFn: async () => {
-      const { computeLeaderboard } = await import("@/lib/leaderboard");
+    queryFn: () => computeLeaderboard(hackathonId),
       return computeLeaderboard(hackathonId);
     },
   });
