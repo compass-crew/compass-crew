@@ -353,6 +353,21 @@ function SignupForm({ onDone }: { onDone: () => void }) {
       return;
     }
 
+    // Supabase returns 200 with an empty `identities` array when the email is
+    // already registered (user-enumeration protection). No user is created and
+    // no verification email is sent, so we must NOT show a success toast.
+    const identities = (data.user as { identities?: unknown[] } | null)?.identities;
+    const isRepeatedSignup =
+      !!data.user && !data.session && Array.isArray(identities) && identities.length === 0;
+
+    if (isRepeatedSignup) {
+      setSubmitting(false);
+      toast.error(
+        "This email is already registered. Try signing in, or reset your password if you've forgotten it.",
+      );
+      return;
+    }
+
     // Persist the extended profile fields once the row exists (created by trigger).
     if (data.user) {
       const { error: profileErr } = await supabase
@@ -376,10 +391,11 @@ function SignupForm({ onDone }: { onDone: () => void }) {
     }
 
     setSubmitting(false);
-    toast.success("Account created. Check your email to verify.");
     if (data.session) {
+      toast.success("Account created.");
       navigate({ to: "/dashboard" });
     } else {
+      toast.success("Account created. Check your email to verify.");
       navigate({ to: "/auth/verify-email", search: { email: values.email } });
       onDone();
     }
