@@ -239,7 +239,9 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
         </div>
+        </div>
       </div>
     </header>
+
   );
 }
