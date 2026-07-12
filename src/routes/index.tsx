@@ -1,255 +1,275 @@
-import { createFileRoute } from "@tanstack/react-router";
-import heroImg from "@/assets/hero.jpg";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Sparkles, Calendar, MapPin, Trophy, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Section, SectionHeading } from "@/components/section";
+import { STATS, FEATURES, HACKATHONS, EVENTS, BENEFITS, SPONSORS, TESTIMONIALS } from "@/data/site";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Compass Crew — AI, Tech & Startup Community for Students" },
+      {
+        name: "description",
+        content:
+          "Join 12,000+ students across India building in AI, technology and startups. Hackathons, workshops, bootcamps and a mentor network — free to join.",
+      },
+      { property: "og:title", content: "Compass Crew — Where student builders find their crew" },
+      {
+        property: "og:description",
+        content: "Hackathons, workshops, bootcamps and startup programs across India.",
+      },
+    ],
+  }),
+  component: Home,
 });
 
-const expeditions = [
-  {
-    tag: "Patagonia",
-    title: "Torres del Paine Traverse",
-    duration: "9 days · Nov–Mar",
-    price: "From $3,890",
-  },
-  {
-    tag: "High Atlas",
-    title: "Berber Villages & Mount Toubkal",
-    duration: "7 days · Apr–Oct",
-    price: "From $2,450",
-  },
-  {
-    tag: "Iceland",
-    title: "Highlands & Volcanic Coast",
-    duration: "6 days · Jun–Sep",
-    price: "From $3,120",
-  },
-];
-
-const principles = [
-  {
-    n: "01",
-    title: "Small groups, always",
-    body: "No more than eight travelers per crew. Real conversations, real trails, no coach buses.",
-  },
-  {
-    n: "02",
-    title: "Guides who live it",
-    body: "Every expedition is led by locals and lifers — climbers, cartographers, cooks, and biologists.",
-  },
-  {
-    n: "03",
-    title: "Slower on purpose",
-    body: "We build in the pauses. Time to notice the light change, the ridge shift, the story unfold.",
-  },
-];
-
-function Index() {
+function Home() {
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground">
-      {/* Nav */}
-      <header className="absolute inset-x-0 top-0 z-20">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10">
-          <a href="#" className="flex items-center gap-2 text-background">
-            <CompassMark />
-            <span className="font-display text-lg tracking-tight">Compass Crew</span>
-          </a>
-          <div className="hidden items-center gap-8 text-sm text-background/85 md:flex">
-            <a href="#expeditions" className="transition hover:text-background">Expeditions</a>
-            <a href="#approach" className="transition hover:text-background">Approach</a>
-            <a href="#journal" className="transition hover:text-background">Journal</a>
-            <a href="#contact" className="transition hover:text-background">Contact</a>
-          </div>
-          <a
-            href="#contact"
-            className="rounded-full border border-background/40 px-4 py-2 text-sm text-background transition hover:bg-background hover:text-foreground"
-          >
-            Plan a trip
-          </a>
-        </nav>
-      </header>
-
+    <>
       {/* Hero */}
-      <section className="relative h-[92vh] min-h-[620px] w-full overflow-hidden">
-        <img
-          src={heroImg}
-          alt="Hikers on a mountain ridge at golden hour"
-          width={1920}
-          height={1200}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/40 via-foreground/20 to-foreground/70" />
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-20 lg:px-10 lg:pb-28">
-          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-background/80">
-            Guided expeditions · Est. 2014
-          </p>
-          <h1 className="max-w-4xl font-display text-5xl font-light leading-[1.02] text-background sm:text-6xl lg:text-7xl">
-            Find your bearings <br />
-            <span className="italic text-background/90">somewhere farther out.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-base text-background/85 sm:text-lg">
-            Compass Crew runs small-group expeditions into the world's quieter corners —
-            planned with care, guided by locals, remembered for a lifetime.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <a
-              href="#expeditions"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-[520px] w-[1000px] -translate-x-1/2 rounded-full bg-gradient-brand opacity-25 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
+          <div className="mx-auto max-w-3xl text-center">
+            <Link
+              to="/hackathons"
+              className="group inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur transition hover:border-primary/40 hover:text-foreground"
             >
-              See 2026 expeditions
-              <span aria-hidden>→</span>
-            </a>
-            <a
-              href="#approach"
-              className="inline-flex items-center gap-2 rounded-full border border-background/40 px-6 py-3 text-sm text-background transition hover:bg-background/10"
-            >
-              How we travel
-            </a>
-          </div>
-        </div>
-      </section>
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              BuildHack 2026 registrations are open
+              <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+            </Link>
 
-      {/* Intro strip */}
-      <section id="approach" className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-24 lg:grid-cols-12 lg:px-10 lg:py-32">
-          <div className="lg:col-span-5">
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Our approach</p>
-            <h2 className="mt-4 font-display text-4xl font-light leading-tight text-foreground sm:text-5xl">
-              Trips that feel like <em className="text-accent">yours</em>, not a tour.
-            </h2>
+            <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
+              Where student builders <br className="hidden sm:block" />
+              <span className="text-gradient-brand">find their crew.</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Compass Crew is a student-led community for AI, technology, innovation and
+              startups — running hackathons, bootcamps and shipping programs across 48 campuses in India.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button asChild size="lg" className="bg-gradient-brand text-white hover:opacity-90">
+                <Link to="/community">
+                  Join the crew <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link to="/hackathons">Explore hackathons</Link>
+              </Button>
+            </div>
           </div>
-          <div className="grid gap-10 lg:col-span-7 lg:grid-cols-3">
-            {principles.map((p) => (
-              <div key={p.n} className="flex flex-col gap-3">
-                <span className="font-display text-sm text-accent">{p.n}</span>
-                <h3 className="font-display text-xl text-foreground">{p.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{p.body}</p>
+
+          {/* Stats */}
+          <div className="mx-auto mt-16 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
+            {STATS.map((s) => (
+              <div
+                key={s.label}
+                className="rounded-2xl border border-border bg-card/70 p-5 text-center backdrop-blur"
+              >
+                <div className="font-display text-3xl font-semibold text-gradient-brand">{s.value}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Expeditions */}
-      <section id="expeditions" className="bg-secondary">
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                Featured · 2026
-              </p>
-              <h2 className="mt-4 font-display text-4xl font-light leading-tight text-foreground sm:text-5xl">
-                Where we're headed next.
-              </h2>
-            </div>
-            <a
-              href="#"
-              className="text-sm font-medium text-accent underline-offset-4 hover:underline"
-            >
-              View the full atlas →
-            </a>
-          </div>
-
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {expeditions.map((e, i) => (
-              <article
-                key={e.title}
-                className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:shadow-lg"
-              >
+      {/* Features */}
+      <Section>
+        <SectionHeading
+          eyebrow="Why Compass Crew"
+          title="Everything you need to build, learn and ship."
+          description="From your first commit to your first users — Compass Crew is a home for the entire student builder journey."
+          align="center"
+        />
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((f) => (
+            <Card key={f.title} className="group transition hover:-translate-y-0.5 hover:shadow-elegant">
+              <CardHeader className="space-y-4">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-brand text-white shadow-elegant">
+                  <f.icon className="h-5 w-5" />
+                </span>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase tracking-[0.25em] text-accent">
-                      {e.tag}
-                    </span>
-                    <span className="font-display text-sm text-muted-foreground">
-                      0{i + 1}
-                    </span>
-                  </div>
-                  <h3 className="mt-8 font-display text-2xl leading-tight text-card-foreground">
-                    {e.title}
-                  </h3>
-                  <p className="mt-3 text-sm text-muted-foreground">{e.duration}</p>
+                  <h3 className="font-display text-lg font-semibold">{f.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
                 </div>
-                <div className="mt-16 flex items-end justify-between border-t border-border pt-6">
-                  <span className="font-display text-lg text-foreground">{e.price}</span>
-                  <span className="text-sm text-accent transition group-hover:translate-x-1">
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      {/* Hackathons */}
+      <Section className="border-y border-border bg-muted/30">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <SectionHeading eyebrow="On the calendar" title="Upcoming hackathons" />
+          <Button asChild variant="ghost">
+            <Link to="/hackathons">
+              View all <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {HACKATHONS.map((h) => (
+            <Card key={h.slug} className="group overflow-hidden">
+              <div className={`h-28 bg-gradient-to-br ${h.color} relative`}>
+                <div className="absolute inset-0 bg-grid opacity-30" />
+                <Badge className="absolute left-4 top-4 border-white/20 bg-white/15 text-white backdrop-blur">
+                  {h.tag}
+                </Badge>
+              </div>
+              <CardContent className="space-y-4 p-6">
+                <div>
+                  <h3 className="font-display text-xl font-semibold">{h.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{h.theme}</p>
+                </div>
+                <ul className="space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2"><Calendar className="h-4 w-4" />{h.date}</li>
+                  <li className="flex items-center gap-2"><MapPin className="h-4 w-4" />{h.location}</li>
+                  <li className="flex items-center gap-2"><Trophy className="h-4 w-4" />{h.prize}</li>
+                </ul>
+                <div className="flex items-center justify-between border-t border-border pt-4">
+                  <span className="text-xs font-medium text-primary">{h.status}</span>
+                  <Link to="/hackathons" className="text-sm font-medium text-foreground transition group-hover:text-primary">
                     Details →
-                  </span>
+                  </Link>
                 </div>
-              </article>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      {/* Events */}
+      <Section>
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <SectionHeading eyebrow="This month" title="Upcoming events" />
+          <Button asChild variant="ghost">
+            <Link to="/events">
+              View all <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {EVENTS.map((e) => (
+            <Card key={e.slug} className="group transition hover:-translate-y-0.5 hover:shadow-elegant">
+              <CardContent className="space-y-3 p-6">
+                <Badge variant="secondary">{e.kind}</Badge>
+                <h3 className="font-display text-lg font-semibold leading-snug">{e.title}</h3>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <p>{e.date} · {e.time}</p>
+                  <p>{e.mode}</p>
+                  <p className="text-foreground/70">{e.host}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      {/* Community benefits */}
+      <Section className="border-y border-border bg-muted/30">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div>
+            <SectionHeading
+              eyebrow="Community benefits"
+              title="Perks that actually move the needle."
+              description="Real mentorship, real invites, real opportunities — not just a Discord server."
+            />
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild className="bg-gradient-brand text-white hover:opacity-90">
+                <Link to="/community">Join the crew</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/resources">Browse resources</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {BENEFITS.map((b) => (
+              <div key={b.title} className="rounded-2xl border border-border bg-card p-5">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <b.icon className="h-5 w-5" />
+                </span>
+                <h4 className="mt-4 font-semibold">{b.title}</h4>
+                <p className="mt-1.5 text-sm text-muted-foreground">{b.body}</p>
+              </div>
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* Quote */}
-      <section id="journal" className="border-b border-border">
-        <div className="mx-auto max-w-4xl px-6 py-28 text-center lg:py-36">
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            From the trail
-          </p>
-          <blockquote className="mt-8 font-display text-3xl font-light leading-snug text-foreground sm:text-4xl">
-            "We didn't just see Patagonia — we listened to it. Nine days,
-            eight strangers, one crew. I came home a little rearranged."
-          </blockquote>
-          <p className="mt-8 text-sm text-muted-foreground">
-            Maren H. — Torres del Paine, 2025
-          </p>
+      {/* Sponsors */}
+      <Section>
+        <SectionHeading
+          eyebrow="Partners & sponsors"
+          title="Backed by the companies you want to work at."
+          align="center"
+        />
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {SPONSORS.map((s) => (
+            <div
+              key={s}
+              className="grid h-16 place-items-center rounded-xl border border-border bg-card text-sm font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+            >
+              {s}
+            </div>
+          ))}
         </div>
-      </section>
+      </Section>
+
+      {/* Testimonials */}
+      <Section className="border-y border-border bg-muted/30">
+        <SectionHeading eyebrow="From the crew" title="Students building in public." align="center" />
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <Card key={t.name}>
+              <CardContent className="space-y-5 p-6">
+                <p className="text-sm leading-relaxed">"{t.quote}"</p>
+                <div className="border-t border-border pt-4">
+                  <p className="text-sm font-semibold">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </Section>
 
       {/* CTA */}
-      <section id="contact" className="bg-primary text-primary-foreground">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-24 lg:flex-row lg:items-center lg:justify-between lg:px-10 lg:py-28">
-          <div className="max-w-2xl">
-            <h2 className="font-display text-4xl font-light leading-tight sm:text-5xl">
-              Ready to point the compass somewhere new?
-            </h2>
-            <p className="mt-5 text-base text-primary-foreground/75">
-              Tell us where you've been dreaming of. We'll design the route, gather the crew,
-              and handle the logistics — you just show up.
-            </p>
+      <Section>
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-brand p-10 text-white shadow-glow sm:p-16">
+          <div className="absolute inset-0 bg-grid opacity-20" />
+          <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Ready to build something worth talking about?
+              </h2>
+              <p className="mt-4 max-w-xl text-white/85">
+                Free to join. Open to every student in India. Bring an idea, or find one — the crew has the rest.
+              </p>
+              <ul className="mt-6 grid gap-2 text-sm text-white/90 sm:grid-cols-2">
+                {["Weekly build sessions", "Mentor introductions", "Hackathon invitations", "Job & internship leads"].map((i) => (
+                  <li key={i} className="flex items-center gap-2"><Check className="h-4 w-4" /> {i}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 lg:justify-end">
+              <Button asChild size="lg" className="bg-white text-foreground hover:bg-white/90">
+                <Link to="/community">Join the crew</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20">
+                <Link to="/partner">Partner with us</Link>
+              </Button>
+            </div>
           </div>
-          <a
-            href="mailto:hello@compasscrew.co"
-            className="inline-flex w-fit items-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-medium text-accent-foreground transition hover:opacity-90"
-          >
-            Start planning
-            <span aria-hidden>→</span>
-          </a>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground/70">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 border-t border-primary-foreground/10 px-6 py-10 sm:flex-row sm:items-center lg:px-10">
-          <div className="flex items-center gap-2 text-primary-foreground">
-            <CompassMark />
-            <span className="font-display text-base">Compass Crew</span>
-          </div>
-          <p className="text-xs">
-            © {new Date().getFullYear()} Compass Crew. Traveling gently, on purpose.
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-function CompassMark() {
-  return (
-    <svg
-      width="26"
-      height="26"
-      viewBox="0 0 26 26"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      aria-hidden
-    >
-      <circle cx="13" cy="13" r="11" />
-      <path d="M13 4 L15.5 13 L13 22 L10.5 13 Z" fill="currentColor" stroke="none" opacity="0.9" />
-      <circle cx="13" cy="13" r="1.2" fill="var(--background)" stroke="none" />
-    </svg>
+      </Section>
+    </>
   );
 }
