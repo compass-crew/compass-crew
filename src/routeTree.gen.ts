@@ -38,16 +38,22 @@ import { Route as AuthenticatedJudgeRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenticated/invitations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackathons.$slug.leaderboard'
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
+import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
 import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from './routes/_authenticated/organizer.hackathons.$hackathonId'
 import { Route as AuthenticatedJudgeSubmissionsSubmissionIdRouteImport } from './routes/_authenticated/judge.submissions.$submissionId'
 import { Route as AuthenticatedJudgeHackathonsHackathonIdRouteImport } from './routes/_authenticated/judge.hackathons.$hackathonId'
+import { Route as AuthenticatedAdminResourceNewRouteImport } from './routes/_authenticated/admin.$resource.new'
+import { Route as AuthenticatedAdminResourceItemIdRouteImport } from './routes/_authenticated/admin.$resource.$itemId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -196,6 +202,16 @@ const AuthenticatedCertificatesRoute =
     path: '/certificates',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const HackathonsSlugLeaderboardRoute =
   HackathonsSlugLeaderboardRouteImport.update({
     id: '/leaderboard',
@@ -219,6 +235,17 @@ const AuthenticatedOrganizerHackathonsRoute =
     path: '/organizer/hackathons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminResourceRoute =
+  AuthenticatedAdminResourceRouteImport.update({
+    id: '/$resource',
+    path: '/$resource',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicCmsMediaSplatRoute = ApiPublicCmsMediaSplatRouteImport.update({
+  id: '/api/public/cms-media/$',
+  path: '/api/public/cms-media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCertificatesCodeRoute =
   ApiPublicCertificatesCodeRouteImport.update({
     id: '/api/public/certificates/$code',
@@ -255,6 +282,18 @@ const AuthenticatedJudgeHackathonsHackathonIdRoute =
     path: '/hackathons/$hackathonId',
     getParentRoute: () => AuthenticatedJudgeRoute,
   } as any)
+const AuthenticatedAdminResourceNewRoute =
+  AuthenticatedAdminResourceNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminResourceRoute,
+  } as any)
+const AuthenticatedAdminResourceItemIdRoute =
+  AuthenticatedAdminResourceItemIdRouteImport.update({
+    id: '/$itemId',
+    path: '/$itemId',
+    getParentRoute: () => AuthenticatedAdminResourceRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -272,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -285,16 +325,21 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
+  '/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
+  '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -325,16 +370,21 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
+  '/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
+  '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -354,6 +404,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
@@ -367,16 +418,21 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
   '/hackathons/$slug/leaderboard': typeof HackathonsSlugLeaderboardRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/$resource/$itemId': typeof AuthenticatedAdminResourceItemIdRoute
+  '/_authenticated/admin/$resource/new': typeof AuthenticatedAdminResourceNewRoute
   '/_authenticated/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/_authenticated/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
+  '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -396,6 +452,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/admin'
     | '/certificates'
     | '/dashboard'
     | '/invitations'
@@ -409,16 +466,21 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/admin/$resource'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/admin/'
+    | '/admin/$resource/$itemId'
+    | '/admin/$resource/new'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
     | '/api/public/certificates/$code'
+    | '/api/public/cms-media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -449,16 +511,21 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/admin/$resource'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/admin'
+    | '/admin/$resource/$itemId'
+    | '/admin/$resource/new'
     | '/judge/hackathons/$hackathonId'
     | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
     | '/api/public/certificates/$code'
+    | '/api/public/cms-media/$'
   id:
     | '__root__'
     | '/'
@@ -477,6 +544,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/_authenticated/admin'
     | '/_authenticated/certificates'
     | '/_authenticated/dashboard'
     | '/_authenticated/invitations'
@@ -490,16 +558,21 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/_authenticated/admin/$resource'
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
     | '/hackathons/$slug/leaderboard'
+    | '/_authenticated/admin/'
+    | '/_authenticated/admin/$resource/$itemId'
+    | '/_authenticated/admin/$resource/new'
     | '/_authenticated/judge/hackathons/$hackathonId'
     | '/_authenticated/judge/submissions/$submissionId'
     | '/_authenticated/organizer/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/new'
     | '/_authenticated/teams/$teamId/submission'
     | '/api/public/certificates/$code'
+    | '/api/public/cms-media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -521,6 +594,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VerifyCodeRoute: typeof VerifyCodeRoute
   ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
+  ApiPublicCmsMediaSplatRoute: typeof ApiPublicCmsMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -728,6 +802,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCertificatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/hackathons/$slug/leaderboard': {
       id: '/hackathons/$slug/leaderboard'
       path: '/leaderboard'
@@ -755,6 +843,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/organizer/hackathons'
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/$resource': {
+      id: '/_authenticated/admin/$resource'
+      path: '/$resource'
+      fullPath: '/admin/$resource'
+      preLoaderRoute: typeof AuthenticatedAdminResourceRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/cms-media/$': {
+      id: '/api/public/cms-media/$'
+      path: '/api/public/cms-media/$'
+      fullPath: '/api/public/cms-media/$'
+      preLoaderRoute: typeof ApiPublicCmsMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/certificates/$code': {
       id: '/api/public/certificates/$code'
@@ -798,8 +900,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRouteImport
       parentRoute: typeof AuthenticatedJudgeRoute
     }
+    '/_authenticated/admin/$resource/new': {
+      id: '/_authenticated/admin/$resource/new'
+      path: '/new'
+      fullPath: '/admin/$resource/new'
+      preLoaderRoute: typeof AuthenticatedAdminResourceNewRouteImport
+      parentRoute: typeof AuthenticatedAdminResourceRoute
+    }
+    '/_authenticated/admin/$resource/$itemId': {
+      id: '/_authenticated/admin/$resource/$itemId'
+      path: '/$itemId'
+      fullPath: '/admin/$resource/$itemId'
+      preLoaderRoute: typeof AuthenticatedAdminResourceItemIdRouteImport
+      parentRoute: typeof AuthenticatedAdminResourceRoute
+    }
   }
 }
+
+interface AuthenticatedAdminResourceRouteChildren {
+  AuthenticatedAdminResourceItemIdRoute: typeof AuthenticatedAdminResourceItemIdRoute
+  AuthenticatedAdminResourceNewRoute: typeof AuthenticatedAdminResourceNewRoute
+}
+
+const AuthenticatedAdminResourceRouteChildren: AuthenticatedAdminResourceRouteChildren =
+  {
+    AuthenticatedAdminResourceItemIdRoute:
+      AuthenticatedAdminResourceItemIdRoute,
+    AuthenticatedAdminResourceNewRoute: AuthenticatedAdminResourceNewRoute,
+  }
+
+const AuthenticatedAdminResourceRouteWithChildren =
+  AuthenticatedAdminResourceRoute._addFileChildren(
+    AuthenticatedAdminResourceRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRouteWithChildren
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRouteWithChildren,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedJudgeRouteChildren {
   AuthenticatedJudgeHackathonsHackathonIdRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRoute
@@ -863,6 +1009,7 @@ const AuthenticatedOrganizerHackathonsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedCertificatesRoute: typeof AuthenticatedCertificatesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
@@ -875,6 +1022,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedCertificatesRoute: AuthenticatedCertificatesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
@@ -947,17 +1095,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VerifyCodeRoute: VerifyCodeRoute,
   ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
+  ApiPublicCmsMediaSplatRoute: ApiPublicCmsMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

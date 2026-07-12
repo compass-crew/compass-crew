@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, LogOut, Menu, Settings, User as UserIcon, X, Users, Mail } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Settings, Shield, User as UserIcon, X, Users, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
@@ -31,7 +31,7 @@ export const NAV_LINKS = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { user, profile, primaryRole, signOut, loading } = useAuth();
+  const { user, profile, primaryRole, hasRole, signOut, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,6 +129,16 @@ export function Navbar() {
                     <Settings className="mr-2 h-4 w-4" /> Settings
                   </Link>
                 </DropdownMenuItem>
+                {hasRole("super_admin") && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">
+                        <Shield className="mr-2 h-4 w-4" /> Admin Console
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" /> Sign out
