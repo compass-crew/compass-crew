@@ -51,29 +51,39 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full transition-all ${
+      className={`sticky top-0 z-40 w-full transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ${
         scrolled
-          ? "border-b border-border/60 bg-background/75 backdrop-blur-xl"
-          : "border-b border-transparent bg-background/40 backdrop-blur-md"
+          ? "border-b border-border/70 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70"
+          : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
         <Logo />
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
           {NAV_LINKS.slice(1).map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
-              className="rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground data-[status=active]:bg-muted data-[status=active]:text-foreground"
+              className="group relative rounded-md px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground data-[status=active]:text-foreground"
             >
-              {l.label}
+              <span className="relative z-10">{l.label}</span>
+              {/* Hover pill */}
+              <span
+                aria-hidden
+                className="absolute inset-x-1.5 inset-y-1 -z-0 rounded-md bg-muted opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-data-[status=active]:opacity-100"
+              />
+              {/* Active underline */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-4 -bottom-[1px] h-[2px] rounded-full bg-gradient-brand opacity-0 transition-opacity duration-200 group-data-[status=active]:opacity-100"
+              />
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
 
           {loading ? (
@@ -81,8 +91,8 @@ export function Navbar() {
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-10 gap-2 rounded-full px-2 sm:px-3">
-                  <Avatar className="h-7 w-7">
+                <Button variant="ghost" className="h-10 gap-2 rounded-full px-1.5 sm:px-2.5">
+                  <Avatar className="h-7 w-7 ring-1 ring-border">
                     {profile?.avatar_url ? (
                       <AvatarImage src={profile.avatar_url} alt={profile.full_name ?? ""} />
                     ) : null}
@@ -95,11 +105,11 @@ export function Navbar() {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <p className="text-sm font-medium">{profile?.full_name ?? "Compass member"}</p>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuLabel className="pb-2">
+                  <p className="text-sm font-semibold">{profile?.full_name ?? "Compass member"}</p>
                   <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-primary">
+                  <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-widest text-primary">
                     {ROLE_LABEL[primaryRole]}
                   </p>
                 </DropdownMenuLabel>
@@ -147,12 +157,12 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <>
-              <Button asChild variant="ghost" className="hidden sm:inline-flex">
+              <Button asChild variant="ghost" className="hidden h-9 rounded-md text-sm sm:inline-flex">
                 <Link to="/auth">Sign in</Link>
               </Button>
               <Button
                 asChild
-                className="hidden sm:inline-flex bg-gradient-brand text-white hover:opacity-90"
+                className="hidden h-9 rounded-md text-sm btn-premium hover:btn-premium-hover sm:inline-flex"
               >
                 <Link to="/auth" search={{ mode: "signup" }}>
                   Join the crew
@@ -183,7 +193,7 @@ export function Navbar() {
                     to={l.to}
                     onClick={() => setOpen(false)}
                     activeOptions={{ exact: l.to === "/" }}
-                    className="rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground data-[status=active]:bg-muted data-[status=active]:text-foreground"
+                    className="rounded-lg px-4 py-3 text-base font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground data-[status=active]:bg-muted data-[status=active]:text-foreground"
                   >
                     {l.label}
                   </Link>
@@ -211,7 +221,7 @@ export function Navbar() {
                       </Button>
                       <Button
                         asChild
-                        className="bg-gradient-brand text-white hover:opacity-90"
+                        className="btn-premium hover:btn-premium-hover"
                         onClick={() => setOpen(false)}
                       >
                         <Link to="/auth" search={{ mode: "signup" }}>
