@@ -6,6 +6,7 @@ import { Logo } from "./logo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { subscribeNewsletter } from "@/lib/public-cms";
+import { Turnstile } from "@/components/turnstile";
 
 const columns = [
   {
@@ -50,15 +51,17 @@ const socials = [
 export function Footer() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function onSubscribe(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!email.trim()) return;
     setSubmitting(true);
     try {
-      await subscribeNewsletter(email);
+      await subscribeNewsletter(email, "footer", captchaToken);
       toast.success("Subscribed. Welcome to the crew!");
       setEmail("");
+      setCaptchaToken(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't subscribe. Try again.");
     } finally {
@@ -77,22 +80,25 @@ export function Footer() {
               building hackathons, learning programs, and shipping real products
               with campuses across India.
             </p>
-            <form className="mt-6 flex max-w-md gap-2" onSubmit={onSubscribe} aria-label="Newsletter signup">
-              <div className="relative flex-1">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@campus.edu"
-                  className="pl-9"
-                  aria-label="Email address"
-                />
+            <form className="mt-6 flex max-w-md flex-col gap-2" onSubmit={onSubscribe} aria-label="Newsletter signup">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@campus.edu"
+                    className="pl-9"
+                    aria-label="Email address"
+                  />
+                </div>
+                <Button type="submit" disabled={submitting} className="bg-gradient-brand text-white hover:opacity-90">
+                  {submitting ? "…" : <>Subscribe <ArrowRight className="ml-1 h-4 w-4" /></>}
+                </Button>
               </div>
-              <Button type="submit" disabled={submitting} className="bg-gradient-brand text-white hover:opacity-90">
-                {submitting ? "…" : <>Subscribe <ArrowRight className="ml-1 h-4 w-4" /></>}
-              </Button>
+              <Turnstile onToken={setCaptchaToken} size="compact" />
             </form>
             <div className="mt-6 flex items-center gap-2">
               {socials.map((s) => (
