@@ -42,10 +42,12 @@ function ContactPage() {
   const faqItems: FaqItem[] = ((faqCms?.data as { items?: FaqItem[] } | null)?.items) ?? FAQS;
 
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     setSubmitting(true);
     try {
       await submitContactMessage({
@@ -53,9 +55,11 @@ function ContactPage() {
         email: String(fd.get("email") ?? "").trim(),
         subject: String(fd.get("subject") ?? "").trim(),
         message: String(fd.get("msg") ?? "").trim(),
+        turnstileToken: captchaToken,
       });
       toast.success("Message sent — we'll get back to you within 2 business days.");
-      e.currentTarget.reset();
+      form.reset();
+      setCaptchaToken(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
@@ -101,6 +105,7 @@ function ContactPage() {
               </div>
               <div className="grid gap-2"><Label htmlFor="subject">Subject</Label><Input id="subject" name="subject" required placeholder="What's on your mind?" /></div>
               <div className="grid gap-2"><Label htmlFor="msg">Message</Label><Textarea id="msg" name="msg" rows={6} required placeholder="Tell us more…" /></div>
+              <Turnstile onToken={setCaptchaToken} />
               <Button type="submit" disabled={submitting} size="lg" className="w-full bg-gradient-brand text-white hover:opacity-90 sm:w-fit">
                 {submitting ? "Sending…" : "Send message"}
               </Button>
