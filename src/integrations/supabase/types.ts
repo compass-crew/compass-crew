@@ -1880,6 +1880,18 @@ export type Database = {
         Args: { _team_id: string; _user_id: string }
         Returns: boolean
       }
+      verify_certificate: {
+        Args: { _code: string }
+        Returns: {
+          code: string
+          hackathon_slug: string
+          hackathon_title: string
+          issued_at: string
+          recipient_name: string
+          subtitle: string
+          type: Database["public"]["Enums"]["certificate_type"]
+        }[]
+      }
     }
     Enums: {
       announcement_audience:
