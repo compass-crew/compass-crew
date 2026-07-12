@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import {
-  ArrowLeft, Plus, Trash2, Trophy, Users, Gavel, Megaphone, ListChecks, Download,
+  ArrowLeft, Plus, Trash2, Trophy, Users, Gavel, Megaphone, ListChecks, Download, Award, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
@@ -31,6 +32,8 @@ import {
   type Prize,
 } from "@/lib/organizer";
 import { toCsv, downloadCsv } from "@/lib/csv";
+import { generateCertificate, bulkGenerateParticipation, revokeCertificate, publishResults } from "@/lib/certificates.functions";
+import { computeLeaderboard } from "@/lib/leaderboard";
 
 export const Route = createFileRoute("/_authenticated/organizer/hackathons/$hackathonId")({
   ssr: false,
@@ -90,6 +93,8 @@ function OrganizerConsole() {
             <TabsTrigger value="prizes">Prizes</TabsTrigger>
             <TabsTrigger value="registrations">Registrations</TabsTrigger>
             <TabsTrigger value="judges">Judges</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
+            <TabsTrigger value="certificates">Certificates</TabsTrigger>
             <TabsTrigger value="announcements">Announcements</TabsTrigger>
           </TabsList>
 
@@ -101,6 +106,8 @@ function OrganizerConsole() {
           <TabsContent value="prizes" className="mt-6"><PrizesTab hackathonId={hackathonId} existing={(h.prizes as unknown as Prize[]) ?? []} /></TabsContent>
           <TabsContent value="registrations" className="mt-6"><RegistrationsTab hackathonId={hackathonId} title={h.title} /></TabsContent>
           <TabsContent value="judges" className="mt-6"><JudgesTab hackathonId={hackathonId} /></TabsContent>
+          <TabsContent value="results" className="mt-6"><ResultsTab hackathonId={hackathonId} slug={h.slug} publishedAt={h.results_published_at} /></TabsContent>
+          <TabsContent value="certificates" className="mt-6"><CertificatesTab hackathonId={hackathonId} /></TabsContent>
           <TabsContent value="announcements" className="mt-6"><AnnouncementsTab hackathonId={hackathonId} authorId={user!.id} /></TabsContent>
         </Tabs>
       </Section>
@@ -604,3 +611,202 @@ function AnnouncementsTab({ hackathonId, authorId }: { hackathonId: string; auth
     </div>
   );
 }
+
+/* ============================== Results ============================== */
+function ResultsTab({ hackathonId, slug, publishedAt }: { hackathonId: string; slug: string; publishedAt: string | null }) {
+  const qc = useQueryClient();
+  const publish = useServerFn(publishResults);
+  const [busy, setBusy] = useState(false);
+
+  const lbQ = useQuery({
+    queryKey: ["organizer", "leaderboard-preview", hackathonId],
+    queryFn: () => computeLeaderboard(hackathonId),
+  });
+
+  const doPublish = async (freeze: boolean) => {
+    setBusy(true);
+    try {
+      await publish({ data: { hackathonId, freeze } });
+      toast.success(freeze ? "Results published & leaderboard frozen" : "Results published");
+      qc.invalidateQueries({ queryKey: ["organizer", "hackathon", hackathonId] });
+      qc.invalidateQueries({ queryKey: ["organizer", "leaderboard-preview", hackathonId] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card><CardContent className="flex flex-wrap items-center justify-between gap-3 p-6">
+        <div>
+          <h3 className="font-display text-lg font-semibold">Publish results</h3>
+          <p className="text-sm text-muted-foreground">
+            {publishedAt ? `Published on ${new Date(publishedAt).toLocaleString("en-IN")}` : "Not published yet. Ranks and awards will be assigned automatically."}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/hackathons/$slug/leaderboard" params={{ slug }}>
+              <Trophy className="mr-2 h-4 w-4" /> Preview public leaderboard
+            </Link>
+          </Button>
+          <Button onClick={() => doPublish(true)} disabled={busy}>
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+            {publishedAt ? "Re-publish & freeze" : "Publish & freeze"}
+          </Button>
+        </div>
+      </CardContent></Card>
+
+      <Card><CardContent className="p-6">
+        <h3 className="font-display text-lg font-semibold">Live leaderboard preview</h3>
+        <p className="text-sm text-muted-foreground">Only finalised judge scores are counted.</p>
+        {lbQ.isLoading ? <Skeleton className="mt-4 h-40 w-full" /> : !lbQ.data?.length ? (
+          <p className="mt-4 text-sm text-muted-foreground">No finalised scores yet.</p>
+        ) : (
+          <ol className="mt-4 space-y-2">
+            {lbQ.data.slice(0, 20).map((e) => (
+              <li key={e.submission_id} className="flex items-center justify-between rounded-md border p-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-muted-foreground w-6">#{e.rank}</span>
+                  <span className="font-medium">{e.submission.name}</span>
+                  {e.track_name && <Badge variant="outline">{e.track_name}</Badge>}
+                </div>
+                <span className="font-display font-semibold text-primary">{e.weighted_score.toFixed(2)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </CardContent></Card>
+    </div>
+  );
+}
+
+/* ============================== Certificates ============================== */
+function CertificatesTab({ hackathonId }: { hackathonId: string }) {
+  const qc = useQueryClient();
+  const genFn = useServerFn(generateCertificate);
+  const bulkFn = useServerFn(bulkGenerateParticipation);
+  const revokeFn = useServerFn(revokeCertificate);
+
+  const [email, setEmail] = useState("");
+  const [type, setType] = useState<"participation" | "winner" | "runner_up" | "special_mention" | "judge" | "mentor" | "organizer" | "campus_ambassador" | "volunteer">("participation");
+  const [achievement, setAchievement] = useState("");
+
+  const certsQ = useQuery({
+    queryKey: ["hackathon", hackathonId, "certs"],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.from("certificates").select("*").eq("hackathon_id", hackathonId).order("issued_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const [busy, setBusy] = useState(false);
+  const issueOne = async () => {
+    if (!email.trim()) return toast.error("Enter recipient email");
+    setBusy(true);
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: uid } = await supabase.rpc("find_user_id_by_email", { _email: email.trim().toLowerCase() });
+      if (!uid) throw new Error("No user found with that email");
+      await genFn({ data: { hackathonId, userId: uid as unknown as string, type, achievement: achievement.trim() || undefined } });
+      toast.success("Certificate issued");
+      setEmail(""); setAchievement("");
+      qc.invalidateQueries({ queryKey: ["hackathon", hackathonId, "certs"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const issueBulk = async () => {
+    setBusy(true);
+    try {
+      const res = await bulkFn({ data: { hackathonId } });
+      toast.success(`Issued ${res.issued} participation certificates`);
+      qc.invalidateQueries({ queryKey: ["hackathon", hackathonId, "certs"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const revoke = async (id: string) => {
+    if (!confirm("Revoke this certificate? The PDF will be removed.")) return;
+    try {
+      await revokeFn({ data: { certificateId: id } });
+      toast.success("Certificate revoked");
+      qc.invalidateQueries({ queryKey: ["hackathon", hackathonId, "certs"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <Card><CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-lg font-semibold">Issued certificates</h3>
+          <Button size="sm" variant="outline" onClick={issueBulk} disabled={busy}>
+            <Award className="mr-2 h-4 w-4" /> Bulk: participation
+          </Button>
+        </div>
+        {certsQ.isLoading ? <Skeleton className="mt-4 h-40 w-full" /> : !certsQ.data?.length ? (
+          <p className="mt-4 text-sm text-muted-foreground">No certificates issued yet.</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border">
+            {certsQ.data.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-3 py-3">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{c.recipient_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {c.type} · <span className="font-mono">{c.code}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="ghost" asChild>
+                    <a href={`/api/public/certificates/${c.code}`} target="_blank" rel="noopener noreferrer"><Download className="h-4 w-4" /></a>
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => revoke(c.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent></Card>
+
+      <Card><CardContent className="p-6">
+        <h3 className="font-display text-lg font-semibold">Issue certificate</h3>
+        <form className="mt-4 grid gap-3" onSubmit={(e) => { e.preventDefault(); issueOne(); }}>
+          <div className="grid gap-2">
+            <Label>Recipient email</Label>
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="user@example.com" />
+          </div>
+          <div className="grid gap-2">
+            <Label>Type</Label>
+            <Select value={type} onValueChange={(v) => setType(v as typeof type)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["participation","winner","runner_up","special_mention","judge","mentor","organizer","campus_ambassador","volunteer"].map((t) => (
+                  <SelectItem key={t} value={t}>{t.replace("_", " ")}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label>Achievement (optional)</Label>
+            <Input value={achievement} onChange={(e) => setAchievement(e.target.value)} placeholder="e.g. Best AI Project" />
+          </div>
+          <Button type="submit" disabled={busy}><Award className="mr-2 h-4 w-4" />Issue</Button>
+        </form>
+      </CardContent></Card>
+    </div>
+  );
+}
+
