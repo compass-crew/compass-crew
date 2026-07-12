@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { submitContactMessage, listHomepageSections, findSection } from "@/lib/public-cms";
+import { Turnstile } from "@/components/turnstile";
 import { FAQS } from "@/data/site";
 
 export const Route = createFileRoute("/contact")({

@@ -281,15 +281,23 @@ export function findSection(sections: HomepageSection[], key: string): HomepageS
   return sections.find((s) => s.key === key);
 }
 
-// ---------- Form submissions (anon-insert policies exist) ----------
+// ---------- Form submissions ----------
+// Anonymous public forms now flow through server functions that verify
+// Cloudflare Turnstile and apply per-IP rate limits before writing.
+import {
+  submitContactMessageFn,
+  submitPartnerApplicationFn,
+  subscribeNewsletterFn,
+} from "@/lib/public-forms.functions";
+
 export async function submitContactMessage(input: {
   name: string;
   email: string;
   subject: string;
   message: string;
+  turnstileToken?: string | null;
 }) {
-  const { error } = await supabase.from("contact_messages").insert(input);
-  if (error) throw error;
+  await submitContactMessageFn({ data: input });
 }
 
 export async function submitPartnerApplication(input: {
@@ -300,14 +308,17 @@ export async function submitPartnerApplication(input: {
   website?: string | null;
   partnership_type?: string | null;
   message: string;
+  turnstileToken?: string | null;
 }) {
-  const { error } = await supabase.from("partner_applications").insert(input);
-  if (error) throw error;
+  await submitPartnerApplicationFn({ data: input });
 }
 
-export async function subscribeNewsletter(email: string, source = "footer") {
-  const { error } = await supabase
-    .from("newsletter_subscribers")
-    .insert({ email: email.toLowerCase().trim(), source });
-  if (error && !`${error.message}`.toLowerCase().includes("duplicate")) throw error;
+export async function subscribeNewsletter(
+  email: string,
+  source = "footer",
+  turnstileToken?: string | null,
+) {
+  await subscribeNewsletterFn({
+    data: { email: email.toLowerCase().trim(), source, turnstileToken: turnstileToken ?? null },
+  });
 }
