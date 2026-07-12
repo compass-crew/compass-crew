@@ -25,6 +25,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyCodeRouteImport } from './routes/verify.$code'
 import { Route as HackathonsSlugRouteImport } from './routes/hackathons.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -125,6 +126,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyCodeRoute = VerifyCodeRouteImport.update({
+  id: '/verify/$code',
+  path: '/verify/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HackathonsSlugRoute = HackathonsSlugRouteImport.update({
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
+  '/verify/$code': typeof VerifyCodeRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -317,6 +324,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
+  '/verify/$code': typeof VerifyCodeRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
+  '/verify/$code': typeof VerifyCodeRoute
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/verify-email'
     | '/hackathons/$slug'
+    | '/verify/$code'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/verify-email'
     | '/hackathons/$slug'
+    | '/verify/$code'
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/verify-email'
     | '/hackathons/$slug'
+    | '/verify/$code'
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
@@ -507,6 +519,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SponsorsRoute: typeof SponsorsRoute
   TermsRoute: typeof TermsRoute
+  VerifyCodeRoute: typeof VerifyCodeRoute
   ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
 }
 
@@ -622,6 +635,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify/$code': {
+      id: '/verify/$code'
+      path: '/verify/$code'
+      fullPath: '/verify/$code'
+      preLoaderRoute: typeof VerifyCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hackathons/$slug': {
@@ -925,6 +945,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SponsorsRoute: SponsorsRoute,
   TermsRoute: TermsRoute,
+  VerifyCodeRoute: VerifyCodeRoute,
   ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
 }
 export const routeTree = rootRouteImport
