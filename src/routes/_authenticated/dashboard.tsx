@@ -10,6 +10,8 @@ import {
   Flag,
   GraduationCap,
   ArrowRight,
+  Award,
+  Bell,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth, ROLE_LABEL, type AppRole, profileCompletion } from "@/hooks/use-auth";
