@@ -42,6 +42,7 @@ import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/publ
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
 import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from './routes/_authenticated/organizer.hackathons.$hackathonId'
+import { Route as AuthenticatedJudgeHackathonsHackathonIdRouteImport } from './routes/_authenticated/judge.hackathons.$hackathonId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -214,6 +215,12 @@ const AuthenticatedOrganizerHackathonsHackathonIdRoute =
     path: '/$hackathonId',
     getParentRoute: () => AuthenticatedOrganizerHackathonsRoute,
   } as any)
+const AuthenticatedJudgeHackathonsHackathonIdRoute =
+  AuthenticatedJudgeHackathonsHackathonIdRouteImport.update({
+    id: '/hackathons/$hackathonId',
+    path: '/hackathons/$hackathonId',
+    getParentRoute: () => AuthenticatedJudgeRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -233,7 +240,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
-  '/judge': typeof AuthenticatedJudgeRoute
+  '/judge': typeof AuthenticatedJudgeRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -244,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -267,7 +275,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
-  '/judge': typeof AuthenticatedJudgeRoute
+  '/judge': typeof AuthenticatedJudgeRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -278,6 +286,7 @@ export interface FileRoutesByTo {
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -303,7 +312,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
-  '/_authenticated/judge': typeof AuthenticatedJudgeRoute
+  '/_authenticated/judge': typeof AuthenticatedJudgeRouteWithChildren
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/_authenticated/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/judge/hackathons/$hackathonId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/judge/hackathons/$hackathonId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
@@ -419,6 +431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
+    | '/_authenticated/judge/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/new'
     | '/_authenticated/teams/$teamId/submission'
@@ -678,8 +691,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsHackathonIdRouteImport
       parentRoute: typeof AuthenticatedOrganizerHackathonsRoute
     }
+    '/_authenticated/judge/hackathons/$hackathonId': {
+      id: '/_authenticated/judge/hackathons/$hackathonId'
+      path: '/hackathons/$hackathonId'
+      fullPath: '/judge/hackathons/$hackathonId'
+      preLoaderRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRouteImport
+      parentRoute: typeof AuthenticatedJudgeRoute
+    }
   }
 }
+
+interface AuthenticatedJudgeRouteChildren {
+  AuthenticatedJudgeHackathonsHackathonIdRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRoute
+}
+
+const AuthenticatedJudgeRouteChildren: AuthenticatedJudgeRouteChildren = {
+  AuthenticatedJudgeHackathonsHackathonIdRoute:
+    AuthenticatedJudgeHackathonsHackathonIdRoute,
+}
+
+const AuthenticatedJudgeRouteWithChildren =
+  AuthenticatedJudgeRoute._addFileChildren(AuthenticatedJudgeRouteChildren)
 
 interface AuthenticatedTeamsTeamIdRouteChildren {
   AuthenticatedTeamsTeamIdSubmissionRoute: typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -730,7 +762,7 @@ const AuthenticatedOrganizerHackathonsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
-  AuthenticatedJudgeRoute: typeof AuthenticatedJudgeRoute
+  AuthenticatedJudgeRoute: typeof AuthenticatedJudgeRouteWithChildren
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
@@ -740,7 +772,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
-  AuthenticatedJudgeRoute: AuthenticatedJudgeRoute,
+  AuthenticatedJudgeRoute: AuthenticatedJudgeRouteWithChildren,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
