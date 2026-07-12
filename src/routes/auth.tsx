@@ -116,10 +116,9 @@ function passwordStrength(pw: string): { score: number; label: string; tone: str
 
 /* ============================ Sanitize redirect ============================ */
 
+import { safeRedirect as _safeRedirect } from "@/lib/safe-redirect";
 function safeRedirect(path?: string): string {
-  if (!path || typeof path !== "string") return "/dashboard";
-  if (!path.startsWith("/") || path.startsWith("//")) return "/dashboard";
-  return path;
+  return _safeRedirect(path, "/dashboard");
 }
 
 /* ============================ Component ============================ */
