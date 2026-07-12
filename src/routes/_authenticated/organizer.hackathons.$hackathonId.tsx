@@ -621,8 +621,6 @@ function ResultsTab({ hackathonId, slug, publishedAt }: { hackathonId: string; s
   const lbQ = useQuery({
     queryKey: ["organizer", "leaderboard-preview", hackathonId],
     queryFn: () => computeLeaderboard(hackathonId),
-      return computeLeaderboard(hackathonId);
-    },
   });
 
   const doPublish = async (freeze: boolean) => {
