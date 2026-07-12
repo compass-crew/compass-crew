@@ -18,6 +18,11 @@ import {
   Settings,
   Mail,
   ArrowLeft,
+  BarChart3,
+  ShieldCheck,
+  Bell,
+  Activity,
+  HeartPulse,
   type LucideIcon,
 } from "lucide-react";
 import { RESOURCES } from "@/lib/admin-config";
@@ -83,6 +88,31 @@ export function AdminSidebar() {
               )}
             >
               <Icon className="h-4 w-4" /> {r.plural}
+            </Link>
+          );
+        })}
+        <div className="mt-3 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Operations
+        </div>
+        {[
+          { to: "/admin/analytics" as const, icon: BarChart3, label: "Analytics" },
+          { to: "/admin/activity" as const, icon: Activity, label: "Activity Feed" },
+          { to: "/admin/admin-notifications" as const, icon: Bell, label: "Notifications" },
+          { to: "/admin/audit" as const, icon: ShieldCheck, label: "Audit Logs" },
+          { to: "/admin/system" as const, icon: HeartPulse, label: "System Health" },
+        ].map((item) => {
+          const active = path === item.to || path.startsWith(item.to + "/");
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={cn(
+                "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition",
+                active ? "bg-muted font-semibold text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              <Icon className="h-4 w-4" /> {item.label}
             </Link>
           );
         })}
