@@ -32,6 +32,8 @@ import {
   type Prize,
 } from "@/lib/organizer";
 import { toCsv, downloadCsv } from "@/lib/csv";
+import { generateCertificate, bulkGenerateParticipation, revokeCertificate, publishResults } from "@/lib/certificates.functions";
+import { computeLeaderboard } from "@/lib/leaderboard";
 
 export const Route = createFileRoute("/_authenticated/organizer/hackathons/$hackathonId")({
   ssr: false,
