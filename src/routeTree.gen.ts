@@ -38,6 +38,7 @@ import { Route as AuthenticatedJudgeRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenticated/invitations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackathons.$slug.leaderboard'
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
@@ -196,6 +197,11 @@ const AuthenticatedCertificatesRoute =
     path: '/certificates',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const HackathonsSlugLeaderboardRoute =
   HackathonsSlugLeaderboardRouteImport.update({
     id: '/leaderboard',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/admin'
     | '/certificates'
     | '/dashboard'
     | '/invitations'
@@ -436,6 +446,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/admin'
     | '/certificates'
     | '/dashboard'
     | '/invitations'
@@ -477,6 +488,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/_authenticated/admin'
     | '/_authenticated/certificates'
     | '/_authenticated/dashboard'
     | '/_authenticated/invitations'
@@ -728,6 +740,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCertificatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/hackathons/$slug/leaderboard': {
       id: '/hackathons/$slug/leaderboard'
       path: '/leaderboard'
@@ -863,6 +882,7 @@ const AuthenticatedOrganizerHackathonsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCertificatesRoute: typeof AuthenticatedCertificatesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
@@ -875,6 +895,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCertificatesRoute: AuthenticatedCertificatesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
