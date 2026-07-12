@@ -125,9 +125,19 @@ function HackathonDetail() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             {myReg ? (
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90" disabled>
-                <CheckCircle2 className="mr-2 h-4 w-4" /> Registered
-              </Button>
+              <>
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90" disabled>
+                  <CheckCircle2 className="mr-2 h-4 w-4" /> Registered
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-white/40 bg-white/10 text-white hover:bg-white/20"
+                >
+                  <Link to="/teams/new" search={{ hackathon: h.id }}>Create team</Link>
+                </Button>
+              </>
             ) : user ? (
               <Button
                 size="lg"

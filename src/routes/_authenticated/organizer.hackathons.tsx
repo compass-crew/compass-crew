@@ -88,7 +88,7 @@ function MyHackathonsPage() {
                       </Button>
                     )}
                     <Button asChild size="sm">
-                      <Link to="/organizer/hackathons/new" search={{ edit: h.id }}>Manage</Link>
+                      <Link to="/organizer/hackathons/$hackathonId" params={{ hackathonId: h.id }}>Manage</Link>
                     </Button>
                   </div>
                 </CardContent>

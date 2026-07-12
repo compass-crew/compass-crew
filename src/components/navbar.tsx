@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, LogOut, Menu, Settings, User as UserIcon, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Settings, User as UserIcon, X, Users, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
@@ -107,6 +107,16 @@ export function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard">
                     <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/teams">
+                    <Users className="mr-2 h-4 w-4" /> My teams
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/invitations">
+                    <Mail className="mr-2 h-4 w-4" /> Invitations
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

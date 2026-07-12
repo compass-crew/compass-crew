@@ -47,22 +47,22 @@ const PARTICIPANT: Widget[] = [
     cta: { label: "Explore hackathons", to: "/hackathons" },
   },
   {
+    icon: Users,
+    title: "Your teams",
+    body: "Create, manage or leave teams for every hackathon you've entered.",
+    cta: { label: "Open teams", to: "/teams" },
+  },
+  {
+    icon: Sparkles,
+    title: "Invitations",
+    body: "Accept team invitations from friends and organizers.",
+    cta: { label: "View invitations", to: "/invitations" },
+  },
+  {
     icon: Calendar,
     title: "Events",
     body: "Workshops, AMAs and campus meetups — announced weekly.",
     cta: { label: "See events", to: "/events" },
-  },
-  {
-    icon: Users,
-    title: "Community",
-    body: "Meet builders across India. Find teammates, mentors and study partners.",
-    cta: { label: "Open community", to: "/community" },
-  },
-  {
-    icon: Sparkles,
-    title: "Resources",
-    body: "Curated tracks in AI, product, design and open-source.",
-    cta: { label: "Browse resources", to: "/resources" },
   },
 ];
 
