@@ -25,6 +25,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -106,6 +107,11 @@ const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
   path: '/verify-email',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 export interface FileRoutesByTo {
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 export interface FileRoutesById {
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 export interface FileRouteTypes {
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/auth/forgot-password'
     | '/auth/verify-email'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/auth/forgot-password'
     | '/auth/verify-email'
   id:
     | '__root__'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/auth/forgot-password'
     | '/auth/verify-email'
   fileRoutesById: FileRoutesById
 }
@@ -351,14 +363,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyEmailRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
 }
 
