@@ -42,6 +42,7 @@ import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/publ
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
 import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from './routes/_authenticated/organizer.hackathons.$hackathonId'
+import { Route as AuthenticatedJudgeSubmissionsSubmissionIdRouteImport } from './routes/_authenticated/judge.submissions.$submissionId'
 import { Route as AuthenticatedJudgeHackathonsHackathonIdRouteImport } from './routes/_authenticated/judge.hackathons.$hackathonId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -215,6 +216,12 @@ const AuthenticatedOrganizerHackathonsHackathonIdRoute =
     path: '/$hackathonId',
     getParentRoute: () => AuthenticatedOrganizerHackathonsRoute,
   } as any)
+const AuthenticatedJudgeSubmissionsSubmissionIdRoute =
+  AuthenticatedJudgeSubmissionsSubmissionIdRouteImport.update({
+    id: '/submissions/$submissionId',
+    path: '/submissions/$submissionId',
+    getParentRoute: () => AuthenticatedJudgeRoute,
+  } as any)
 const AuthenticatedJudgeHackathonsHackathonIdRoute =
   AuthenticatedJudgeHackathonsHackathonIdRouteImport.update({
     id: '/hackathons/$hackathonId',
@@ -252,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
+  '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -287,6 +295,7 @@ export interface FileRoutesByTo {
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
   '/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
+  '/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -324,6 +333,7 @@ export interface FileRoutesById {
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
   '/_authenticated/judge/hackathons/$hackathonId': typeof AuthenticatedJudgeHackathonsHackathonIdRoute
+  '/_authenticated/judge/submissions/$submissionId': typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
   '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
   '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/judge/hackathons/$hackathonId'
+    | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/judge/hackathons/$hackathonId'
+    | '/judge/submissions/$submissionId'
     | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
     | '/teams/$teamId/submission'
@@ -432,6 +444,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
     | '/_authenticated/judge/hackathons/$hackathonId'
+    | '/_authenticated/judge/submissions/$submissionId'
     | '/_authenticated/organizer/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/new'
     | '/_authenticated/teams/$teamId/submission'
@@ -691,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsHackathonIdRouteImport
       parentRoute: typeof AuthenticatedOrganizerHackathonsRoute
     }
+    '/_authenticated/judge/submissions/$submissionId': {
+      id: '/_authenticated/judge/submissions/$submissionId'
+      path: '/submissions/$submissionId'
+      fullPath: '/judge/submissions/$submissionId'
+      preLoaderRoute: typeof AuthenticatedJudgeSubmissionsSubmissionIdRouteImport
+      parentRoute: typeof AuthenticatedJudgeRoute
+    }
     '/_authenticated/judge/hackathons/$hackathonId': {
       id: '/_authenticated/judge/hackathons/$hackathonId'
       path: '/hackathons/$hackathonId'
@@ -703,11 +723,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedJudgeRouteChildren {
   AuthenticatedJudgeHackathonsHackathonIdRoute: typeof AuthenticatedJudgeHackathonsHackathonIdRoute
+  AuthenticatedJudgeSubmissionsSubmissionIdRoute: typeof AuthenticatedJudgeSubmissionsSubmissionIdRoute
 }
 
 const AuthenticatedJudgeRouteChildren: AuthenticatedJudgeRouteChildren = {
   AuthenticatedJudgeHackathonsHackathonIdRoute:
     AuthenticatedJudgeHackathonsHackathonIdRoute,
+  AuthenticatedJudgeSubmissionsSubmissionIdRoute:
+    AuthenticatedJudgeSubmissionsSubmissionIdRoute,
 }
 
 const AuthenticatedJudgeRouteWithChildren =
