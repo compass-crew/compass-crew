@@ -91,6 +91,8 @@ function OrganizerConsole() {
             <TabsTrigger value="prizes">Prizes</TabsTrigger>
             <TabsTrigger value="registrations">Registrations</TabsTrigger>
             <TabsTrigger value="judges">Judges</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
+            <TabsTrigger value="certificates">Certificates</TabsTrigger>
             <TabsTrigger value="announcements">Announcements</TabsTrigger>
           </TabsList>
 
@@ -102,6 +104,8 @@ function OrganizerConsole() {
           <TabsContent value="prizes" className="mt-6"><PrizesTab hackathonId={hackathonId} existing={(h.prizes as unknown as Prize[]) ?? []} /></TabsContent>
           <TabsContent value="registrations" className="mt-6"><RegistrationsTab hackathonId={hackathonId} title={h.title} /></TabsContent>
           <TabsContent value="judges" className="mt-6"><JudgesTab hackathonId={hackathonId} /></TabsContent>
+          <TabsContent value="results" className="mt-6"><ResultsTab hackathonId={hackathonId} slug={h.slug} publishedAt={h.results_published_at} /></TabsContent>
+          <TabsContent value="certificates" className="mt-6"><CertificatesTab hackathonId={hackathonId} /></TabsContent>
           <TabsContent value="announcements" className="mt-6"><AnnouncementsTab hackathonId={hackathonId} authorId={user!.id} /></TabsContent>
         </Tabs>
       </Section>
