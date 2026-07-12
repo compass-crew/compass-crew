@@ -208,9 +208,7 @@ export function FieldRenderer({ field, value, values, onChange }: Props) {
             );
         }
       })()}
-      {field.helpText && field.type !== "boolean" && (
-        <p className="text-xs text-muted-foreground">{field.helpText}</p>
-      )}
+      {field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>}
     </div>
   );
 }
