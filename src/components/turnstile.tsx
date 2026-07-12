@@ -113,7 +113,7 @@ export function Turnstile({
           /* noop */
         }
         widgetId.current = null;
-        onToken("");
+        onToken(null);
       },
     });
     widgetId.current = id;
