@@ -1,49 +1,71 @@
 import { Link } from "@tanstack/react-router";
-import { Github, Instagram, Linkedin, Twitter, Youtube, Mail, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { Github, Instagram, Linkedin, Mail, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { Logo } from "./logo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { subscribeNewsletter } from "@/lib/public-cms";
 
 const columns = [
   {
     title: "Explore",
     links: [
-      { label: "Hackathons", to: "/hackathons" },
-      { label: "Events", to: "/events" },
-      { label: "Community", to: "/community" },
-      { label: "Resources", to: "/resources" },
-      { label: "Blog", to: "/blog" },
+      { label: "Hackathons", to: "/hackathons" as const },
+      { label: "Events", to: "/events" as const },
+      { label: "Community", to: "/community" as const },
+      { label: "Resources", to: "/resources" as const },
+      { label: "Blog", to: "/blog" as const },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", to: "/about" },
-      { label: "Sponsors", to: "/sponsors" },
-      { label: "Partner with us", to: "/partner" },
-      { label: "Contact", to: "/contact" },
-      { label: "FAQs", to: "/faqs" },
+      { label: "About", to: "/about" as const },
+      { label: "Sponsors", to: "/sponsors" as const },
+      { label: "Partners", to: "/partners" as const },
+      { label: "Mentors", to: "/mentors" as const },
+      { label: "Judges", to: "/judges" as const },
+      { label: "Careers", to: "/careers" as const },
     ],
   },
   {
-    title: "Legal",
+    title: "Support",
     links: [
-      { label: "Privacy Policy", to: "/privacy" },
-      { label: "Terms of Service", to: "/terms" },
-      { label: "Code of Conduct", to: "/code-of-conduct" },
+      { label: "Contact", to: "/contact" as const },
+      { label: "FAQs", to: "/faqs" as const },
+      { label: "Privacy Policy", to: "/privacy" as const },
+      { label: "Terms of Service", to: "/terms" as const },
+      { label: "Code of Conduct", to: "/code-of-conduct" as const },
     ],
   },
 ] as const;
 
 const socials = [
-  { icon: Twitter, label: "Twitter", href: "https://twitter.com" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com" },
-  { icon: Github, label: "GitHub", href: "https://github.com" },
-  { icon: Youtube, label: "YouTube", href: "https://youtube.com" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/compasscrew" },
+  { icon: Instagram, label: "Instagram", href: "https://instagram.com/compasscrew" },
+  { icon: Github, label: "GitHub", href: "https://github.com/compasscrew" },
 ];
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function onSubscribe(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    try {
+      await subscribeNewsletter(email);
+      toast.success("Subscribed. Welcome to the crew!");
+      setEmail("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't subscribe. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <footer className="border-t border-border bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -55,23 +77,21 @@ export function Footer() {
               building hackathons, learning programs, and shipping real products
               with campuses across India.
             </p>
-            <form
-              className="mt-6 flex max-w-md gap-2"
-              onSubmit={(e) => e.preventDefault()}
-              aria-label="Newsletter signup"
-            >
+            <form className="mt-6 flex max-w-md gap-2" onSubmit={onSubscribe} aria-label="Newsletter signup">
               <div className="relative flex-1">
                 <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@campus.edu"
                   className="pl-9"
                   aria-label="Email address"
                 />
               </div>
-              <Button type="submit" className="bg-gradient-brand text-white hover:opacity-90">
-                Subscribe <ArrowRight className="ml-1 h-4 w-4" />
+              <Button type="submit" disabled={submitting} className="bg-gradient-brand text-white hover:opacity-90">
+                {submitting ? "…" : <>Subscribe <ArrowRight className="ml-1 h-4 w-4" /></>}
               </Button>
             </form>
             <div className="mt-6 flex items-center gap-2">
@@ -97,12 +117,7 @@ export function Footer() {
                 <ul className="mt-4 space-y-3">
                   {col.links.map((l) => (
                     <li key={l.to}>
-                      <Link
-                        to={l.to}
-                        className="text-sm text-muted-foreground transition hover:text-foreground"
-                      >
-                        {l.label}
-                      </Link>
+                      <Link to={l.to} className="text-sm text-muted-foreground transition hover:text-foreground">{l.label}</Link>
                     </li>
                   ))}
                 </ul>
