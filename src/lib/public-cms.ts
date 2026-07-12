@@ -293,7 +293,7 @@ export async function submitContactMessage(input: {
 }
 
 export async function submitPartnerApplication(input: {
-  company_name: string;
+  org_name: string;
   contact_name: string;
   email: string;
   phone?: string | null;
