@@ -702,25 +702,36 @@ function HalftoneCompass({ className = "", glow = false }: { className?: string;
   );
 }
 
-const TRUSTED = ["IIT", "NIT", "BITS", "IIIT", "VIT", "SRM", "Manipal"];
+const PILLARS_STRIP = [
+  { label: "Student-first", icon: "◆" },
+  { label: "AI Innovation", icon: "✦" },
+  { label: "Open Source", icon: "◇" },
+  { label: "Hackathons", icon: "▲" },
+  { label: "Research", icon: "◈" },
+  { label: "Startup Ecosystem", icon: "★" },
+] as const;
 
 function TrustedStrip() {
   return (
-    <div className="mt-14 border-t border-border/60 pt-8">
-      <p className="text-center text-[11px] font-medium uppercase tracking-[0.28em] text-muted-foreground">
-        Trusted by student builders across every campus
+    <div className="mt-16 border-t border-border/50 pt-8">
+      <p className="text-center text-[10.5px] font-medium uppercase tracking-[0.3em] text-muted-foreground/80">
+        What we stand for
       </p>
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-80">
-        {TRUSTED.map((t) => (
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+        {PILLARS_STRIP.map((p) => (
           <span
-            key={t}
-            className="font-display text-[15px] font-semibold tracking-[0.18em] text-muted-foreground/90"
+            key={p.label}
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3.5 py-1.5 text-[12.5px] font-medium text-foreground/85 shadow-elegant backdrop-blur transition hover:-translate-y-px hover:border-primary/30 hover:text-foreground"
           >
-            {t}
+            <span aria-hidden className="text-gradient-brand text-[13px]">
+              {p.icon}
+            </span>
+            {p.label}
           </span>
         ))}
       </div>
     </div>
   );
 }
+
 
