@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_notifications: {
+        Row: {
+          body: string | null
+          category: string
+          created_at: string
+          id: string
+          is_archived: boolean
+          is_read: boolean
+          link: string | null
+          meta: Json
+          priority: string
+          resource_id: string | null
+          resource_type: string | null
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          category: string
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          link?: string | null
+          meta?: Json
+          priority?: string
+          resource_id?: string | null
+          resource_type?: string | null
+          title: string
+        }
+        Update: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          link?: string | null
+          meta?: Json
+          priority?: string
+          resource_id?: string | null
+          resource_type?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       ambassador_applications: {
         Row: {
           admin_notes: string | null
@@ -194,6 +239,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          id: string
+          meta: Json
+          resource_id: string | null
+          resource_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json
+          resource_id?: string | null
+          resource_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json
+          resource_id?: string | null
+          resource_type?: string | null
+        }
+        Relationships: []
       }
       blog_posts: {
         Row: {
@@ -1879,6 +1957,10 @@ export type Database = {
       is_team_member: {
         Args: { _team_id: string; _user_id: string }
         Returns: boolean
+      }
+      join_open_team_by_invite_code: {
+        Args: { _code: string }
+        Returns: string
       }
       verify_certificate: {
         Args: { _code: string }

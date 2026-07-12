@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.join_open_team_by_invite_code(text) FROM anon;

@@ -254,26 +254,23 @@ export async function transferOwnership(teamId: string, newLeaderId: string, old
   await supabase.from("team_members").update({ role: "leader" }).eq("team_id", teamId).eq("user_id", newLeaderId);
 }
 
-export async function joinOpenTeam(inviteCode: string, userId: string) {
-  const { data: team, error } = await supabase
-    .from("teams")
-    .select("id, is_open, is_locked, hackathon_id")
-    .eq("invite_code", inviteCode.trim().toLowerCase())
-    .maybeSingle();
-  if (error) throw error;
-  if (!team) throw new Error("Invalid invite code");
-  if (team.is_locked) throw new Error("This team is locked");
-  if (!team.is_open) throw new Error("This team is not open for public joins");
-
-  const { error: mErr } = await supabase.from("team_members").insert({
-    team_id: team.id,
-    user_id: userId,
-    role: "member",
-    status: "active",
-  });
-  if (mErr) {
-    if (mErr.code === "23505") throw new Error("You're already on this team");
-    throw mErr;
+export async function joinOpenTeam(inviteCode: string, _userId: string) {
+  // Uses a SECURITY DEFINER RPC so authenticated users cannot enumerate
+  // invite codes on the teams table (see RLS: we removed the permissive
+  // "Open teams visible" policy). The RPC verifies the code, ensures the
+  // team is open + unlocked, and inserts the caller as an active member.
+  const { data, error } = await supabase.rpc("join_open_team_by_invite_code" as never, {
+    _code: inviteCode.trim().toLowerCase(),
+  } as never);
+  if (error) {
+    const msg = error.message ?? "";
+    if (/already on this team/i.test(msg) || error.code === "23505") {
+      throw new Error("You're already on this team");
+    }
+    if (/invalid invite code/i.test(msg)) throw new Error("Invalid invite code");
+    if (/locked/i.test(msg)) throw new Error("This team is locked");
+    if (/not open/i.test(msg)) throw new Error("This team is not open for public joins");
+    throw error;
   }
-  return team;
+  return { id: data as unknown as string };
 }

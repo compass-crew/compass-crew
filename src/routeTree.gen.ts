@@ -61,6 +61,7 @@ import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminAdminNotificationsRouteImport } from './routes/_authenticated/admin.admin-notifications'
 import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin.activity'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
+import { Route as ApiPublicVerifyCodeRouteImport } from './routes/api/public/verify.$code'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
 import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
@@ -345,6 +346,11 @@ const AuthenticatedAdminResourceRoute =
     path: '/$resource',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicVerifyCodeRoute = ApiPublicVerifyCodeRouteImport.update({
+  id: '/api/public/verify/$code',
+  path: '/api/public/verify/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCmsMediaSplatRoute = ApiPublicCmsMediaSplatRouteImport.update({
   id: '/api/public/cms-media/$',
   path: '/api/public/cms-media/$',
@@ -467,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
   '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
+  '/api/public/verify/$code': typeof ApiPublicVerifyCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -529,6 +536,7 @@ export interface FileRoutesByTo {
   '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
   '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
+  '/api/public/verify/$code': typeof ApiPublicVerifyCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -594,6 +602,7 @@ export interface FileRoutesById {
   '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
   '/api/public/certificates/$code': typeof ApiPublicCertificatesCodeRoute
   '/api/public/cms-media/$': typeof ApiPublicCmsMediaSplatRoute
+  '/api/public/verify/$code': typeof ApiPublicVerifyCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -659,6 +668,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId/submission'
     | '/api/public/certificates/$code'
     | '/api/public/cms-media/$'
+    | '/api/public/verify/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -721,6 +731,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId/submission'
     | '/api/public/certificates/$code'
     | '/api/public/cms-media/$'
+    | '/api/public/verify/$code'
   id:
     | '__root__'
     | '/'
@@ -785,6 +796,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teams/$teamId/submission'
     | '/api/public/certificates/$code'
     | '/api/public/cms-media/$'
+    | '/api/public/verify/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -811,6 +823,7 @@ export interface RootRouteChildren {
   VerifyCodeRoute: typeof VerifyCodeRoute
   ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
   ApiPublicCmsMediaSplatRoute: typeof ApiPublicCmsMediaSplatRoute
+  ApiPublicVerifyCodeRoute: typeof ApiPublicVerifyCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1179,6 +1192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourceRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/verify/$code': {
+      id: '/api/public/verify/$code'
+      path: '/api/public/verify/$code'
+      fullPath: '/api/public/verify/$code'
+      preLoaderRoute: typeof ApiPublicVerifyCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cms-media/$': {
       id: '/api/public/cms-media/$'
       path: '/api/public/cms-media/$'
@@ -1483,6 +1503,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyCodeRoute: VerifyCodeRoute,
   ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
   ApiPublicCmsMediaSplatRoute: ApiPublicCmsMediaSplatRoute,
+  ApiPublicVerifyCodeRoute: ApiPublicVerifyCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

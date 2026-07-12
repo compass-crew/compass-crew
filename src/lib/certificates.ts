@@ -37,10 +37,17 @@ export type VerifiedCertificate = {
 };
 
 export async function getCertificateByCode(code: string): Promise<VerifiedCertificate | null> {
-  const { data, error } = await supabase.rpc("verify_certificate", { _code: code });
-  if (error) throw error;
-  const row = Array.isArray(data) ? data[0] : data;
-  return (row as VerifiedCertificate | null) ?? null;
+  // Public verification goes through a server route that uses the admin
+  // client with a narrow column projection. The verify_certificate RPC is
+  // no longer callable by anon/authenticated to satisfy the linter.
+  const res = await fetch(`/api/public/verify/${encodeURIComponent(code)}`, {
+    headers: { accept: "application/json" },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Verification failed (${res.status})`);
+  const json = (await res.json()) as { found: boolean; certificate?: VerifiedCertificate };
+  if (!json.found || !json.certificate) return null;
+  return json.certificate;
 }
 
 export function certPdfUrl(code: string): string {
