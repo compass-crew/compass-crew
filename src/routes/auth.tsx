@@ -48,7 +48,7 @@ export const Route = createFileRoute("/auth")({
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Enter a valid email" }).max(255),
   password: z.string().min(1, { message: "Password is required" }).max(128),
-  remember: z.boolean().default(true),
+  remember: z.boolean(),
 });
 type LoginValues = z.infer<typeof loginSchema>;
 
