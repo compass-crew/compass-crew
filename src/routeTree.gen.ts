@@ -35,6 +35,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedJudgeRouteImport } from './routes/_authenticated/judge'
 import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenticated/invitations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
@@ -175,6 +176,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCertificatesRoute =
+  AuthenticatedCertificatesRouteImport.update({
+    id: '/certificates',
+    path: '/certificates',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTeamsNewRoute = AuthenticatedTeamsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -245,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
   '/judge': typeof AuthenticatedJudgeRouteWithChildren
@@ -281,6 +289,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
   '/judge': typeof AuthenticatedJudgeRouteWithChildren
@@ -319,6 +328,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invitations': typeof AuthenticatedInvitationsRoute
   '/_authenticated/judge': typeof AuthenticatedJudgeRouteWithChildren
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/certificates'
     | '/dashboard'
     | '/invitations'
     | '/judge'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/certificates'
     | '/dashboard'
     | '/invitations'
     | '/judge'
@@ -430,6 +442,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/_authenticated/certificates'
     | '/_authenticated/dashboard'
     | '/_authenticated/invitations'
     | '/_authenticated/judge'
@@ -655,6 +668,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/certificates': {
+      id: '/_authenticated/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof AuthenticatedCertificatesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/teams/new': {
       id: '/_authenticated/teams/new'
       path: '/new'
@@ -783,6 +803,7 @@ const AuthenticatedOrganizerHackathonsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCertificatesRoute: typeof AuthenticatedCertificatesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvitationsRoute: typeof AuthenticatedInvitationsRoute
   AuthenticatedJudgeRoute: typeof AuthenticatedJudgeRouteWithChildren
@@ -793,6 +814,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCertificatesRoute: AuthenticatedCertificatesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvitationsRoute: AuthenticatedInvitationsRoute,
   AuthenticatedJudgeRoute: AuthenticatedJudgeRouteWithChildren,
