@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import {
-  ArrowLeft, Plus, Trash2, Trophy, Users, Gavel, Megaphone, ListChecks, Download,
+  ArrowLeft, Plus, Trash2, Trophy, Users, Gavel, Megaphone, ListChecks, Download, Award, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
