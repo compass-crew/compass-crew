@@ -79,7 +79,7 @@ function Home() {
               <Button
                 asChild
                 size="lg"
-                className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:[&]:btn-premium-hover"
+                className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:btn-premium-hover"
               >
                 <Link to="/community">
                   Join Community <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -252,7 +252,7 @@ function Home() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Button
                 asChild
-                className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:[&]:btn-premium-hover"
+                className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:btn-premium-hover"
               >
                 <Link to="/community">Join the crew</Link>
               </Button>
@@ -326,7 +326,7 @@ function Home() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button
               asChild
-              className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:[&]:btn-premium-hover"
+              className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:btn-premium-hover"
             >
               <Link to="/partner">Partner with Compass Crew</Link>
             </Button>

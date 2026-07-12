@@ -162,7 +162,7 @@ export function Navbar() {
               </Button>
               <Button
                 asChild
-                className="hidden h-9 rounded-md text-sm btn-premium hover:[&]:btn-premium-hover sm:inline-flex"
+                className="hidden h-9 rounded-md text-sm btn-premium hover:btn-premium-hover sm:inline-flex"
               >
                 <Link to="/auth" search={{ mode: "signup" }}>
                   Join the crew
@@ -221,7 +221,7 @@ export function Navbar() {
                       </Button>
                       <Button
                         asChild
-                        className="btn-premium hover:[&]:btn-premium-hover"
+                        className="btn-premium hover:btn-premium-hover"
                         onClick={() => setOpen(false)}
                       >
                         <Link to="/auth" search={{ mode: "signup" }}>
