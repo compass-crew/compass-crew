@@ -529,7 +529,7 @@ function AnnouncementsTab({ hackathonId, authorId }: { hackathonId: string; auth
   const q = useQuery({ queryKey: ["hackathon", hackathonId, "announcements"], queryFn: () => listAnnouncements(hackathonId) });
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [audience, setAudience] = useState<"all" | "participants" | "judges" | "organizers">("all");
+  const [audience, setAudience] = useState<"all" | "participants" | "judges" | "mentors" | "teams">("all");
 
   const post = useMutation({
     mutationFn: () => createAnnouncement({ hackathon_id: hackathonId, author_id: authorId, title: title.trim(), body: body.trim(), audience }),

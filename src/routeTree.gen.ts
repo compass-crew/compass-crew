@@ -37,7 +37,9 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams.$teamId'
 import { Route as AuthenticatedOrganizerHackathonsRouteImport } from './routes/_authenticated/organizer.hackathons'
+import { Route as AuthenticatedTeamsTeamIdSubmissionRouteImport } from './routes/_authenticated/teams.$teamId.submission'
 import { Route as AuthenticatedOrganizerHackathonsNewRouteImport } from './routes/_authenticated/organizer.hackathons.new'
+import { Route as AuthenticatedOrganizerHackathonsHackathonIdRouteImport } from './routes/_authenticated/organizer.hackathons.$hackathonId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -181,10 +183,22 @@ const AuthenticatedOrganizerHackathonsRoute =
     path: '/organizer/hackathons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTeamsTeamIdSubmissionRoute =
+  AuthenticatedTeamsTeamIdSubmissionRouteImport.update({
+    id: '/submission',
+    path: '/submission',
+    getParentRoute: () => AuthenticatedTeamsTeamIdRoute,
+  } as any)
 const AuthenticatedOrganizerHackathonsNewRoute =
   AuthenticatedOrganizerHackathonsNewRouteImport.update({
     id: '/new',
     path: '/new',
+    getParentRoute: () => AuthenticatedOrganizerHackathonsRoute,
+  } as any)
+const AuthenticatedOrganizerHackathonsHackathonIdRoute =
+  AuthenticatedOrganizerHackathonsHackathonIdRouteImport.update({
+    id: '/$hackathonId',
+    path: '/$hackathonId',
     getParentRoute: () => AuthenticatedOrganizerHackathonsRoute,
   } as any)
 
@@ -214,9 +228,11 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
-  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
+  '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -244,9 +260,11 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRoute
   '/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
-  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
+  '/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -276,9 +294,11 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/hackathons/$slug': typeof HackathonsSlugRoute
   '/_authenticated/organizer/hackathons': typeof AuthenticatedOrganizerHackathonsRouteWithChildren
-  '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRouteWithChildren
   '/_authenticated/teams/new': typeof AuthenticatedTeamsNewRoute
+  '/_authenticated/organizer/hackathons/$hackathonId': typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   '/_authenticated/organizer/hackathons/new': typeof AuthenticatedOrganizerHackathonsNewRoute
+  '/_authenticated/teams/$teamId/submission': typeof AuthenticatedTeamsTeamIdSubmissionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -310,7 +330,9 @@ export interface FileRouteTypes {
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
+    | '/teams/$teamId/submission'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -340,7 +362,9 @@ export interface FileRouteTypes {
     | '/organizer/hackathons'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/organizer/hackathons/$hackathonId'
     | '/organizer/hackathons/new'
+    | '/teams/$teamId/submission'
   id:
     | '__root__'
     | '/'
@@ -371,7 +395,9 @@ export interface FileRouteTypes {
     | '/_authenticated/organizer/hackathons'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/teams/new'
+    | '/_authenticated/organizer/hackathons/$hackathonId'
     | '/_authenticated/organizer/hackathons/new'
+    | '/_authenticated/teams/$teamId/submission'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -591,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/teams/$teamId/submission': {
+      id: '/_authenticated/teams/$teamId/submission'
+      path: '/submission'
+      fullPath: '/teams/$teamId/submission'
+      preLoaderRoute: typeof AuthenticatedTeamsTeamIdSubmissionRouteImport
+      parentRoute: typeof AuthenticatedTeamsTeamIdRoute
+    }
     '/_authenticated/organizer/hackathons/new': {
       id: '/_authenticated/organizer/hackathons/new'
       path: '/new'
@@ -598,16 +631,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizerHackathonsNewRouteImport
       parentRoute: typeof AuthenticatedOrganizerHackathonsRoute
     }
+    '/_authenticated/organizer/hackathons/$hackathonId': {
+      id: '/_authenticated/organizer/hackathons/$hackathonId'
+      path: '/$hackathonId'
+      fullPath: '/organizer/hackathons/$hackathonId'
+      preLoaderRoute: typeof AuthenticatedOrganizerHackathonsHackathonIdRouteImport
+      parentRoute: typeof AuthenticatedOrganizerHackathonsRoute
+    }
   }
 }
 
+interface AuthenticatedTeamsTeamIdRouteChildren {
+  AuthenticatedTeamsTeamIdSubmissionRoute: typeof AuthenticatedTeamsTeamIdSubmissionRoute
+}
+
+const AuthenticatedTeamsTeamIdRouteChildren: AuthenticatedTeamsTeamIdRouteChildren =
+  {
+    AuthenticatedTeamsTeamIdSubmissionRoute:
+      AuthenticatedTeamsTeamIdSubmissionRoute,
+  }
+
+const AuthenticatedTeamsTeamIdRouteWithChildren =
+  AuthenticatedTeamsTeamIdRoute._addFileChildren(
+    AuthenticatedTeamsTeamIdRouteChildren,
+  )
+
 interface AuthenticatedTeamsRouteChildren {
-  AuthenticatedTeamsTeamIdRoute: typeof AuthenticatedTeamsTeamIdRoute
+  AuthenticatedTeamsTeamIdRoute: typeof AuthenticatedTeamsTeamIdRouteWithChildren
   AuthenticatedTeamsNewRoute: typeof AuthenticatedTeamsNewRoute
 }
 
 const AuthenticatedTeamsRouteChildren: AuthenticatedTeamsRouteChildren = {
-  AuthenticatedTeamsTeamIdRoute: AuthenticatedTeamsTeamIdRoute,
+  AuthenticatedTeamsTeamIdRoute: AuthenticatedTeamsTeamIdRouteWithChildren,
   AuthenticatedTeamsNewRoute: AuthenticatedTeamsNewRoute,
 }
 
@@ -615,11 +670,14 @@ const AuthenticatedTeamsRouteWithChildren =
   AuthenticatedTeamsRoute._addFileChildren(AuthenticatedTeamsRouteChildren)
 
 interface AuthenticatedOrganizerHackathonsRouteChildren {
+  AuthenticatedOrganizerHackathonsHackathonIdRoute: typeof AuthenticatedOrganizerHackathonsHackathonIdRoute
   AuthenticatedOrganizerHackathonsNewRoute: typeof AuthenticatedOrganizerHackathonsNewRoute
 }
 
 const AuthenticatedOrganizerHackathonsRouteChildren: AuthenticatedOrganizerHackathonsRouteChildren =
   {
+    AuthenticatedOrganizerHackathonsHackathonIdRoute:
+      AuthenticatedOrganizerHackathonsHackathonIdRoute,
     AuthenticatedOrganizerHackathonsNewRoute:
       AuthenticatedOrganizerHackathonsNewRoute,
   }
