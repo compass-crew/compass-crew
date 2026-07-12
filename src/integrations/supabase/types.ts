@@ -1030,6 +1030,8 @@ export type Database = {
           portfolio_url: string | null
           skills: string[]
           state: string | null
+          suspended_at: string | null
+          suspended_reason: string | null
           updated_at: string
           username: string | null
           year_of_study: string | null
@@ -1051,6 +1053,8 @@ export type Database = {
           portfolio_url?: string | null
           skills?: string[]
           state?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           username?: string | null
           year_of_study?: string | null
@@ -1072,6 +1076,8 @@ export type Database = {
           portfolio_url?: string | null
           skills?: string[]
           state?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           username?: string | null
           year_of_study?: string | null
@@ -1802,6 +1808,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_user: { Args: { _user_id: string }; Returns: Json }
+      admin_global_search: {
+        Args: { _limit?: number; _q: string }
+        Returns: Json
+      }
+      admin_list_users: {
+        Args: {
+          _limit?: number
+          _offset?: number
+          _role?: string
+          _search?: string
+          _status?: string
+        }
+        Returns: Json
+      }
+      admin_security_overview: { Args: never; Returns: Json }
+      admin_set_user_role: {
+        Args: { _grant: boolean; _role: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_set_user_suspended: {
+        Args: { _reason?: string; _suspended: boolean; _user_id: string }
+        Returns: undefined
+      }
       current_user_email: { Args: never; Returns: string }
       find_user_id_by_email: { Args: { _email: string }; Returns: string }
       get_admin_activity: { Args: { _limit?: number }; Returns: Json }
