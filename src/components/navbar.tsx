@@ -31,7 +31,7 @@ export const NAV_LINKS = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { user, profile, primaryRole, signOut, loading } = useAuth();
+  const { user, profile, primaryRole, hasRole, signOut, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
