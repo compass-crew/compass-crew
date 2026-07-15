@@ -170,7 +170,6 @@ function Hero() {
               </div>
             </Reveal>
           </div>
-        </div>
 
         {/* footer strip — value pillars */}
         <Reveal delay={0.75} className="mt-16">
