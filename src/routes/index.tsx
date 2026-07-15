@@ -132,9 +132,7 @@ function Hero() {
           >
             builders.
           </TextReveal>
-            <span>India's next </span>
-            <span className="italic font-light text-gradient-brand">builders.</span>
-          </TextReveal>
+        </div>
 
           <div className="mt-12 grid gap-10 sm:mt-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <Reveal delay={0.35}>
