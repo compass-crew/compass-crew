@@ -57,9 +57,8 @@ function Home() {
       <Hero />
       <Bento />
       <HackathonsMagazine />
-      <JourneyTimeline />
-      <CommunitySplit />
       <TeamMatching />
+      <CommunitySplit />
       <Certificates />
       <PartnersBand />
       <FaqSection />
