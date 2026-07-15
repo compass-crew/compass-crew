@@ -1,12 +1,11 @@
-import { motion, useReducedMotion, useInView } from "framer-motion";
-import { useRef, type ElementType, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 import { EASE_OUT_SOFT } from "@/lib/motion";
 
 /**
- * Editorial per-word mask reveal. Uses useInView on the container so the
- * reveal fires once the block enters the viewport, and drives child words
- * via a shared `animate` prop rather than per-word whileInView (which can
- * fail on small masked spans).
+ * Editorial per-word mask reveal. Uses a native IntersectionObserver on the
+ * container to trigger the reveal — avoids framer's whileInView on masked
+ * spans which can fail to detect visibility.
  */
 export function TextReveal({
   children,
@@ -15,7 +14,7 @@ export function TextReveal({
   wordClassName,
   delay = 0,
   stagger = 0.06,
-  amount = 0.15,
+  amount = 0.05,
   once = true,
 }: {
   children: ReactNode;
@@ -28,8 +27,36 @@ export function TextReveal({
   once?: boolean;
 }) {
   const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once, amount });
+  const ref = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (reduce) {
+      setVisible(true);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            if (once) io.disconnect();
+          } else if (!once) {
+            setVisible(false);
+          }
+        }
+      },
+      { threshold: amount },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [amount, once, reduce]);
 
   const nodes = Array.isArray(children) ? children : [children];
   const words: { text: string; node?: ReactNode; key: string }[] = [];
@@ -60,7 +87,7 @@ export function TextReveal({
           <motion.span
             className={`inline-block ${wordClassName ?? ""}`}
             initial={{ y: "110%", opacity: 0 }}
-            animate={inView ? { y: "0%", opacity: 1 } : { y: "110%", opacity: 0 }}
+            animate={visible ? { y: "0%", opacity: 1 } : { y: "110%", opacity: 0 }}
             transition={{
               duration: 0.85,
               ease: EASE_OUT_SOFT,
