@@ -55,14 +55,13 @@ function Home() {
   return (
     <>
       <Hero />
-      <Manifesto />
       <Bento />
       <HackathonsMagazine />
       <JourneyTimeline />
       <CommunitySplit />
       <TeamMatching />
       <Certificates />
-      <SponsorsBand />
+      <PartnersBand />
       <FaqSection />
       <FinalCta />
     </>
