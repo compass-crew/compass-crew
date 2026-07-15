@@ -123,6 +123,15 @@ function Hero() {
             className="text-display mt-2 block text-[13.5vw] leading-[0.92] tracking-[-0.045em] sm:text-[10vw] lg:text-[8.6vw]"
             delay={0.15}
           >
+            India's next
+          </TextReveal>
+          <TextReveal
+            as="span"
+            className="text-display mt-2 -mt-2 block text-[13.5vw] leading-[0.92] tracking-[-0.045em] italic font-light text-gradient-brand sm:text-[10vw] lg:text-[8.6vw]"
+            delay={0.45}
+          >
+            builders.
+          </TextReveal>
             <span>India's next </span>
             <span className="italic font-light text-gradient-brand">builders.</span>
           </TextReveal>
