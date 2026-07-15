@@ -352,3 +352,61 @@
   border-bottom: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent);
 }
 
+/* Editorial hairline top+bottom */
+@utility hairline {
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 90%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 90%, transparent);
+}
+
+/* Mask a container so it fades to background at the bottom */
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 70%, transparent);
+}
+
+/* Gradient-border card via mask trick, revealed on hover */
+.gradient-border-hover {
+  position: relative;
+}
+.gradient-border-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-primary) 70%, transparent),
+    color-mix(in oklab, var(--color-secondary) 70%, transparent),
+    color-mix(in oklab, var(--color-accent) 70%, transparent)
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.group:hover .gradient-border-hover::before,
+.gradient-border-hover:hover::before {
+  opacity: 1;
+}
+
+/* Editorial display type */
+@utility text-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+/* Slow drift for ambient elements */
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(3%, -2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@theme {
+  --animate-drift: drift 24s ease-in-out infinite;
+}
+
