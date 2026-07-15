@@ -207,39 +207,7 @@ function Hero() {
   );
 }
 
-/* ============================================================
-   MANIFESTO — one giant sentence, per-word reveal
-============================================================ */
-function Manifesto() {
-  return (
-    <section className="relative overflow-hidden py-28 sm:py-40 lg:py-48">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-40" />
-      <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-12">
-        <Reveal>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
-            <span className="inline-block h-px w-6 translate-y-[-3px] bg-primary align-middle" />{" "}
-            Manifesto
-          </p>
-        </Reveal>
-        <TextReveal
-          as="h2"
-          className="text-display mt-8 block max-w-6xl text-[7vw] leading-[1] tracking-[-0.035em] sm:text-[5vw] lg:text-[4.2vw]"
-          stagger={0.045}
-        >
-          Talent is everywhere. Opportunity isn't. We're building the platform that closes the gap —{" "}
-        </TextReveal>
-        <TextReveal
-          as="h2"
-          className="text-display mt-2 block max-w-6xl text-[7vw] leading-[1] tracking-[-0.035em] text-muted-foreground/70 sm:text-[5vw] lg:text-[4.2vw]"
-          stagger={0.045}
-          delay={0.2}
-        >
-          for every student in India who wants to build.
-        </TextReveal>
-      </div>
-    </section>
-  );
-}
+/* Manifesto section removed — folded into hero + final CTA for tighter hierarchy. */
 
 /* ============================================================
    BENTO — asymmetric, editorial. Five tiles, no repeated grid.
