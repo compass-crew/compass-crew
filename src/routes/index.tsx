@@ -975,56 +975,71 @@ function Certificates() {
 }
 
 /* ============================================================
-   SPONSORS — premium empty logo wall + CTA
+   PARTNERS — honest editorial band, no fake logo wall
 ============================================================ */
-function SponsorsBand() {
+function PartnersBand() {
   return (
     <section className="relative border-t border-border/60 py-24 sm:py-32 surface-alt">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-        <Reveal className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
-            Partners & Sponsors
-          </p>
-          <h2 className="text-display mx-auto mt-4 max-w-3xl text-[9vw] leading-[1] tracking-[-0.035em] sm:text-[5.5vw] lg:text-[3.8vw]">
-            Back the next generation of Indian builders.
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-            We partner with founder-led companies to power hackathons, workshops and campus
-            programs. Reach thousands of student builders across India.
-          </p>
-        </Reveal>
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-12">
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-20">
+          <Reveal>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Partners & Sponsors
+            </p>
+            <h2 className="text-display mt-4 text-[9vw] leading-[0.98] tracking-[-0.035em] sm:text-[5.5vw] lg:text-[3.8vw]">
+              Back the next
+              <br />
+              <span className="italic font-light text-muted-foreground/80">generation.</span>
+            </h2>
+            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              We're onboarding a founding cohort of partners — founder-led companies who want
+              early access to India's most curious student builders. Sponsor a track, host a
+              workshop, or hire from the crew.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Magnetic>
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 rounded-full px-6 text-sm font-semibold btn-premium hover:btn-premium-hover"
+                >
+                  <Link to="/partner">
+                    <Handshake className="mr-2 h-4 w-4" /> Become a founding partner
+                  </Link>
+                </Button>
+              </Magnetic>
+              <Button asChild variant="ghost" size="lg" className="h-12 rounded-full">
+                <Link to="/partners">See how it works</Link>
+              </Button>
+            </div>
+          </Reveal>
 
-        <StaggerGroup className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/40 sm:grid-cols-3 lg:grid-cols-6">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              className="group relative flex h-24 items-center justify-center bg-background/60 transition duration-300 hover:bg-card"
-            >
-              <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground/50 transition group-hover:text-foreground/80">
-                Your Logo · 0{(i % 9) + 1}
-              </span>
-            </motion.div>
-          ))}
-        </StaggerGroup>
-
-        <Reveal delay={0.2} className="mt-10 text-center">
-          <Magnetic>
-            <Button
-              asChild
-              size="lg"
-              className="h-12 rounded-full px-6 text-sm font-semibold btn-premium hover:btn-premium-hover"
-            >
-              <Link to="/partner">
-                <Handshake className="mr-2 h-4 w-4" /> Partner with us
-              </Link>
-            </Button>
-          </Magnetic>
-        </Reveal>
+          <Reveal delay={0.15}>
+            <ul className="divide-y divide-border/60 border-y border-border/60">
+              {[
+                { k: "Sponsor a hackathon track", v: "Your brand next to student demos, judges, and pilot conversations." },
+                { k: "Host a workshop or AMA", v: "Meet builders 1:1 across our Discord and campus chapters." },
+                { k: "Hire from the crew", v: "Access verified portfolios, referrals and campus ambassadors." },
+                { k: "Fund research pods", v: "Applied research with faculty collaborators, published openly." },
+              ].map((item) => (
+                <li key={item.k} className="flex items-start gap-4 py-5">
+                  <span className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-brand" />
+                  <div className="min-w-0">
+                    <p className="text-display text-[16px] tracking-tight sm:text-[18px]">{item.k}</p>
+                    <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">
+                      {item.v}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
 }
+
 
 /* ============================================================
    FAQ — editorial accordion
