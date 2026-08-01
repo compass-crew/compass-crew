@@ -14,7 +14,7 @@ export default defineTool({
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser(ctx);
-    const { data, error } = await supabase.rpc("verify_certificate", { p_code: code });
+    const { data, error } = await supabase.rpc("verify_certificate", { _code: code });
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) {
