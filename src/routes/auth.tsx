@@ -200,8 +200,8 @@ function AuthPage() {
 /* ============================ Login form ============================ */
 
 function LoginForm({ redirect }: { redirect?: string }) {
-  const navigate = useNavigate();
   const router = useRouter();
+
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
