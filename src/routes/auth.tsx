@@ -584,8 +584,9 @@ function SocialButtons({ redirect }: { redirect?: string }) {
       }
     }
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}${redirect ? safeRedirect(redirect) : ""}`,
     });
+
     setBusy(null);
     if (result.error) {
       toast.error("Google sign-in failed. Please try again.");
