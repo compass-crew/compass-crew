@@ -65,6 +65,7 @@ import { Route as AuthenticatedAdminAdminNotificationsRouteImport } from './rout
 import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin.activity'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicVerifyCodeRouteImport } from './routes/api/public/verify.$code'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
@@ -373,6 +374,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicVerifyCodeRoute = ApiPublicVerifyCodeRouteImport.update({
   id: '/api/public/verify/$code',
   path: '/api/public/verify/$code',
@@ -476,6 +482,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
@@ -543,6 +550,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
@@ -613,6 +621,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
@@ -683,6 +692,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/$resource'
     | '/admin/activity'
@@ -750,6 +760,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/$resource'
     | '/admin/activity'
@@ -819,6 +830,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/activity'
@@ -875,6 +887,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   VerifyCodeRoute: typeof VerifyCodeRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
   ApiPublicCmsMediaSplatRoute: typeof ApiPublicCmsMediaSplatRoute
@@ -1275,6 +1288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/verify/$code': {
       id: '/api/public/verify/$code'
       path: '/api/public/verify/$code'
@@ -1588,6 +1608,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   VerifyCodeRoute: VerifyCodeRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
   ApiPublicCmsMediaSplatRoute: ApiPublicCmsMediaSplatRoute,
