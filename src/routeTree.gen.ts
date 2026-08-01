@@ -16,6 +16,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as MentorsRouteImport } from './routes/mentors'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as JudgesRouteImport } from './routes/judges'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as FaqsRouteImport } from './routes/faqs'
@@ -44,6 +45,8 @@ import { Route as AuthenticatedInvitationsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as HackathonsSlugLeaderboardRouteImport } from './routes/hackathons.$slug.leaderboard'
 import { Route as AuthenticatedTeamsNewRouteImport } from './routes/_authenticated/teams.new'
@@ -61,6 +64,8 @@ import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminAdminNotificationsRouteImport } from './routes/_authenticated/admin.admin-notifications'
 import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin.activity'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicVerifyCodeRouteImport } from './routes/api/public/verify.$code'
 import { Route as ApiPublicCmsMediaSplatRouteImport } from './routes/api/public/cms-media.$'
 import { Route as ApiPublicCertificatesCodeRouteImport } from './routes/api/public/certificates.$code'
@@ -106,6 +111,11 @@ const PartnerRoute = PartnerRouteImport.update({
 const MentorsRoute = MentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JudgesRoute = JudgesRouteImport.update({
@@ -250,6 +260,18 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -346,6 +368,17 @@ const AuthenticatedAdminResourceRoute =
     path: '/$resource',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicVerifyCodeRoute = ApiPublicVerifyCodeRouteImport.update({
   id: '/api/public/verify/$code',
   path: '/api/public/verify/$code',
@@ -424,6 +457,7 @@ export interface FileRoutesByFullPath {
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
+  '/mcp': typeof McpRoute
   '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
@@ -431,6 +465,8 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -446,6 +482,8 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
@@ -488,6 +526,7 @@ export interface FileRoutesByTo {
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
+  '/mcp': typeof McpRoute
   '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
@@ -495,6 +534,8 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/certificates': typeof AuthenticatedCertificatesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invitations': typeof AuthenticatedInvitationsRoute
@@ -509,6 +550,8 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
@@ -553,6 +596,7 @@ export interface FileRoutesById {
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
+  '/mcp': typeof McpRoute
   '/mentors': typeof MentorsRoute
   '/partner': typeof PartnerRoute
   '/partners': typeof PartnersRoute
@@ -560,6 +604,8 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sponsors': typeof SponsorsRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -575,6 +621,8 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/hackathons/$slug': typeof HackathonsSlugRouteWithChildren
   '/verify/$code': typeof VerifyCodeRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRouteWithChildren
   '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/_authenticated/admin/admin-notifications': typeof AuthenticatedAdminAdminNotificationsRoute
@@ -619,6 +667,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/hackathons'
     | '/judges'
+    | '/mcp'
     | '/mentors'
     | '/partner'
     | '/partners'
@@ -626,6 +675,8 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/certificates'
     | '/dashboard'
@@ -641,6 +692,8 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/$resource'
     | '/admin/activity'
     | '/admin/admin-notifications'
@@ -683,6 +736,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/hackathons'
     | '/judges'
+    | '/mcp'
     | '/mentors'
     | '/partner'
     | '/partners'
@@ -690,6 +744,8 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/certificates'
     | '/dashboard'
     | '/invitations'
@@ -704,6 +760,8 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/$resource'
     | '/admin/activity'
     | '/admin/admin-notifications'
@@ -747,6 +805,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/hackathons'
     | '/judges'
+    | '/mcp'
     | '/mentors'
     | '/partner'
     | '/partners'
@@ -754,6 +813,8 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sponsors'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/certificates'
     | '/_authenticated/dashboard'
@@ -769,6 +830,8 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/hackathons/$slug'
     | '/verify/$code'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/activity'
     | '/_authenticated/admin/admin-notifications'
@@ -813,6 +876,7 @@ export interface RootRouteChildren {
   FaqsRoute: typeof FaqsRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   JudgesRoute: typeof JudgesRoute
+  McpRoute: typeof McpRoute
   MentorsRoute: typeof MentorsRoute
   PartnerRoute: typeof PartnerRoute
   PartnersRoute: typeof PartnersRoute
@@ -820,7 +884,11 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SponsorsRoute: typeof SponsorsRoute
   TermsRoute: typeof TermsRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   VerifyCodeRoute: typeof VerifyCodeRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicCertificatesCodeRoute: typeof ApiPublicCertificatesCodeRoute
   ApiPublicCmsMediaSplatRoute: typeof ApiPublicCmsMediaSplatRoute
   ApiPublicVerifyCodeRoute: typeof ApiPublicVerifyCodeRoute
@@ -875,6 +943,13 @@ declare module '@tanstack/react-router' {
       path: '/mentors'
       fullPath: '/mentors'
       preLoaderRoute: typeof MentorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/judges': {
@@ -1073,6 +1148,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -1191,6 +1280,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/$resource'
       preLoaderRoute: typeof AuthenticatedAdminResourceRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/verify/$code': {
       id: '/api/public/verify/$code'
@@ -1493,6 +1596,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqsRoute: FaqsRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   JudgesRoute: JudgesRoute,
+  McpRoute: McpRoute,
   MentorsRoute: MentorsRoute,
   PartnerRoute: PartnerRoute,
   PartnersRoute: PartnersRoute,
@@ -1500,7 +1604,12 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SponsorsRoute: SponsorsRoute,
   TermsRoute: TermsRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   VerifyCodeRoute: VerifyCodeRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicCertificatesCodeRoute: ApiPublicCertificatesCodeRoute,
   ApiPublicCmsMediaSplatRoute: ApiPublicCmsMediaSplatRoute,
   ApiPublicVerifyCodeRoute: ApiPublicVerifyCodeRoute,
@@ -1508,3 +1617,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -200,8 +200,8 @@ function AuthPage() {
 /* ============================ Login form ============================ */
 
 function LoginForm({ redirect }: { redirect?: string }) {
-  const navigate = useNavigate();
   const router = useRouter();
+
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -232,7 +232,10 @@ function LoginForm({ redirect }: { redirect?: string }) {
     }
     toast.success("Welcome back!");
     await router.invalidate();
-    navigate({ to: safeRedirect(redirect) });
+    // Full navigation so destinations carrying a query string (e.g. the OAuth
+    // consent screen) are preserved exactly.
+    window.location.assign(safeRedirect(redirect));
+
   }
 
   return (
@@ -581,8 +584,9 @@ function SocialButtons({ redirect }: { redirect?: string }) {
       }
     }
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}${redirect ? safeRedirect(redirect) : ""}`,
     });
+
     setBusy(null);
     if (result.error) {
       toast.error("Google sign-in failed. Please try again.");
