@@ -232,7 +232,10 @@ function LoginForm({ redirect }: { redirect?: string }) {
     }
     toast.success("Welcome back!");
     await router.invalidate();
-    navigate({ to: safeRedirect(redirect) });
+    // Full navigation so destinations carrying a query string (e.g. the OAuth
+    // consent screen) are preserved exactly.
+    window.location.assign(safeRedirect(redirect));
+
   }
 
   return (
