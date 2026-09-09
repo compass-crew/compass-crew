@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "./styles/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -352,61 +353,150 @@
   border-bottom: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent);
 }
 
-/* Editorial hairline top+bottom */
-@utility hairline {
-  border-top: 1px solid color-mix(in oklab, var(--color-border) 90%, transparent);
-  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 90%, transparent);
+/* ==========================================================================
+   Compass Crew — Step 2 Design System Utilities
+   ========================================================================== */
+
+@utility font-cc-sans {
+  font-family: var(--font-cc-sans);
 }
 
-/* Mask a container so it fades to background at the bottom */
-@utility mask-fade-b {
-  mask-image: linear-gradient(to bottom, black 70%, transparent);
+@utility font-cc-mono {
+  font-family: var(--font-cc-mono);
 }
 
-/* Gradient-border card via mask trick, revealed on hover */
-.gradient-border-hover {
+@utility bg-cc-brand-gradient {
+  background-image: var(--cc-gradient-brand);
+}
+
+@utility text-cc-brand-gradient {
+  background-image: var(--cc-gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility glass-cc {
+  background-color: var(--cc-surface-1);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--cc-border-subtle);
+}
+
+@utility glass-cc-elevated {
+  background-color: var(--cc-surface-2);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--cc-border-strong);
+}
+
+@utility glass-cc-interactive {
+  background-color: var(--cc-surface-1);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--cc-border-subtle);
+  transition: background-color var(--cc-duration-fast) var(--cc-ease-out),
+              border-color var(--cc-duration-fast) var(--cc-ease-out),
+              transform var(--cc-duration-fast) var(--cc-ease-out);
+
+  &:hover {
+    background-color: var(--cc-surface-2);
+    border-color: var(--cc-border-strong);
+    transform: translateY(-1px);
+  }
+}
+
+@utility btn-cc-primary {
   position: relative;
-}
-.gradient-border-hover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--color-primary) 70%, transparent),
-    color-mix(in oklab, var(--color-secondary) 70%, transparent),
-    color-mix(in oklab, var(--color-accent) 70%, transparent)
-  );
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 400ms ease;
-}
-.group:hover .gradient-border-hover::before,
-.gradient-border-hover:hover::before {
-  opacity: 1;
-}
-
-/* Editorial display type */
-@utility text-display {
-  font-family: var(--font-display);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-image: var(--cc-gradient-brand);
+  color: #ffffff;
+  font-family: var(--font-cc-sans);
   font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  border-radius: var(--cc-radius-md);
+  padding: 0.625rem 1.25rem;
+  transition: transform var(--cc-duration-fast) var(--cc-ease-out),
+              box-shadow var(--cc-duration-standard) var(--cc-ease-out),
+              filter var(--cc-duration-fast) var(--cc-ease-out);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -4px rgba(124, 92, 255, 0.45);
+
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 12px 32px -4px rgba(124, 92, 255, 0.6);
+  }
 }
 
-/* Slow drift for ambient elements */
-@keyframes drift {
-  0%   { transform: translate3d(0, 0, 0); }
-  50%  { transform: translate3d(3%, -2%, 0); }
-  100% { transform: translate3d(0, 0, 0); }
+@utility btn-cc-secondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cc-surface-1);
+  color: var(--cc-text-primary);
+  font-family: var(--font-cc-sans);
+  font-weight: 600;
+  border: 1px solid var(--cc-border-subtle);
+  border-radius: var(--cc-radius-md);
+  padding: 0.625rem 1.25rem;
+  backdrop-filter: blur(12px);
+  transition: background-color var(--cc-duration-fast) var(--cc-ease-out),
+              border-color var(--cc-duration-fast) var(--cc-ease-out),
+              transform var(--cc-duration-fast) var(--cc-ease-out);
+
+  &:hover {
+    background-color: var(--cc-surface-2);
+    border-color: var(--cc-border-strong);
+    transform: translateY(-1px);
+  }
 }
-@theme {
-  --animate-drift: drift 24s ease-in-out infinite;
+
+/* ==========================================================================
+   Compass Crew — Hero Cinematic Entry Animations
+   ========================================================================== */
+
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.hero-reveal-1 {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.hero-reveal-2 {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.hero-reveal-3 {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.hero-reveal-4 {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+.hero-reveal-5 {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal-1,
+  .hero-reveal-2,
+  .hero-reveal-3,
+  .hero-reveal-4,
+  .hero-reveal-5 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }
 

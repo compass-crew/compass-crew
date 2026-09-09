@@ -1,24 +1,36 @@
-import { createStart, createMiddleware } from "@tanstack/react-start";
+import { createStart, createMiddleware, createCsrfMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { applySecurityHeaders } from "./lib/security-headers";
 
-const errorMiddleware = createMiddleware().server(async ({ next }) => {
+// Recommended TanStack Start CSRF middleware for server functions
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (ctx) => ctx.handlerType === "serverFn",
+});
+
+const securityAndErrorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
-    return await next();
+    const res = await next();
+    if (res instanceof Response) {
+      applySecurityHeaders(res.headers);
+    }
+    return res;
   } catch (error) {
     if (error != null && typeof error === "object" && "statusCode" in error) {
       throw error;
     }
     console.error(error);
-    return new Response(renderErrorPage(), {
+    const errRes = new Response(renderErrorPage(), {
       status: 500,
       headers: { "content-type": "text/html; charset=utf-8" },
     });
+    applySecurityHeaders(errRes.headers);
+    return errRes;
   }
 });
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [csrfMiddleware, securityAndErrorMiddleware],
 }));

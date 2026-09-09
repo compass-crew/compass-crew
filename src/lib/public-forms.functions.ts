@@ -80,7 +80,7 @@ async function guard(kind: FormKind, token: string | null | undefined) {
 }
 
 export const submitContactMessageFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => contactSchema.parse(data))
+  .validator((data: unknown) => contactSchema.parse(data))
   .handler(async ({ data }) => {
     const { turnstileToken, ...row } = data;
     const { supabaseAdmin } = await guard("contact", turnstileToken);
@@ -90,7 +90,7 @@ export const submitContactMessageFn = createServerFn({ method: "POST" })
   });
 
 export const submitPartnerApplicationFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => partnerSchema.parse(data))
+  .validator((data: unknown) => partnerSchema.parse(data))
   .handler(async ({ data }) => {
     const { turnstileToken, website, ...rest } = data;
     const { supabaseAdmin } = await guard("partner", turnstileToken);
@@ -102,7 +102,7 @@ export const submitPartnerApplicationFn = createServerFn({ method: "POST" })
   });
 
 export const subscribeNewsletterFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => newsletterSchema.parse(data))
+  .validator((data: unknown) => newsletterSchema.parse(data))
   .handler(async ({ data }) => {
     const { turnstileToken, email, source } = data;
     const { supabaseAdmin } = await guard("newsletter", turnstileToken);

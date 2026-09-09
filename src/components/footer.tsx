@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Github, Instagram, Linkedin, Mail, ArrowRight } from "lucide-react";
+import { Instagram, Linkedin, Mail, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "./logo";
 import { Input } from "@/components/ui/input";
@@ -14,27 +14,24 @@ const columns = [
     links: [
       { label: "Hackathons", to: "/hackathons" as const },
       { label: "Events", to: "/events" as const },
-      { label: "Community", to: "/community" as const },
       { label: "Resources", to: "/resources" as const },
       { label: "Blog", to: "/blog" as const },
     ],
   },
   {
-    title: "Company",
+    title: "Community",
     links: [
       { label: "About", to: "/about" as const },
-      { label: "Sponsors", to: "/sponsors" as const },
-      { label: "Partners", to: "/partners" as const },
       { label: "Mentors", to: "/mentors" as const },
       { label: "Judges", to: "/judges" as const },
-      { label: "Careers", to: "/careers" as const },
+      { label: "Partners", to: "/partners" as const },
     ],
   },
   {
-    title: "Support",
+    title: "Platform",
     links: [
+      { label: "Careers", to: "/careers" as const },
       { label: "Contact", to: "/contact" as const },
-      { label: "FAQs", to: "/faqs" as const },
       { label: "Privacy Policy", to: "/privacy" as const },
       { label: "Terms of Service", to: "/terms" as const },
       { label: "Code of Conduct", to: "/code-of-conduct" as const },
@@ -43,9 +40,8 @@ const columns = [
 ] as const;
 
 const socials = [
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/compasscrew" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/compasscrew" },
-  { icon: Github, label: "GitHub", href: "https://github.com/compasscrew" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/compasscrewindia" },
+  { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/compasscrewnetwork" },
 ];
 
 export function Footer() {

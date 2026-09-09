@@ -1,111 +1,408 @@
-import { useEffect, useState } from "react";
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import { MailCheck, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Mail, CheckCircle2, AlertCircle, Loader2, ArrowRight, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { safeRedirect } from "@/lib/safe-redirect";
+import { AuthShell, AuthAlert } from "@/components/auth/auth-shell";
+import { maskEmail } from "@/components/auth/auth-helpers";
+import "@/components/auth/auth-shell.css";
 
-type VerifySearch = { email?: string };
+/* ============================ Route Definition ============================ */
+
+type VerifySearch = {
+  email?: string;
+  redirect?: string;
+  error?: string;
+  error_description?: string;
+  error_code?: string;
+};
 
 export const Route = createFileRoute("/auth/verify-email")({
   validateSearch: (search: Record<string, unknown>): VerifySearch => ({
     email: typeof search.email === "string" ? search.email : undefined,
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    error: typeof search.error === "string" ? search.error : undefined,
+    error_description:
+      typeof search.error_description === "string" ? search.error_description : undefined,
+    error_code: typeof search.error_code === "string" ? search.error_code : undefined,
   }),
   head: () => ({
     meta: [
       { title: "Verify your email — Compass Crew" },
-      { name: "description", content: "Check your inbox to verify your Compass Crew account." },
+      {
+        name: "description",
+        content: "Verify your Compass Crew account email to continue.",
+      },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: VerifyEmailPage,
 });
 
-const RESEND_COOLDOWN = 45;
+/* ============================ Page Component ============================ */
+
+const RESEND_COOLDOWN_SECONDS = 60;
 
 function VerifyEmailPage() {
-  const { email } = useSearch({ from: "/auth/verify-email" });
-  const [countdown, setCountdown] = useState(RESEND_COOLDOWN);
-  const [sending, setSending] = useState(false);
+  const search = useSearch({ from: "/auth/verify-email" });
+  const navigate = useNavigate();
+
+  const [inputEmail, setInputEmail] = useState(search.email ?? "");
+  const [countdown, setCountdown] = useState(0);
+  const [resending, setResending] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{
+    variant: "success" | "error" | "info" | "warning";
+    text: string;
+  } | null>(null);
+
+  const isExpired =
+    search.error_code === "otp_expired" ||
+    (search.error_description && /expired/i.test(search.error_description));
+  const isInvalid =
+    !isExpired &&
+    (search.error ||
+      (search.error_description && /invalid|token/i.test(search.error_description)));
+
+  const [isVerified, setIsVerified] = useState(false);
+
+  // Safe redirect destination
+  const targetDestination = safeRedirect(search.redirect, "/dashboard");
+
+  // Check if current user is already confirmed
+  const verifyCurrentState = useCallback(async () => {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (data.user?.email_confirmed_at) {
+        setIsVerified(true);
+        return true;
+      }
+    } catch {
+      // Ignore background check failure
+    }
+    return false;
+  }, []);
 
   useEffect(() => {
+    void verifyCurrentState();
+  }, [verifyCurrentState]);
+
+  // Handle countdown timer
+  useEffect(() => {
     if (countdown <= 0) return;
-    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
   }, [countdown]);
 
-  async function resend() {
-    if (!email) {
-      toast.error("Missing email. Please sign up again.");
-      return;
-    }
-    setSending(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/verify-email` },
-    });
-    setSending(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Verification email sent again.");
-      setCountdown(RESEND_COOLDOWN);
+  // Explicit check verification button
+  async function handleCheckStatus() {
+    setChecking(true);
+    setStatusMessage(null);
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
+        setStatusMessage({
+          variant: "info",
+          text: "Still waiting for verification. Check your inbox and click the verification link.",
+        });
+      } else if (data.user.email_confirmed_at) {
+        setIsVerified(true);
+        setStatusMessage({
+          variant: "success",
+          text: "Your email has been verified! You're ready to proceed.",
+        });
+      } else {
+        setStatusMessage({
+          variant: "info",
+          text: "Verification pending. Please open the link sent to your email.",
+        });
+      }
+    } catch {
+      setStatusMessage({
+        variant: "error",
+        text: "Could not check verification status right now. Please try again.",
+      });
+    } finally {
+      setChecking(false);
     }
   }
 
+  // Resend verification email
+  async function handleResend() {
+    const emailToUse = inputEmail.trim() || search.email?.trim();
+    if (!emailToUse || !emailToUse.includes("@")) {
+      setStatusMessage({
+        variant: "error",
+        text: "Please provide a valid email address to resend the verification link.",
+      });
+      return;
+    }
+
+    setResending(true);
+    setStatusMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: emailToUse,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        // Map error to human-friendly message without leaking server internals
+        if (/rate limit|too many/i.test(error.message)) {
+          setStatusMessage({
+            variant: "warning",
+            text: "Too many requests. Please wait a couple minutes before requesting another email.",
+          });
+        } else {
+          setStatusMessage({
+            variant: "error",
+            text: "We couldn't send the verification email right now. Please try again.",
+          });
+        }
+      } else {
+        setStatusMessage({
+          variant: "success",
+          text: "Verification email sent. Check your inbox and spam folders.",
+        });
+        setCountdown(RESEND_COOLDOWN_SECONDS);
+        toast.success("Verification email sent.");
+      }
+    } catch {
+      setStatusMessage({
+        variant: "error",
+        text: "We couldn't send the verification email right now. Please try again.",
+      });
+    } finally {
+      setResending(false);
+    }
+  }
+
+  // Determine masked email to show
+  const displayEmail = inputEmail.trim() || search.email?.trim();
+  const masked = maskEmail(displayEmail);
+
   return (
-    <div className="relative min-h-[calc(100dvh-4rem)]">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 left-1/2 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-brand opacity-25 blur-3xl animate-blob" />
-      </div>
-      <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
-      <div className="mx-auto max-w-md px-4 py-16">
-        <Card className="border-border/70 bg-card/70 shadow-glow backdrop-blur-xl">
-          <CardContent className="space-y-6 p-8 text-center">
-            <div className="relative mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-gradient-brand text-white shadow-glow">
-              <MailCheck className="h-9 w-9" />
-              <span className="absolute -inset-2 rounded-3xl bg-gradient-brand opacity-30 blur-xl animate-pulse" />
-            </div>
-            <div>
-              <h1 className="font-display text-2xl font-semibold">Check your email</h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                We sent a verification link
-                {email ? (
-                  <>
-                    {" "}to <span className="font-medium text-foreground">{email}</span>
-                  </>
-                ) : null}
-                . Verify your account to start using Compass Crew.
-              </p>
-            </div>
+    <AuthShell
+      backTo="/auth"
+      backLabel="Back to sign in"
+      brandProps={{
+        state: isVerified ? "success" : "verify",
+        subtitle: isVerified
+          ? "Account verified and active."
+          : "Verify your email to continue.",
+      }}
+    >
+      {/* 1. Already Verified State */}
+      {isVerified ? (
+        <div className="auth-status-card auth-entry">
+          <div className="auth-status-card__icon auth-status-card__icon--success">
+            <CheckCircle2 size={32} aria-hidden="true" />
+          </div>
+          <span className="auth-status-card__badge auth-status-card__badge--green">
+            Verified
+          </span>
+          <h1 className="auth-status-card__title">Email Verified</h1>
+          <p className="auth-status-card__desc">
+            Your email is confirmed and your Compass Crew account is active. You're all set.
+          </p>
 
-            <div className="rounded-xl border border-dashed border-border bg-muted/40 p-4 text-left text-xs text-muted-foreground">
-              Didn't get the email? Check your spam folder, or wait{" "}
-              {countdown > 0 ? (
-                <span className="font-semibold text-foreground">{countdown}s</span>
+          <button
+            type="button"
+            className="auth-btn-primary"
+            onClick={() => navigate({ to: targetDestination })}
+          >
+            Continue to Compass Crew
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      ) : isExpired ? (
+        /* 2. Expired Verification Link State */
+        <div className="auth-entry">
+          <div className="auth-status-card">
+            <div className="auth-status-card__icon auth-status-card__icon--error">
+              <AlertCircle size={32} aria-hidden="true" />
+            </div>
+            <span className="auth-status-card__badge auth-status-card__badge--coral">
+              Link Expired
+            </span>
+            <h1 className="auth-status-card__title">Verification link expired</h1>
+            <p className="auth-status-card__desc">
+              That verification link has expired for your security. Enter your email below to receive a fresh verification link.
+            </p>
+          </div>
+
+          {statusMessage && (
+            <AuthAlert variant={statusMessage.variant} message={statusMessage.text} />
+          )}
+
+          <div className="auth-field">
+            <label htmlFor="verify-email-input" className="auth-label">
+              Your email address
+            </label>
+            <input
+              id="verify-email-input"
+              type="email"
+              autoComplete="email"
+              className="auth-input"
+              placeholder="you@campus.edu"
+              value={inputEmail}
+              onChange={(e) => setInputEmail(e.target.value)}
+              disabled={resending || countdown > 0}
+            />
+          </div>
+
+          <button
+            type="button"
+            className="auth-btn-primary"
+            onClick={handleResend}
+            disabled={resending || countdown > 0}
+          >
+            {resending && <Loader2 size={16} className="animate-spin" />}
+            {countdown > 0
+              ? `Resend in ${countdown}s`
+              : resending
+                ? "Sending link…"
+                : "Send new verification link"}
+          </button>
+
+          <div style={{ marginTop: "1rem" }}>
+            <Link to="/auth" className="auth-btn-ghost">
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      ) : isInvalid ? (
+        /* 3. Invalid Verification Link State */
+        <div className="auth-entry">
+          <div className="auth-status-card">
+            <div className="auth-status-card__icon auth-status-card__icon--error">
+              <AlertCircle size={32} aria-hidden="true" />
+            </div>
+            <span className="auth-status-card__badge auth-status-card__badge--coral">
+              Invalid Link
+            </span>
+            <h1 className="auth-status-card__title">Invalid verification link</h1>
+            <p className="auth-status-card__desc">
+              This verification link is no longer valid or has already been used. Please request a new verification email.
+            </p>
+          </div>
+
+          {statusMessage && (
+            <AuthAlert variant={statusMessage.variant} message={statusMessage.text} />
+          )}
+
+          <div className="auth-field">
+            <label htmlFor="verify-email-input" className="auth-label">
+              Your email address
+            </label>
+            <input
+              id="verify-email-input"
+              type="email"
+              autoComplete="email"
+              className="auth-input"
+              placeholder="you@campus.edu"
+              value={inputEmail}
+              onChange={(e) => setInputEmail(e.target.value)}
+              disabled={resending || countdown > 0}
+            />
+          </div>
+
+          <button
+            type="button"
+            className="auth-btn-primary"
+            onClick={handleResend}
+            disabled={resending || countdown > 0}
+          >
+            {resending && <Loader2 size={16} className="animate-spin" />}
+            {countdown > 0
+              ? `Resend in ${countdown}s`
+              : resending
+                ? "Sending…"
+                : "Request new verification email"}
+          </button>
+
+          <div style={{ marginTop: "1rem" }}>
+            <Link to="/auth" className="auth-btn-ghost">
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      ) : (
+        /* 4. Normal Check Inbox / Verification Pending State */
+        <div className="auth-entry">
+          <div className="auth-status-card">
+            <div className="auth-status-card__icon auth-status-card__icon--brand">
+              <Mail size={28} aria-hidden="true" />
+            </div>
+            <span className="auth-status-card__badge auth-status-card__badge--amber">
+              Verification Required
+            </span>
+            <h1 className="auth-status-card__title">Check your inbox</h1>
+            <p className="auth-status-card__desc">
+              We sent a secure verification link to your email. Click the link to verify your account and join the crew.
+            </p>
+
+            {masked ? (
+              <div className="auth-status-card__email-chip">
+                <span>{masked}</span>
+              </div>
+            ) : null}
+          </div>
+
+          {/* In-content status message */}
+          {statusMessage && (
+            <AuthAlert variant={statusMessage.variant} message={statusMessage.text} />
+          )}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {/* Primary Action: Resend */}
+            <button
+              type="button"
+              className="auth-btn-primary"
+              onClick={handleResend}
+              disabled={resending || countdown > 0}
+            >
+              {resending && <Loader2 size={16} className="animate-spin" />}
+              {countdown > 0
+                ? `Resend verification in ${countdown}s`
+                : resending
+                  ? "Sending verification…"
+                  : "Resend verification email"}
+            </button>
+
+            {/* Check status button */}
+            <button
+              type="button"
+              className="auth-btn-secondary"
+              onClick={handleCheckStatus}
+              disabled={checking}
+            >
+              {checking ? (
+                <Loader2 size={16} className="animate-spin" />
               ) : (
-                <span className="font-semibold text-primary">now</span>
-              )}{" "}
-              and resend below.
-            </div>
+                <RefreshCw size={15} />
+              )}
+              {checking ? "Checking status…" : "I've verified my email"}
+            </button>
 
-            <div className="flex flex-col gap-2">
-              <Button
-                onClick={resend}
-                disabled={sending || countdown > 0 || !email}
-                className="bg-gradient-brand text-white hover:opacity-90"
-              >
-                {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {countdown > 0 ? `Resend in ${countdown}s` : "Resend verification email"}
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/auth">Back to sign in</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            {/* Secondary: Back to sign in */}
+            <Link to="/auth" className="auth-btn-ghost">
+              Back to sign in
+            </Link>
+          </div>
+
+          {countdown > 0 && (
+            <p className="auth-cooldown-text">
+              Didn't receive the email? Check spam or resend in {countdown}s.
+            </p>
+          )}
+        </div>
+      )}
+    </AuthShell>
   );
 }

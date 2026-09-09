@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type EmailProvider = "lovable" | "zoho" | "resend" | "smtp";
+export type EmailProvider = "resend" | "zoho" | "smtp";
 
 export interface EmailProviderSettings {
   id: string;
@@ -36,7 +36,7 @@ export async function fetchEmailProviderSettings(): Promise<EmailProviderSetting
   if (!data) {
     return {
       id: "default",
-      provider: "lovable",
+      provider: "resend",
       from_email: "",
       from_name: "",
       reply_to: "",
@@ -114,22 +114,16 @@ export function renderTemplatePreview(
 
 export const PROVIDER_OPTIONS: { value: EmailProvider; label: string; description: string; requiresSecrets: string[] }[] = [
   {
-    value: "lovable",
-    label: "Lovable Emails",
-    description: "Managed sending via Lovable's built-in email infrastructure. Recommended.",
-    requiresSecrets: [],
+    value: "resend",
+    label: "Resend",
+    description: "Send through Resend API. Requires an API key once activated.",
+    requiresSecrets: ["RESEND_API_KEY"],
   },
   {
     value: "zoho",
     label: "Zoho Mail",
     description: "Send through Zoho Mail SMTP. Requires SMTP credentials once activated.",
     requiresSecrets: ["ZOHO_SMTP_HOST", "ZOHO_SMTP_USER", "ZOHO_SMTP_PASSWORD"],
-  },
-  {
-    value: "resend",
-    label: "Resend",
-    description: "Send through Resend API. Requires an API key once activated.",
-    requiresSecrets: ["RESEND_API_KEY"],
   },
   {
     value: "smtp",

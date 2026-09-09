@@ -1,0 +1,10 @@
+export { HeroSection } from "./HeroSection";
+export { DiscoverSection } from "./DiscoverSection";
+export { BuildSection } from "./BuildSection";
+export { LearnSection } from "./LearnSection";
+export { ConnectSection } from "./ConnectSection";
+export { CompeteSection } from "./CompeteSection";
+export { ShipSection } from "./ShipSection";
+export { GrowSection } from "./GrowSection";
+export { DirectionSection } from "./DirectionSection";
+export { FinalCTASection } from "./FinalCTASection";

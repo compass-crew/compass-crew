@@ -156,7 +156,7 @@ async function buildPdf(input: {
 
 export const generateCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: {
+  .validator((d: {
     hackathonId: string;
     userId: string;
     type: CertificateType;
@@ -268,7 +268,7 @@ export const generateCertificate = createServerFn({ method: "POST" })
 
 export const bulkGenerateParticipation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { hackathonId: string }) => d)
+  .validator((d: { hackathonId: string }) => d)
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
     await verifyOrganizer(supabase, callerId, data.hackathonId);
@@ -300,7 +300,7 @@ export const bulkGenerateParticipation = createServerFn({ method: "POST" })
 
 export const publishResults = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { hackathonId: string; freeze?: boolean }) => d)
+  .validator((d: { hackathonId: string; freeze?: boolean }) => d)
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
     await verifyOrganizer(supabase, callerId, data.hackathonId);
@@ -356,7 +356,7 @@ export const publishResults = createServerFn({ method: "POST" })
 
 export const revokeCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { certificateId: string }) => d)
+  .validator((d: { certificateId: string }) => d)
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Megaphone, Calendar, BookOpen, Newspaper, GraduationCap, Sparkles, Github, Instagram, Linkedin, ExternalLink } from "lucide-react";
+import { Megaphone, Calendar, BookOpen, Newspaper, GraduationCap, Sparkles, Instagram, Linkedin, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Section, SectionHeading } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,9 +19,11 @@ export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
       { title: "Community — Compass Crew" },
-      { name: "description", content: "A student-led community of builders in AI, tech and startups across India — announcements, events, resources and campus ambassadors." },
-      { property: "og:title", content: "Community — Compass Crew" },
-      { property: "og:description", content: "Student builders across India." },
+      {
+        name: "description",
+        content:
+          "Stay in the loop with Compass Crew announcements, articles, upcoming hackathons and student opportunities.",
+      },
     ],
     links: [{ rel: "canonical", href: "/community" }],
   }),
@@ -29,9 +31,8 @@ export const Route = createFileRoute("/community")({
 });
 
 const SOCIALS = [
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/compasscrew" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/compasscrew" },
-  { icon: Github, label: "GitHub", href: "https://github.com/compasscrew" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/compasscrewindia" },
+  { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/compasscrewnetwork" },
 ];
 
 function fmtDate(iso: string | null) {

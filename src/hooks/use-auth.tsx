@@ -100,42 +100,113 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRoles([]);
       return;
     }
-    const [{ data: profileRow }, { data: rolesRows }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", userId),
-    ]);
-    setProfile((profileRow as Profile | null) ?? null);
-    setRoles((rolesRows ?? []).map((r) => r.role as AppRole));
+    try {
+      const [{ data: profileRow }, { data: rolesRows }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
+      ]);
+
+      let finalProfile = (profileRow as Profile | null) ?? null;
+
+      // Self-healing check for new Google OAuth users where the trigger might be in flight
+      if (!finalProfile) {
+        await new Promise((r) => setTimeout(r, 400));
+        const { data: retryRow } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (retryRow) {
+          finalProfile = retryRow as Profile;
+        } else {
+          // Fallback minimal profile initialization from authenticated user identity
+          const { data: userRes } = await supabase.auth.getUser();
+          const u = userRes?.user;
+          if (u && u.id === userId) {
+            const meta = u.user_metadata || {};
+            const fullName =
+              meta.full_name || meta.name || (u.email ? u.email.split("@")[0] : "Builder");
+            const avatarUrl = meta.avatar_url || meta.picture || null;
+
+            await supabase.from("profiles").upsert(
+              {
+                id: userId,
+                full_name: fullName,
+                avatar_url: avatarUrl,
+              },
+              { onConflict: "id", ignoreDuplicates: true },
+            );
+
+            const { data: healedRow } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", userId)
+              .maybeSingle();
+            finalProfile = (healedRow as Profile | null) ?? null;
+          }
+        }
+      }
+
+      setProfile(finalProfile);
+
+      // Ensure every authenticated user has at least the default 'participant' role
+      const loadedRoles = (rolesRows ?? []).map((r) => r.role as AppRole);
+      if (loadedRoles.length === 0) {
+        setRoles(["participant"]);
+      } else {
+        setRoles(loadedRoles);
+      }
+    } catch (err) {
+      console.warn("[AuthProvider] user data load notice:", err);
+      // Fallback to participant so user is never blocked from authenticated dashboard
+      setRoles((prev) => (prev.length > 0 ? prev : ["participant"]));
+    }
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+
     // 1. Register listener FIRST (per Supabase best practice).
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, newSession) => {
+    } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (!mounted) return;
       setSession(newSession);
-      // Never call other supabase methods synchronously inside the callback.
+
       if (newSession?.user) {
-        setTimeout(() => {
-          void loadUserData(newSession.user.id);
-        }, 0);
+        await loadUserData(newSession.user.id);
       } else if (event === "SIGNED_OUT") {
         setProfile(null);
         setRoles([]);
       }
+      setLoading(false);
     });
 
     // 2. Then fetch current session.
     (async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      if (data.session?.user) {
-        await loadUserData(data.session.user.id);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.warn("[AuthProvider] session check note:", error.message);
+        }
+        if (mounted) {
+          setSession(data.session);
+          if (data.session?.user) {
+            await loadUserData(data.session.user.id);
+          }
+        }
+      } catch (err) {
+        console.warn("[AuthProvider] getSession error:", err);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
     })();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [loadUserData]);
 
   const refresh = useCallback(async () => {
@@ -143,9 +214,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session, loadUserData]);
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-    setRoles([]);
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("[AuthProvider] signOut note:", err);
+    } finally {
+      setSession(null);
+      setProfile(null);
+      setRoles([]);
+      try {
+        sessionStorage.removeItem("cc:post-auth-redirect");
+      } catch {
+        /* ignore */
+      }
+    }
   }, []);
 
   const value = useMemo<AuthContextValue>(() => {

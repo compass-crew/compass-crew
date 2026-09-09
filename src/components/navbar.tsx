@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LayoutDashboard, LogOut, Menu, Settings, Shield, User as UserIcon, X, Users, Mail } from "lucide-react";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { useAuth, ROLE_LABEL } from "@/hooks/use-auth";
+import { LandingHeader } from "@/components/landing/LandingHeader";
 
 export const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -33,6 +34,12 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, profile, primaryRole, hasRole, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  // On the public landing page, the persistent minimal public header is hosted within the landing page shell
+  if (pathname === "/") {
+    return null;
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);

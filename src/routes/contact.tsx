@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Mail, MapPin, Linkedin, Instagram, Github, ExternalLink } from "lucide-react";
+import { Mail, MapPin, Linkedin, Instagram, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Section, SectionHeading } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,9 +31,8 @@ export const Route = createFileRoute("/contact")({
 type FaqItem = { q: string; a: string };
 
 const SOCIALS = [
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/compasscrew" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/compasscrew" },
-  { icon: Github, label: "GitHub", href: "https://github.com/compasscrew" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/compasscrewindia" },
+  { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/compasscrewnetwork" },
 ];
 
 function ContactPage() {

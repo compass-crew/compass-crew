@@ -122,7 +122,7 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
       <CardHeader>
         <CardTitle>Email Provider</CardTitle>
         <CardDescription>
-          Choose which service sends outbound email. Provider secrets are stored separately as environment variables — set them when activating a non-Lovable provider.
+          Choose which service sends outbound email. Provider secrets are stored securely as environment variables.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -166,11 +166,9 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
             </div>
           </div>
 
-          {s.provider !== "lovable" && (
-            <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              Architecture is ready. To send with {option.label}, add the required secrets to the project and wire a send helper in a server function. No emails will be sent until credentials are configured.
-            </div>
-          )}
+          <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+            Architecture is ready. To send with {option.label}, ensure the required environment variables are set in your deployment configuration.
+          </div>
 
           <div className="flex justify-end pt-2">
             <Button type="submit" disabled={busy}>
