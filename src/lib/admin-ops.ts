@@ -56,12 +56,7 @@ export async function fetchAnalytics(): Promise<AnalyticsPayload> {
 // ------------------------------------------------------------------
 // Activity
 // ------------------------------------------------------------------
-export type ActivityKind =
-  | "registration"
-  | "team"
-  | "submission"
-  | "certificate"
-  | "audit";
+export type ActivityKind = "registration" | "team" | "submission" | "certificate" | "audit";
 
 export interface ActivityItem {
   kind: ActivityKind;
@@ -71,9 +66,12 @@ export interface ActivityItem {
 }
 
 export async function fetchActivity(limit = 50): Promise<ActivityItem[]> {
-  const { data, error } = await supabase.rpc("get_admin_activity" as never, {
-    _limit: limit,
-  } as never);
+  const { data, error } = await supabase.rpc(
+    "get_admin_activity" as never,
+    {
+      _limit: limit,
+    } as never,
+  );
   if (error) throw error;
   return (data as unknown as ActivityItem[]) ?? [];
 }
@@ -95,11 +93,20 @@ export interface AuditLog {
 export interface AuditFilters {
   search?: string;
   actorEmail?: string;
+  action?: string;
   resourceType?: string;
   from?: string;
   to?: string;
   page?: number;
   pageSize?: number;
+  sortOrder?: "asc" | "desc";
+}
+
+export interface AuditStats {
+  totalEvents: number;
+  events24h: number;
+  uniqueActors: number;
+  securityEvents: number;
 }
 
 export async function listAuditLogs(
@@ -108,15 +115,17 @@ export async function listAuditLogs(
   const {
     search,
     actorEmail,
+    action,
     resourceType,
     from,
     to,
     page = 1,
     pageSize = 50,
+    sortOrder = "desc",
   } = filters;
-  let q = supabase
-    .from("audit_logs" as never)
-    .select("*", { count: "exact" });
+
+  let q = supabase.from("audit_logs" as never).select("*", { count: "exact" });
+
   if (search && search.trim()) {
     const term = search.trim().replace(/[%,]/g, "");
     q = q.or(
@@ -126,18 +135,52 @@ export async function listAuditLogs(
   if (actorEmail && actorEmail.trim()) {
     q = q.ilike("actor_email", `%${actorEmail.trim()}%`);
   }
-  if (resourceType && resourceType.trim()) {
+  if (action && action.trim() && action !== "all") {
+    q = q.eq("action", action.trim());
+  }
+  if (resourceType && resourceType.trim() && resourceType !== "all") {
     q = q.eq("resource_type", resourceType.trim());
   }
   if (from) q = q.gte("created_at", from);
   if (to) q = q.lte("created_at", to);
-  q = q.order("created_at", { ascending: false });
+
+  q = q.order("created_at", { ascending: sortOrder === "asc" });
+
   const start = (page - 1) * pageSize;
   const { data, error, count } = await q.range(start, start + pageSize - 1);
   if (error) throw error;
+
   return {
     rows: (data as unknown as AuditLog[]) ?? [],
     total: count ?? 0,
+  };
+}
+
+export async function fetchAuditStats(): Promise<AuditStats> {
+  const now = new Date();
+  const dayAgoIso = new Date(now.getTime() - 86400000).toISOString();
+
+  const [totalRes, dayAgoRes, securityRes, actorsRes] = await Promise.all([
+    supabase.from("audit_logs" as never).select("id", { count: "exact", head: true }),
+    supabase
+      .from("audit_logs" as never)
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", dayAgoIso),
+    supabase
+      .from("audit_logs" as never)
+      .select("id", { count: "exact", head: true })
+      .or("action.ilike.%role%,action.ilike.%suspend%,action.ilike.%delete%"),
+    supabase.from("audit_logs" as never).select("actor_email"),
+  ]);
+
+  const actors = (actorsRes.data as Array<{ actor_email?: string | null }> | null) ?? [];
+  const uniqueEmails = new Set(actors.map((a) => a.actor_email).filter(Boolean));
+
+  return {
+    totalEvents: totalRes.count ?? 0,
+    events24h: dayAgoRes.count ?? 0,
+    securityEvents: securityRes.count ?? 0,
+    uniqueActors: uniqueEmails.size || (actors.length > 0 ? 1 : 0),
   };
 }
 
@@ -163,18 +206,38 @@ export async function listAdminNotifications(
   filter: "unread" | "read" | "archived" | "all" = "all",
   category?: string,
 ): Promise<AdminNotification[]> {
-  let q = supabase
-    .from("admin_notifications" as never)
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const { data } = await listAdminNotificationsPaged(filter, category, undefined, 1, 200);
+  return data;
+}
+
+export async function listAdminNotificationsPaged(
+  filter: "unread" | "read" | "archived" | "all" = "all",
+  category?: string,
+  search?: string,
+  page = 1,
+  pageSize = 10,
+): Promise<{ data: AdminNotification[]; totalCount: number }> {
+  let q = supabase.from("admin_notifications" as never).select("*", { count: "exact" });
+
   if (filter === "unread") q = q.eq("is_read", false).eq("is_archived", false);
   else if (filter === "read") q = q.eq("is_read", true).eq("is_archived", false);
   else if (filter === "archived") q = q.eq("is_archived", true);
   if (category && category !== "all") q = q.eq("category", category);
-  const { data, error } = await q;
+  if (search && search.trim()) {
+    const s = search.trim();
+    q = q.or(`title.ilike.%${s}%,body.ilike.%${s}%,category.ilike.%${s}%`);
+  }
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await q.order("created_at", { ascending: false }).range(from, to);
+
   if (error) throw error;
-  return (data as unknown as AdminNotification[]) ?? [];
+  return {
+    data: (data as unknown as AdminNotification[]) ?? [],
+    totalCount: count ?? 0,
+  };
 }
 
 export async function markAdminNotificationRead(id: string, read = true) {
@@ -247,9 +310,7 @@ export async function fetchHealthReport(): Promise<HealthReport> {
   const buckets: { name: string; ok: boolean; error?: string }[] = [];
   for (const name of ["cms-media", "certificates"]) {
     const { error } = await supabase.storage.from(name).list("", { limit: 1 });
-    buckets.push(
-      error ? { name, ok: false, error: error.message } : { name, ok: true },
-    );
+    buckets.push(error ? { name, ok: false, error: error.message } : { name, ok: true });
   }
   const storage = { ok: buckets.every((b) => b.ok), buckets };
 

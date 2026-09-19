@@ -1,4 +1,3 @@
-
 # Compass Crew — Awwwards-tier Redesign
 
 Scope: purely visual + motion. No changes to routes, DB, RLS, auth, RBAC, APIs, CMS fields, or business logic. Every page keeps its data and behavior; only the surface, typography, motion, and composition change.

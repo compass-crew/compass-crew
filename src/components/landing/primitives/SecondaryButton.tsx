@@ -38,7 +38,11 @@ export function SecondaryButton({
 
   const content = (
     <>
-      {icon && <span className="shrink-0 text-[#8C8882] transition-colors group-hover:text-[#F5F2EA]">{icon}</span>}
+      {icon && (
+        <span className="shrink-0 text-[#8C8882] transition-colors group-hover:text-[#F5F2EA]">
+          {icon}
+        </span>
+      )}
       <span>{children}</span>
     </>
   );

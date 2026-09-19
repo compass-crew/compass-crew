@@ -37,7 +37,10 @@ export async function computeLeaderboard(hackathonId: string): Promise<Leaderboa
   const { data: scores, error: sErr } = await supabase
     .from("scores")
     .select("*")
-    .in("submission_id", submissions.map((s) => s.id))
+    .in(
+      "submission_id",
+      submissions.map((s) => s.id),
+    )
     .eq("is_final", true);
   if (sErr) throw sErr;
 
@@ -45,7 +48,10 @@ export async function computeLeaderboard(hackathonId: string): Promise<Leaderboa
 }
 
 export function rankSubmissions(
-  submissions: (Submission & { team?: { name: string | null } | null; track?: { id: string; name: string } | null })[],
+  submissions: (Submission & {
+    team?: { name: string | null } | null;
+    track?: { id: string; name: string } | null;
+  })[],
   criteria: Criterion[],
   scores: Score[],
 ): LeaderboardEntry[] {

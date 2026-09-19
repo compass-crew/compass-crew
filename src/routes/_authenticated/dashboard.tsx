@@ -22,7 +22,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { useQuery } from "@tanstack/react-query";
+import { unreadCount } from "@/lib/notifications";
+
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Dashboard — Compass Crew" },
@@ -81,35 +85,105 @@ const PARTICIPANT: Widget[] = [
 ];
 
 const ORGANIZER: Widget[] = [
-  { icon: Trophy, title: "Your hackathons", body: "Create, publish and manage the hackathons you run.", cta: { label: "Open organizer console", to: "/organizer/hackathons" } },
-  { icon: Sparkles, title: "New hackathon", body: "Ship a hackathon in minutes. Add tracks, prizes and judges as you go.", cta: { label: "Create hackathon", to: "/organizer/hackathons/new" } },
-  { icon: Award, title: "Certificates & results", body: "Publish leaderboards and issue certificates from the organizer console.", cta: { label: "Open organizer console", to: "/organizer/hackathons" } },
-  { icon: Users, title: "Community", body: "Grow campus chapters and community programs.", cta: { label: "Open community", to: "/community" } },
+  {
+    icon: Trophy,
+    title: "Your hackathons",
+    body: "Create, publish and manage the hackathons you run.",
+    cta: { label: "Open organizer console", to: "/organizer/hackathons" },
+  },
+  {
+    icon: Sparkles,
+    title: "New hackathon",
+    body: "Ship a hackathon in minutes. Add tracks, prizes and judges as you go.",
+    cta: { label: "Create hackathon", to: "/organizer/hackathons/new" },
+  },
+  {
+    icon: Award,
+    title: "Certificates & results",
+    body: "Publish leaderboards and issue certificates from the organizer console.",
+    cta: { label: "Open organizer console", to: "/organizer/hackathons" },
+  },
+  {
+    icon: Users,
+    title: "Community",
+    body: "Grow campus chapters and community programs.",
+    cta: { label: "Open community", to: "/community" },
+  },
 ];
 
 const JUDGE: Widget[] = [
-  { icon: Gavel, title: "Judging queue", body: "Review and score submissions assigned to you.", cta: { label: "Open judge console", to: "/judge" } },
-  { icon: Trophy, title: "Hackathons", body: "Explore the full slate of Compass Crew hackathons.", cta: { label: "Browse hackathons", to: "/hackathons" } },
-  { icon: Award, title: "Certificates", body: "Your judge certificates land here after events wrap up.", cta: { label: "Open certificates", to: "/certificates" } },
+  {
+    icon: Gavel,
+    title: "Judging queue",
+    body: "Review and score submissions assigned to you.",
+    cta: { label: "Open judge console", to: "/judge" },
+  },
+  {
+    icon: Trophy,
+    title: "Hackathons",
+    body: "Explore the full slate of Compass Crew hackathons.",
+    cta: { label: "Browse hackathons", to: "/hackathons" },
+  },
+  {
+    icon: Award,
+    title: "Certificates",
+    body: "Your judge certificates land here after events wrap up.",
+    cta: { label: "Open certificates", to: "/certificates" },
+  },
 ];
 
 const MENTOR: Widget[] = [
-  { icon: Sparkles, title: "Mentorship sessions", body: "Set your availability and take office hours with student teams.", cta: { label: "Open community", to: "/community" } },
-  { icon: Rocket, title: "Startup studio", body: "Coach teams in the Compass startup studio cohort.", cta: { label: "Explore", to: "/about" } },
+  {
+    icon: Sparkles,
+    title: "Mentorship sessions",
+    body: "Set your availability and take office hours with student teams.",
+    cta: { label: "Open community", to: "/community" },
+  },
+  {
+    icon: Rocket,
+    title: "Startup studio",
+    body: "Coach teams in the Compass startup studio cohort.",
+    cta: { label: "Explore", to: "/about" },
+  },
 ];
 
 const CAMPUS_AMBASSADOR: Widget[] = [
-  { icon: Flag, title: "Your chapter", body: "Run meetups, promote hackathons and grow your campus crew.", cta: { label: "Chapter playbook", to: "/community" } },
-  { icon: Users, title: "Ambassador community", body: "Connect with ambassadors across India.", cta: { label: "Open community", to: "/community" } },
+  {
+    icon: Flag,
+    title: "Your chapter",
+    body: "Run meetups, promote hackathons and grow your campus crew.",
+    cta: { label: "Chapter playbook", to: "/community" },
+  },
+  {
+    icon: Users,
+    title: "Ambassador community",
+    body: "Connect with ambassadors across India.",
+    cta: { label: "Open community", to: "/community" },
+  },
 ];
 
 const SUPER_ADMIN: Widget[] = [
-  { icon: ShieldCheck, title: "Platform administration", body: "Manage users, roles, hackathons, events and content.", cta: { label: "Manage users", to: "/settings" } },
-  { icon: Users, title: "User & role management", body: "Grant Organizer, Judge, Mentor or Ambassador roles.", cta: { label: "Open users", to: "/settings" } },
+  {
+    icon: ShieldCheck,
+    title: "Platform administration",
+    body: "Manage users, roles, hackathons, events and content.",
+    cta: { label: "Manage users", to: "/settings" },
+  },
+  {
+    icon: Users,
+    title: "User & role management",
+    body: "Grant Organizer, Judge, Mentor or Ambassador roles.",
+    cta: { label: "Open users", to: "/settings" },
+  },
 ];
 
 const GUEST: Widget[] = [
-  { icon: GraduationCap, title: "Complete your profile", body: "Fill in your college, degree and skills to unlock full access.", cta: { label: "Edit profile", to: "/profile" } },
+  {
+    icon: GraduationCap,
+    title: "Complete your profile",
+    body: "Fill in your college, degree and skills to unlock full access.",
+    cta: { label: "Edit profile", to: "/profile" },
+  },
 ];
 
 const WIDGETS: Record<AppRole, Widget[]> = {
@@ -126,6 +200,13 @@ const WIDGETS: Record<AppRole, Widget[]> = {
 
 function DashboardPage() {
   const { user, profile, roles, primaryRole, loading } = useAuth();
+
+  const { data: userUnreadCount = 0 } = useQuery({
+    queryKey: ["notifications", "unread-count", user?.id],
+    queryFn: () => (user?.id ? unreadCount(user.id) : 0),
+    enabled: !!user?.id,
+    refetchInterval: 20000,
+  });
 
   if (loading) {
     return (
@@ -159,7 +240,8 @@ function DashboardPage() {
                 Welcome back, <span className="text-gradient-brand">{firstName}</span>.
               </h1>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Everything the crew is building for you — hackathons, events, mentorship and open-source.
+                Everything the crew is building for you — hackathons, events, mentorship and
+                open-source.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {roles.map((r) => (
@@ -189,13 +271,23 @@ function DashboardPage() {
         <SectionHeading eyebrow="Your dashboard" title="Where you go from here." />
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {widgets.map((w) => (
-            <Card key={w.title} className="group transition hover:-translate-y-0.5 hover:shadow-elegant">
+            <Card
+              key={w.title}
+              className="group transition hover:-translate-y-0.5 hover:shadow-elegant"
+            >
               <CardContent className="space-y-4 p-6">
                 <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-brand text-white shadow-elegant">
                   <w.icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="font-display text-lg font-semibold">{w.title}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-display text-lg font-semibold">{w.title}</h3>
+                    {w.title === "Notifications" && userUnreadCount > 0 && (
+                      <Badge className="bg-primary text-primary-foreground text-[10px] px-1.5 py-0 font-semibold">
+                        {userUnreadCount} new
+                      </Badge>
+                    )}
+                  </div>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.body}</p>
                 </div>
                 <Button asChild variant="ghost" className="px-0 text-primary">

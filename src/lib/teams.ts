@@ -6,11 +6,22 @@ export type TeamMember = Database["public"]["Tables"]["team_members"]["Row"];
 export type TeamInvitation = Database["public"]["Tables"]["team_invitations"]["Row"];
 
 export interface TeamWithHackathon extends Team {
-  hackathon?: { id: string; slug: string; title: string; min_team_size: number; max_team_size: number } | null;
+  hackathon?: {
+    id: string;
+    slug: string;
+    title: string;
+    min_team_size: number;
+    max_team_size: number;
+  } | null;
 }
 
 export interface TeamMemberWithProfile extends TeamMember {
-  profile: { id: string; full_name: string | null; username: string | null; avatar_url: string | null } | null;
+  profile: {
+    id: string;
+    full_name: string | null;
+    username: string | null;
+    avatar_url: string | null;
+  } | null;
 }
 
 /* ------------------------------- Queries ------------------------------- */
@@ -76,7 +87,14 @@ export async function listTeamInvitations(teamId: string): Promise<TeamInvitatio
 }
 
 export async function listMyPendingInvitations(): Promise<
-  (TeamInvitation & { team: { id: string; name: string; hackathon_id: string; hackathon: { title: string; slug: string } | null } | null })[]
+  (TeamInvitation & {
+    team: {
+      id: string;
+      name: string;
+      hackathon_id: string;
+      hackathon: { title: string; slug: string } | null;
+    } | null;
+  })[]
 > {
   const { data, error } = await supabase
     .from("team_invitations")
@@ -121,8 +139,16 @@ export async function createTeam(input: {
   return data;
 }
 
-export async function updateTeam(teamId: string, patch: Partial<Pick<Team, "name" | "tagline" | "track_id" | "is_open" | "is_locked">>) {
-  const { data, error } = await supabase.from("teams").update(patch).eq("id", teamId).select().single();
+export async function updateTeam(
+  teamId: string,
+  patch: Partial<Pick<Team, "name" | "tagline" | "track_id" | "is_open" | "is_locked">>,
+) {
+  const { data, error } = await supabase
+    .from("teams")
+    .update(patch)
+    .eq("id", teamId)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }
@@ -148,7 +174,8 @@ export async function inviteToTeam(input: { team_id: string; email: string; invi
       invited_email: email,
     });
     if (error) {
-      if (error.code === "23505") throw new Error("This person is already on the team or was already invited");
+      if (error.code === "23505")
+        throw new Error("This person is already on the team or was already invited");
       throw error;
     }
     return { kind: "direct" as const, user_id: existingId };
@@ -166,7 +193,10 @@ export async function inviteToTeam(input: { team_id: string; email: string; invi
 }
 
 export async function acceptDirectInvitation(teamMemberId: string) {
-  const { error } = await supabase.from("team_members").update({ status: "active" }).eq("id", teamMemberId);
+  const { error } = await supabase
+    .from("team_members")
+    .update({ status: "active" })
+    .eq("id", teamMemberId);
   if (error) throw error;
 }
 
@@ -244,14 +274,26 @@ export async function transferOwnership(teamId: string, newLeaderId: string, old
     .eq("user_id", newLeaderId)
     .maybeSingle();
   if (qErr) throw qErr;
-  if (!member || member.status !== "active") throw new Error("New leader must be an active team member");
+  if (!member || member.status !== "active")
+    throw new Error("New leader must be an active team member");
 
-  const { error: tErr } = await supabase.from("teams").update({ leader_id: newLeaderId }).eq("id", teamId);
+  const { error: tErr } = await supabase
+    .from("teams")
+    .update({ leader_id: newLeaderId })
+    .eq("id", teamId);
   if (tErr) throw tErr;
 
   // Downgrade old leader row, promote new leader row
-  await supabase.from("team_members").update({ role: "member" }).eq("team_id", teamId).eq("user_id", oldLeaderId);
-  await supabase.from("team_members").update({ role: "leader" }).eq("team_id", teamId).eq("user_id", newLeaderId);
+  await supabase
+    .from("team_members")
+    .update({ role: "member" })
+    .eq("team_id", teamId)
+    .eq("user_id", oldLeaderId);
+  await supabase
+    .from("team_members")
+    .update({ role: "leader" })
+    .eq("team_id", teamId)
+    .eq("user_id", newLeaderId);
 }
 
 export async function joinOpenTeam(inviteCode: string, _userId: string) {
@@ -259,9 +301,12 @@ export async function joinOpenTeam(inviteCode: string, _userId: string) {
   // invite codes on the teams table (see RLS: we removed the permissive
   // "Open teams visible" policy). The RPC verifies the code, ensures the
   // team is open + unlocked, and inserts the caller as an active member.
-  const { data, error } = await supabase.rpc("join_open_team_by_invite_code" as never, {
-    _code: inviteCode.trim().toLowerCase(),
-  } as never);
+  const { data, error } = await supabase.rpc(
+    "join_open_team_by_invite_code" as never,
+    {
+      _code: inviteCode.trim().toLowerCase(),
+    } as never,
+  );
   if (error) {
     const msg = error.message ?? "";
     if (/already on this team/i.test(msg) || error.code === "23505") {

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Gavel, ArrowRight, Trophy } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -11,13 +11,11 @@ import { EmptyState } from "@/components/empty-state";
 import { useAuth } from "@/hooks/use-auth";
 import { listJudgeHackathons } from "@/lib/judging";
 import { HACKATHON_STATUS_LABEL } from "@/lib/hackathons";
+import { requireRole } from "@/lib/auth-guard";
 
 export const Route = createFileRoute("/_authenticated/judge")({
   ssr: false,
-  beforeLoad: ({ context }) => {
-    const user = (context as { user?: { id: string } }).user;
-    if (!user) throw redirect({ to: "/auth" });
-  },
+  beforeLoad: requireRole(["judge", "super_admin"]),
   component: JudgePage,
 });
 
@@ -47,7 +45,9 @@ function JudgePage() {
           />
         ) : q.isLoading ? (
           <div className="grid gap-4 md:grid-cols-2">
-            {[0, 1].map((i) => <Skeleton key={i} className="h-40 w-full rounded-2xl" />)}
+            {[0, 1].map((i) => (
+              <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+            ))}
           </div>
         ) : !q.data?.length ? (
           <EmptyState
@@ -58,7 +58,10 @@ function JudgePage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {q.data.map((h) => (
-              <Card key={h.id} className="group transition hover:-translate-y-0.5 hover:shadow-elegant">
+              <Card
+                key={h.id}
+                className="group transition hover:-translate-y-0.5 hover:shadow-elegant"
+              >
                 <CardContent className="space-y-4 p-6">
                   <div className="flex items-center gap-3">
                     <Badge variant="secondary">{HACKATHON_STATUS_LABEL[h.status]}</Badge>

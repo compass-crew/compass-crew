@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { enforceRateLimit, resolveClientIp } from "./rate-limit.server";
 
 /**
  * Server-owned submission pipeline for anonymous public forms.
@@ -8,9 +8,10 @@ import { z } from "zod";
  * Flow:
  *   1. Validate input with Zod (strict length/format caps).
  *   2. Verify Cloudflare Turnstile token (skipped only if secret unset in dev).
- *   3. Enforce a simple per-IP rate limit (10 submissions / hour / form).
+ *   3. Enforce distributed per-IP rate limit (10 submissions / hour / form).
  *   4. Insert via supabaseAdmin (RLS bypassed on purpose — anonymous inserts
  *      are no longer allowed at the RLS layer; this is the only ingress).
+ *   5. Return sanitized, safe error responses without leaking DB internals.
  */
 
 const contactSchema = z.object({
@@ -44,75 +45,117 @@ const newsletterSchema = z.object({
 type FormKind = "contact" | "partner" | "newsletter";
 
 async function guard(kind: FormKind, token: string | null | undefined) {
-  const { verifyTurnstile, hashIp } = await import("./turnstile.server");
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const ip = resolveClientIp();
 
-  const ip =
-    getRequestHeader("cf-connecting-ip") ??
-    getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ??
-    getRequestIP({ xForwardedFor: true }) ??
-    "0.0.0.0";
-  const ipHash = await hashIp(ip);
+  // Rate limit: 10 submissions per IP per form per hour
+  await enforceRateLimit({
+    key: `public-form:${kind}`,
+    limit: 10,
+    windowSeconds: 3600,
+    identifier: ip,
+    errorMessage: "Too many submissions from this network. Please try again later.",
+  });
 
-  // Rate limit: 10 submissions per IP per form per hour.
-  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count, error: cErr } = await supabaseAdmin
-    .from("public_form_events")
-    .select("id", { count: "exact", head: true })
-    .eq("ip_hash", ipHash)
-    .eq("form_kind", kind)
-    .gte("created_at", since);
-  if (cErr) throw new Error("Rate check failed.");
-  if ((count ?? 0) >= 10) {
-    throw new Error("Too many submissions from this network. Try again later.");
-  }
-
+  const { verifyTurnstile } = await import("./turnstile.server");
   const verify = await verifyTurnstile(token ?? null, ip);
   if (!verify.ok) {
     throw new Error("Security check failed. Please refresh and try again.");
   }
 
-  await supabaseAdmin
-    .from("public_form_events")
-    .insert({ ip_hash: ipHash, form_kind: kind });
-
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return { supabaseAdmin };
 }
 
 export const submitContactMessageFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => contactSchema.parse(data))
   .handler(async ({ data }) => {
-    const { turnstileToken, ...row } = data;
-    const { supabaseAdmin } = await guard("contact", turnstileToken);
-    const { error } = await supabaseAdmin.from("contact_messages").insert(row);
-    if (error) throw new Error(error.message);
-    return { ok: true as const };
+    try {
+      const { turnstileToken, ...row } = data;
+      const { supabaseAdmin } = await guard("contact", turnstileToken);
+      const { error } = await supabaseAdmin.from("contact_messages").insert(row);
+      if (error) {
+        console.error("[ContactMessage Error]", error);
+        throw new Error("Unable to save message. Please try again later.");
+      }
+
+      // Dispatch admin alert
+      try {
+        const { createAdminNotification } = await import("./notifications.server");
+        await createAdminNotification({
+          title: `New contact message: ${row.subject.slice(0, 50)}`,
+          body: `From ${row.name} (${row.email})`,
+          category: "contact",
+          priority: "normal",
+          link: "/admin/content",
+        });
+      } catch (notifErr) {
+        console.warn("[Contact Alert Error]", notifErr);
+      }
+
+      return { ok: true as const };
+    } catch (err) {
+      if (err instanceof Error) throw err;
+      throw new Error("Unable to submit message. Please try again.");
+    }
   });
 
 export const submitPartnerApplicationFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => partnerSchema.parse(data))
   .handler(async ({ data }) => {
-    const { turnstileToken, website, ...rest } = data;
-    const { supabaseAdmin } = await guard("partner", turnstileToken);
-    const { error } = await supabaseAdmin
-      .from("partner_applications")
-      .insert({ ...rest, website: website ?? null });
-    if (error) throw new Error(error.message);
-    return { ok: true as const };
+    try {
+      const { turnstileToken, website, ...rest } = data;
+      const { supabaseAdmin } = await guard("partner", turnstileToken);
+      const { data: inserted, error } = await supabaseAdmin
+        .from("partner_applications")
+        .insert({ ...rest, website: website ?? null })
+        .select("id")
+        .single();
+      if (error) {
+        console.error("[PartnerApplication Error]", error);
+        throw new Error("Unable to submit application. Please try again later.");
+      }
+
+      // Dispatch admin alert
+      try {
+        const { createAdminNotification } = await import("./notifications.server");
+        await createAdminNotification({
+          title: `New Partner Application: ${rest.org_name}`,
+          body: `Applicant ${rest.contact_name} requested partnership (${rest.partnership_type || "General"}).`,
+          category: "partner",
+          priority: "high",
+          link: "/admin/partners",
+          resourceType: "partner_applications",
+          resourceId: inserted?.id,
+        });
+      } catch (notifErr) {
+        console.warn("[Partner Alert Error]", notifErr);
+      }
+
+      return { ok: true as const };
+    } catch (err) {
+      if (err instanceof Error) throw err;
+      throw new Error("Unable to submit application. Please try again.");
+    }
   });
 
 export const subscribeNewsletterFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => newsletterSchema.parse(data))
   .handler(async ({ data }) => {
-    const { turnstileToken, email, source } = data;
-    const { supabaseAdmin } = await guard("newsletter", turnstileToken);
-    const { error } = await supabaseAdmin
-      .from("newsletter_subscribers")
-      .insert({ email: email.toLowerCase(), source });
-    if (error && !error.message.toLowerCase().includes("duplicate")) {
-      throw new Error(error.message);
+    try {
+      const { turnstileToken, email, source } = data;
+      const { supabaseAdmin } = await guard("newsletter", turnstileToken);
+      const { error } = await supabaseAdmin
+        .from("newsletter_subscribers")
+        .insert({ email: email.toLowerCase(), source });
+      if (error && !error.message.toLowerCase().includes("duplicate")) {
+        console.error("[Newsletter Error]", error);
+        throw new Error("Unable to subscribe. Please try again later.");
+      }
+      return { ok: true as const };
+    } catch (err) {
+      if (err instanceof Error) throw err;
+      throw new Error("Unable to subscribe. Please try again.");
     }
-    return { ok: true as const };
   });
 
 // Public site key exposure — public value, safe to return.

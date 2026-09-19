@@ -29,11 +29,7 @@ export const Route = createFileRoute("/auth/forgot-password")({
 /* ============================ Schema ============================ */
 
 const forgotSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email({ message: "Please enter a valid email address." })
-    .max(255),
+  email: z.string().trim().email({ message: "Please enter a valid email address." }).max(255),
 });
 
 type ForgotValues = z.infer<typeof forgotSchema>;
@@ -151,7 +147,8 @@ function ForgotPasswordPage() {
             </span>
             <h1 className="auth-status-card__title">Check your inbox</h1>
             <p className="auth-status-card__desc">
-              If an account exists for that email, a password reset link has been sent. Click the link in that email to choose a new password.
+              If an account exists for that email, a password reset link has been sent. Click the
+              link in that email to choose a new password.
             </p>
 
             <div className="auth-status-card__email-chip">

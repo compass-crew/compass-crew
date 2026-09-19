@@ -6,7 +6,10 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { getResource } from "@/lib/admin-config";
 import { getRow } from "@/lib/admin-api";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/$resource/$itemId")({
+  beforeLoad: requireRole(["super_admin"]),
   component: EditResourcePage,
 });
 
@@ -36,7 +39,9 @@ function EditResourcePage() {
     return (
       <div className="rounded-xl border border-border bg-card p-8 text-center">
         <p className="font-display text-lg font-semibold">Not found</p>
-        <p className="mt-1 text-sm text-muted-foreground">This record doesn't exist or was deleted.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          This record doesn't exist or was deleted.
+        </p>
         <Link
           to="/admin/$resource"
           params={{ resource: resource.key }}

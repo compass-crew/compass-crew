@@ -15,7 +15,7 @@ interface ProjectModuleConfig {
   id: string;
   name: string;
   initialOffset: THREE.Vector3; // Position coming from Connect team cluster
-  lockedOffset: THREE.Vector3;  // Interlocking position in solved lattice
+  lockedOffset: THREE.Vector3; // Interlocking position in solved lattice
   color: number;
   size: number;
 }
@@ -166,7 +166,7 @@ export class CompeteArenaCore {
       const rOuter = 2.45;
       tickPoints.push(
         new THREE.Vector3(Math.cos(angle) * rInner, Math.sin(angle) * rInner * 0.3, 0),
-        new THREE.Vector3(Math.cos(angle) * rOuter, Math.sin(angle) * rOuter * 0.3, 0)
+        new THREE.Vector3(Math.cos(angle) * rOuter, Math.sin(angle) * rOuter * 0.3, 0),
       );
     }
     const ticksGeo = new THREE.BufferGeometry().setFromPoints(tickPoints);
@@ -351,7 +351,7 @@ export class CompeteArenaCore {
     this.currentProgress = THREE.MathUtils.lerp(
       this.currentProgress,
       this.targetProgress,
-      this.lerpFactor
+      this.lerpFactor,
     );
 
     // Hide if out of scene
@@ -414,15 +414,17 @@ export class CompeteArenaCore {
       if (!mesh || !halo) return;
 
       // Migrate from initial Connect offset to locked build lattice with zero allocations
-      this._scratchCurPos.lerpVectors(
-        cfg.initialOffset,
-        cfg.lockedOffset,
-        modularReorg
-      ).multiplyScalar(scaleMult);
+      this._scratchCurPos
+        .lerpVectors(cfg.initialOffset, cfg.lockedOffset, modularReorg)
+        .multiplyScalar(scaleMult);
 
       // Micro float
       const floatY = Math.sin(elapsedTime * 1.4 + i * 1.1) * 0.015;
-      mesh.position.set(this._scratchCurPos.x, this._scratchCurPos.y + floatY, this._scratchCurPos.z);
+      mesh.position.set(
+        this._scratchCurPos.x,
+        this._scratchCurPos.y + floatY,
+        this._scratchCurPos.z,
+      );
       halo.position.copy(mesh.position);
 
       mesh.rotation.x = elapsedTime * 0.6 + i;
@@ -450,7 +452,7 @@ export class CompeteArenaCore {
     // =========================================================================
     // STAGE 5: SUBMISSION ENERGY PULSE & STABILIZATION (0.75 -> 0.95)
     // =========================================================================
-    const submissionState = THREE.MathUtils.smoothstep(this.currentProgress, 0.74, 0.90);
+    const submissionState = THREE.MathUtils.smoothstep(this.currentProgress, 0.74, 0.9);
     const pulseSpeed = 1.8;
     const pulseT = (elapsedTime * pulseSpeed) % 1.0;
     const pulseExpansion = 1 + pulseT * 3.5;

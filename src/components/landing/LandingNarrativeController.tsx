@@ -1,7 +1,4 @@
-import {
-  LandingScrollProvider,
-  useLandingScroll,
-} from "./LandingScrollContext";
+import { LandingScrollProvider, useLandingScroll } from "./LandingScrollContext";
 import { ImmersiveWorld } from "./ImmersiveWorld";
 import { PublicHeader } from "./LandingHeader";
 import {
@@ -46,13 +43,11 @@ import { ImmersiveFooter } from "./footer";
  * └─────────────────────────────────────────────────────────────────┘
  */
 function LandingNarrativeView() {
-  const { narrativeProgress, isCtaHovered, activeSection } = useLandingScroll();
+  const { isCtaHovered, activeSection } = useLandingScroll();
 
   // CTA hover forwarded only when CTA or Direction is active/nearby
   const activeCtaHovered =
-    activeSection === "cta" || activeSection === "direction"
-      ? isCtaHovered
-      : false;
+    activeSection === "cta" || activeSection === "direction" ? isCtaHovered : false;
 
   return (
     <>
@@ -60,11 +55,7 @@ function LandingNarrativeView() {
       <PublicHeader />
 
       {/* ── 2. Layer B: Single Persistent 3D World (WebGL Canvas) ─── */}
-      <ImmersiveWorld
-        narrativeProgress={narrativeProgress}
-        active={true}
-        ctaHovered={activeCtaHovered}
-      />
+      <ImmersiveWorld active={true} ctaHovered={activeCtaHovered} />
 
       {/* ── 3. Layer A: Independent HTML Semantic Sections ───────── */}
       <main className="relative w-full z-10">

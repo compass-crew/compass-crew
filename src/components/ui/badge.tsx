@@ -16,14 +16,11 @@ const badgeVariants = cva(
           "border-transparent bg-secondary/12 text-secondary ring-1 ring-inset ring-secondary/25 hover:bg-secondary/18",
         destructive:
           "border-transparent bg-destructive/10 text-destructive ring-1 ring-inset ring-destructive/25 hover:bg-destructive/15",
-        success:
-          "border-transparent bg-success/12 text-success ring-1 ring-inset ring-success/25",
+        success: "border-transparent bg-success/12 text-success ring-1 ring-inset ring-success/25",
         warning:
           "border-transparent bg-warning/15 text-warning-foreground ring-1 ring-inset ring-warning/30",
-        outline:
-          "text-foreground border-border/70 bg-background/60",
-        muted:
-          "border-transparent bg-muted text-muted-foreground",
+        outline: "text-foreground border-border/70 bg-background/60",
+        muted: "border-transparent bg-muted text-muted-foreground",
       },
     },
     defaultVariants: {

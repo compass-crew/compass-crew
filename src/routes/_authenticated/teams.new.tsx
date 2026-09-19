@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,7 +24,9 @@ import { listHackathonTracks } from "@/lib/hackathons";
 
 export const Route = createFileRoute("/_authenticated/teams/new")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ hackathon: (s.hackathon as string) ?? undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    hackathon: (s.hackathon as string) ?? undefined,
+  }),
   component: NewTeamPage,
 });
 
@@ -79,22 +87,37 @@ function NewTeamPage() {
 
   return (
     <>
-      <PageHeader eyebrow="New team" title="Create a team" description="Team up with friends or open your team for others to join." />
+      <PageHeader
+        eyebrow="New team"
+        title="Create a team"
+        description="Team up with friends or open your team for others to join."
+      />
       <Section>
         <Card>
           <CardContent className="p-8">
-            <form className="grid gap-5" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
+            <form
+              className="grid gap-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                create.mutate();
+              }}
+            >
               <div className="grid gap-2">
                 <Label>Hackathon</Label>
                 <Select value={hackathonId} onValueChange={setHackathonId}>
-                  <SelectTrigger><SelectValue placeholder="Choose a hackathon you've registered for" /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a hackathon you've registered for" />
+                  </SelectTrigger>
                   <SelectContent>
                     {(regsQ.data ?? []).length === 0 ? (
-                      <div className="px-3 py-2 text-sm text-muted-foreground">Register for a hackathon first.</div>
+                      <div className="px-3 py-2 text-sm text-muted-foreground">
+                        Register for a hackathon first.
+                      </div>
                     ) : (
                       (regsQ.data ?? []).map((r) => (
                         <SelectItem key={r.hackathon_id} value={r.hackathon_id}>
-                          {(r as { hackathons: { title: string } | null }).hackathons?.title ?? "Hackathon"}
+                          {(r as { hackathons: { title: string } | null }).hackathons?.title ??
+                            "Hackathon"}
                         </SelectItem>
                       ))
                     )}
@@ -104,21 +127,40 @@ function NewTeamPage() {
 
               <div className="grid gap-2">
                 <Label htmlFor="name">Team name</Label>
-                <Input id="name" required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Nebula Devs" />
+                <Input
+                  id="name"
+                  required
+                  maxLength={80}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Nebula Devs"
+                />
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="tag">One-line tagline (optional)</Label>
-                <Input id="tag" maxLength={140} value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="Building AI tutors for rural India" />
+                <Input
+                  id="tag"
+                  maxLength={140}
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value)}
+                  placeholder="Building AI tutors for rural India"
+                />
               </div>
 
               {(tracksQ.data ?? []).length > 0 && (
                 <div className="grid gap-2">
                   <Label>Track (optional)</Label>
                   <Select value={trackId} onValueChange={setTrackId}>
-                    <SelectTrigger><SelectValue placeholder="Pick later if unsure" /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pick later if unsure" />
+                    </SelectTrigger>
                     <SelectContent>
-                      {(tracksQ.data ?? []).map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                      {(tracksQ.data ?? []).map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -127,14 +169,22 @@ function NewTeamPage() {
               <div className="flex items-start justify-between rounded-lg border border-border bg-muted/30 p-4">
                 <div>
                   <Label>Open joining</Label>
-                  <p className="text-xs text-muted-foreground">Anyone with the invite code can join without an invitation.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Anyone with the invite code can join without an invitation.
+                  </p>
                 </div>
                 <Switch checked={isOpen} onCheckedChange={setIsOpen} />
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => router.history.back()}>Cancel</Button>
-                <Button type="submit" disabled={create.isPending} className="bg-gradient-brand text-white hover:opacity-90">
+                <Button type="button" variant="outline" onClick={() => router.history.back()}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={create.isPending}
+                  className="bg-gradient-brand text-white hover:opacity-90"
+                >
                   {create.isPending ? "Creating…" : "Create team"}
                 </Button>
               </div>

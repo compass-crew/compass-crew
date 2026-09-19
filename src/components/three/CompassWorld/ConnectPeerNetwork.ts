@@ -76,7 +76,7 @@ export class ConnectPeerNetwork {
       teamOffset: new THREE.Vector3(0.65, -0.25, 0.15),
       isTeamMember: true,
       color: 0x7c5cff, // Ultraviolet
-      size: 0.10,
+      size: 0.1,
     },
     {
       id: "founder",
@@ -137,7 +137,10 @@ export class ConnectPeerNetwork {
   private raycaster = new THREE.Raycaster();
 
   // Scratch objects & cached positions to eliminate per-frame allocations
-  private cachedNodePositions: THREE.Vector3[] = Array.from({ length: 6 }, () => new THREE.Vector3());
+  private cachedNodePositions: THREE.Vector3[] = Array.from(
+    { length: 6 },
+    () => new THREE.Vector3(),
+  );
   private _scratchVec1 = new THREE.Vector3();
   private _scratchVec2 = new THREE.Vector3();
   private _scratchVec3 = new THREE.Vector3();
@@ -313,7 +316,7 @@ export class ConnectPeerNetwork {
     this.currentProgress = THREE.MathUtils.lerp(
       this.currentProgress,
       this.targetProgress,
-      this.lerpFactor
+      this.lerpFactor,
     );
 
     // Hide everything when far outside scene
@@ -356,7 +359,7 @@ export class ConnectPeerNetwork {
       this._scratchVec4.lerpVectors(
         this._scratchVec3,
         this._scratchVec2,
-        cfg.isTeamMember ? teamConvergence : teamConvergence * 0.5
+        cfg.isTeamMember ? teamConvergence : teamConvergence * 0.5,
       );
 
       // Subtle organic floating drift
@@ -364,7 +367,11 @@ export class ConnectPeerNetwork {
       const floatZ = Math.cos(elapsedTime * 0.85 + i * 1.1) * 0.025;
       const floatX = Math.sin(elapsedTime * 0.65 + i * 0.9) * 0.02;
 
-      mesh.position.set(this._scratchVec4.x + floatX, this._scratchVec4.y + floatY, this._scratchVec4.z + floatZ);
+      mesh.position.set(
+        this._scratchVec4.x + floatX,
+        this._scratchVec4.y + floatY,
+        this._scratchVec4.z + floatZ,
+      );
       halo.position.copy(mesh.position);
       outerRing.position.copy(mesh.position);
       this.cachedNodePositions[i].copy(mesh.position);
@@ -384,11 +391,15 @@ export class ConnectPeerNetwork {
       mesh.scale.setScalar(nodeScale);
 
       const haloScale =
-        cfg.size * 1.55 * (isMobile ? 0.8 : 1.0) * emergence * (1 + Math.sin(elapsedTime * 1.3 + i) * 0.15) * hoverScale;
+        cfg.size *
+        1.55 *
+        (isMobile ? 0.8 : 1.0) *
+        emergence *
+        (1 + Math.sin(elapsedTime * 1.3 + i) * 0.15) *
+        hoverScale;
       halo.scale.setScalar(haloScale);
 
-      const outerRingScale =
-        cfg.size * 1.9 * (isMobile ? 0.8 : 1.0) * emergence * hoverScale;
+      const outerRingScale = cfg.size * 1.9 * (isMobile ? 0.8 : 1.0) * emergence * hoverScale;
       outerRing.scale.setScalar(outerRingScale);
 
       // Opacity
@@ -427,7 +438,8 @@ export class ConnectPeerNetwork {
         this.hoveredNodeIndex === conn.nodeA || this.hoveredNodeIndex === conn.nodeB;
       const teamHighlight = conn.isTeamLink ? 1 + teamConvergence * 0.6 : 1.0;
 
-      lineMat.opacity = connAlpha * (conn.isTeamLink ? 0.65 : 0.35) * (isHoveredLink ? 1.3 : 1.0) * teamHighlight;
+      lineMat.opacity =
+        connAlpha * (conn.isTeamLink ? 0.65 : 0.35) * (isHoveredLink ? 1.3 : 1.0) * teamHighlight;
 
       // Traveling light pulse animation
       const speed = 0.55 + (idx % 3) * 0.18;
@@ -439,7 +451,7 @@ export class ConnectPeerNetwork {
     // =========================================================================
     // STAGE 4: PROJECT NUCLEUS (TEAM CORE) EMERGENCE (0.70 -> 0.90)
     // =========================================================================
-    const coreAlpha = THREE.MathUtils.smoothstep(this.currentProgress, 0.70, 0.88);
+    const coreAlpha = THREE.MathUtils.smoothstep(this.currentProgress, 0.7, 0.88);
     this.projectCoreMaterial.opacity = coreAlpha * 0.85;
     this.projectCoreRingMaterial.opacity = coreAlpha * 0.65;
 

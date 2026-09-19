@@ -16,6 +16,8 @@ import { Eye, EyeOff, Loader2, ShieldCheck, ArrowLeft, AlertCircle } from "lucid
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { redirectIfAuthenticated } from "@/lib/auth-guard";
+import { Turnstile } from "@/components/turnstile";
 import "@/components/auth/auth-shell.css";
 
 /* ============================ Lazy 3D Compass ============================ */
@@ -31,15 +33,15 @@ const Compass3D = lazy(() =>
 type AuthSearch = { redirect?: string; mode?: "login" | "signup" };
 
 export const Route = createFileRoute("/auth")({
+  beforeLoad: async ({ search, location }) => {
+    // Only redirect if visiting exact /auth or /auth/ so subroutes like /auth/verify-email, /auth/callback can run
+    if (location.pathname === "/auth" || location.pathname === "/auth/") {
+      await redirectIfAuthenticated({ search });
+    }
+  },
   validateSearch: (search: Record<string, unknown>): AuthSearch => ({
-    redirect:
-      typeof search.redirect === "string" ? search.redirect : undefined,
-    mode:
-      search.mode === "signup"
-        ? "signup"
-        : search.mode === "login"
-          ? "login"
-          : undefined,
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    mode: search.mode === "signup" ? "signup" : search.mode === "login" ? "login" : undefined,
   }),
   head: () => ({
     meta: [
@@ -130,9 +132,7 @@ function safeRedirect(path?: string): string {
 function hasWebGL(): boolean {
   try {
     const canvas = document.createElement("canvas");
-    return !!(
-      canvas.getContext("webgl2") || canvas.getContext("webgl")
-    );
+    return !!(canvas.getContext("webgl2") || canvas.getContext("webgl"));
   } catch {
     return false;
   }
@@ -199,7 +199,7 @@ function AuthPage() {
           {tab === "login" ? (
             <LoginForm redirect={search.redirect} onSwitchToSignup={() => setTab("signup")} />
           ) : (
-            <SignupForm onDone={() => setTab("login")} />
+            <SignupForm redirect={search.redirect} onDone={() => setTab("login")} />
           )}
         </div>
 
@@ -262,9 +262,7 @@ function AuthVisual() {
           CONNECT. <span className="auth-visual__statement-accent">SHIP.</span>
         </div>
 
-        <p className="auth-visual__subtitle">
-          Your next build starts here.
-        </p>
+        <p className="auth-visual__subtitle">Your next build starts here.</p>
 
         {/* 3D Compass or static fallback */}
         <div className="auth-visual__compass">
@@ -302,6 +300,8 @@ function LoginForm({
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -309,14 +309,23 @@ function LoginForm({
   });
 
   async function onSubmit(values: LoginValues) {
+    if (!captchaToken) {
+      setFormError("Please complete the security check.");
+      return;
+    }
     setSubmitting(true);
     setFormError(null);
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
+      options: {
+        captchaToken,
+      },
     });
     setSubmitting(false);
     if (error) {
+      setCaptchaToken(null);
+      setCaptchaKey((k) => k + 1);
       if (/email.*not.*confirm/i.test(error.message)) {
         setFormError("Please verify your email before signing in.");
         toast.error("Please verify your email before signing in.", {
@@ -336,7 +345,6 @@ function LoginForm({
     // Full navigation so destinations carrying a query string (e.g. the OAuth
     // consent screen) are preserved exactly.
     window.location.assign(safeRedirect(redirect));
-
   }
 
   return (
@@ -411,12 +419,13 @@ function LoginForm({
           )}
         </div>
 
+        {/* Security verification */}
+        <div style={{ marginBottom: "1rem" }}>
+          <Turnstile key={captchaKey} onToken={setCaptchaToken} theme="dark" />
+        </div>
+
         {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="auth-btn-primary"
-        >
+        <button type="submit" disabled={submitting} className="auth-btn-primary">
           {submitting && <Loader2 size={18} className="animate-spin" />}
           {submitting ? "Signing in\u2026" : "Sign in"}
         </button>
@@ -449,10 +458,12 @@ function LoginForm({
 
 /* ============================ Signup Form ============================ */
 
-function SignupForm({ onDone }: { onDone: () => void }) {
+function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => void }) {
   const [submitting, setSubmitting] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
   const navigate = useNavigate();
 
   const form = useForm<SignupValues>({
@@ -471,14 +482,26 @@ function SignupForm({ onDone }: { onDone: () => void }) {
   const strength = passwordStrength(password);
 
   async function onSubmit(values: SignupValues) {
+    if (!captchaToken) {
+      setFormError("Please complete the security check.");
+      return;
+    }
     setSubmitting(true);
     setFormError(null);
+    if (redirect) {
+      try {
+        sessionStorage.setItem("cc:post-auth-redirect", safeRedirect(redirect));
+      } catch {
+        /* ignore */
+      }
+    }
     const emailRedirectTo = `${window.location.origin}/auth/callback`;
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
         emailRedirectTo,
+        captchaToken,
         data: {
           full_name: values.full_name,
           newsletter_opt_in: values.newsletter,
@@ -488,22 +511,22 @@ function SignupForm({ onDone }: { onDone: () => void }) {
 
     if (error) {
       setSubmitting(false);
+      setCaptchaToken(null);
+      setCaptchaKey((k) => k + 1);
       setFormError(error.message);
       return;
     }
 
     // Supabase returns 200 with an empty `identities` array when the email is
     // already registered (user-enumeration protection).
-    const identities = (data.user as { identities?: unknown[] } | null)
-      ?.identities;
+    const identities = (data.user as { identities?: unknown[] } | null)?.identities;
     const isRepeatedSignup =
-      !!data.user &&
-      !data.session &&
-      Array.isArray(identities) &&
-      identities.length === 0;
+      !!data.user && !data.session && Array.isArray(identities) && identities.length === 0;
 
     if (isRepeatedSignup) {
       setSubmitting(false);
+      setCaptchaToken(null);
+      setCaptchaKey((k) => k + 1);
       setFormError(
         "This email is already registered. Try signing in, or reset your password if you\u2019ve forgotten it.",
       );
@@ -532,7 +555,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
       toast.success("Account created. Check your email to verify.");
       navigate({
         to: "/auth/verify-email",
-        search: { email: values.email },
+        search: { email: values.email, redirect: redirect ? safeRedirect(redirect) : undefined },
       });
       onDone();
     }
@@ -541,9 +564,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
   return (
     <div>
       <h1 className="auth-welcome">Join the crew.</h1>
-      <p className="auth-welcome-sub">
-        Create your account in seconds.
-      </p>
+      <p className="auth-welcome-sub">Create your account in seconds.</p>
 
       {/* Form Error */}
       {formError && (
@@ -554,7 +575,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
       )}
 
       {/* Google first */}
-      <GoogleButton />
+      <GoogleButton redirect={redirect} />
 
       <div className="auth-divider">
         <span className="auth-divider__text">or sign up with email</span>
@@ -577,11 +598,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
         </AuthField>
 
         {/* Email */}
-        <AuthField
-          id="signup-email"
-          label="Email"
-          error={form.formState.errors.email?.message}
-        >
+        <AuthField id="signup-email" label="Email" error={form.formState.errors.email?.message}>
           <input
             id="signup-email"
             type="email"
@@ -593,11 +610,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
         </AuthField>
 
         {/* Password */}
-        <AuthField
-          id="signup-pw"
-          label="Password"
-          error={form.formState.errors.password?.message}
-        >
+        <AuthField id="signup-pw" label="Password" error={form.formState.errors.password?.message}>
           <div className="auth-input-wrap">
             <input
               id="signup-pw"
@@ -628,9 +641,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
                   }}
                 />
               </div>
-              <span className="auth-pw-strength__label">
-                {strength.label}
-              </span>
+              <span className="auth-pw-strength__label">{strength.label}</span>
             </div>
           )}
         </AuthField>
@@ -663,8 +674,7 @@ function SignupForm({ onDone }: { onDone: () => void }) {
               }
             />
             <span>
-              I agree to the{" "}
-              <Link to="/terms">Terms</Link> and{" "}
+              I agree to the <Link to="/terms">Terms</Link> and{" "}
               <Link to="/privacy">Privacy Policy</Link>.
             </span>
           </label>
@@ -683,12 +693,14 @@ function SignupForm({ onDone }: { onDone: () => void }) {
           </label>
         </div>
 
+        {/* Security verification */}
+        <div style={{ marginBottom: "1rem" }}>
+          <Turnstile key={captchaKey} onToken={setCaptchaToken} theme="dark" />
+        </div>
+
         {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="auth-btn-primary"
-        >
+        <button type="submit" disabled={submitting} className="auth-btn-primary">
+          {" "}
           {submitting && <Loader2 size={18} className="animate-spin" />}
           {submitting ? "Creating account\u2026" : "Create account"}
         </button>
@@ -747,57 +759,26 @@ function GoogleButton({ redirect }: { redirect?: string }) {
     setBusy(true);
     if (redirect) {
       try {
-        sessionStorage.setItem(
-          "cc:post-auth-redirect",
-          safeRedirect(redirect),
-        );
+        sessionStorage.setItem("cc:post-auth-redirect", safeRedirect(redirect));
       } catch {
         /* ignore */
       }
     }
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
-    setBusy(null);
-    if (result.error) {
-      toast.error("Google sign-in failed. Please try again.");
-      return;
+    if (error) {
+      setBusy(false);
+      toast.error(error.message || "Google sign-in failed. Please try again.");
     }
-    if (result.redirected) return;
-    // Popup path: session set — send them to dashboard (or saved destination).
-    let target = "/dashboard";
-    try {
-      const saved = sessionStorage.getItem("cc:post-auth-redirect");
-      if (saved) {
-        target = saved;
-        sessionStorage.removeItem("cc:post-auth-redirect");
-      }
-    } catch {
-      /* ignore */
-    }
-    window.location.href = target;
-  }
-
-  function signInGithub() {
-    setBusy("github");
-    toast.info(
-      "GitHub sign-in isn't enabled yet on Compass Crew. It'll go live once we finish the integration setup.",
-    );
-    setTimeout(() => setBusy(null), 400);
   }
 
   return (
-    <button
-      type="button"
-      onClick={signInGoogle}
-      disabled={busy}
-      className="auth-btn-oauth"
-    >
-      {busy ? (
-        <Loader2 size={18} className="animate-spin" />
-      ) : (
-        <GoogleIcon />
-      )}
+    <button type="button" onClick={signInGoogle} disabled={busy} className="auth-btn-oauth">
+      {busy ? <Loader2 size={18} className="animate-spin" /> : <GoogleIcon />}
       Continue with Google
     </button>
   );

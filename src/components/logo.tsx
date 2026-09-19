@@ -1,6 +1,12 @@
 import { Link } from "@tanstack/react-router";
 
-export function Logo({ className = "", compact = false }: { className?: string; compact?: boolean }) {
+export function Logo({
+  className = "",
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   return (
     <Link to="/" className={`flex items-center gap-2.5 ${className}`} aria-label="Compass Crew">
       <span className="relative flex shrink-0 items-center justify-center">

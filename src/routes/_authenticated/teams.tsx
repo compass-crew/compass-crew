@@ -32,19 +32,29 @@ function MyTeamsPage() {
         description="Teams you lead or belong to across all Compass Crew hackathons."
       >
         <Button asChild variant="outline">
-          <Link to="/invitations"><Users className="mr-2 h-4 w-4" /> Invitations</Link>
+          <Link to="/invitations">
+            <Users className="mr-2 h-4 w-4" /> Invitations
+          </Link>
         </Button>
       </PageHeader>
 
       <Section>
         {isLoading ? (
-          <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}</div>
+          <div className="space-y-3">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            ))}
+          </div>
         ) : (data ?? []).length === 0 ? (
           <EmptyState
             icon={Trophy}
             title="You're not on any team yet"
             description="Register for a hackathon and create or join a team to build your project."
-            action={<Button asChild><Link to="/hackathons">Browse hackathons</Link></Button>}
+            action={
+              <Button asChild>
+                <Link to="/hackathons">Browse hackathons</Link>
+              </Button>
+            }
           />
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
@@ -53,16 +63,22 @@ function MyTeamsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between gap-3">
                     <Badge variant="outline">{t.hackathon?.title ?? "Hackathon"}</Badge>
-                    {t.leader_id === user?.id && <Badge className="bg-primary/15 text-primary">Leader</Badge>}
+                    {t.leader_id === user?.id && (
+                      <Badge className="bg-primary/15 text-primary">Leader</Badge>
+                    )}
                   </div>
                   <h3 className="mt-3 font-display text-xl font-semibold">{t.name}</h3>
                   {t.tagline && <p className="mt-1 text-sm text-muted-foreground">{t.tagline}</p>}
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Button asChild size="sm">
-                      <Link to="/teams/$teamId" params={{ teamId: t.id }}>Manage team</Link>
+                      <Link to="/teams/$teamId" params={{ teamId: t.id }}>
+                        Manage team
+                      </Link>
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <Link to="/teams/$teamId/submission" params={{ teamId: t.id }}>Submission</Link>
+                      <Link to="/teams/$teamId/submission" params={{ teamId: t.id }}>
+                        Submission
+                      </Link>
                     </Button>
                   </div>
                 </CardContent>

@@ -16,15 +16,15 @@ export function createCompassMaterials() {
   // Inner Gimbal Rings: Soft Anodized Titanium
   const gimbal = new THREE.MeshStandardMaterial({
     color: 0x1e2645,
-    roughness: 0.40,
-    metalness: 0.70,
+    roughness: 0.4,
+    metalness: 0.7,
   });
 
   // Coordinate Dial Face: Deepest Void Surface
   const dialFace = new THREE.MeshStandardMaterial({
     color: 0x070b18,
     roughness: 0.85,
-    metalness: 0.20,
+    metalness: 0.2,
   });
 
   // North Needle: Electric Cyan with Controlled Emissive Aura
@@ -32,8 +32,8 @@ export function createCompassMaterials() {
     color: 0x00c8ff,
     emissive: 0x00c8ff,
     emissiveIntensity: 1.25,
-    roughness: 0.20,
-    metalness: 0.50,
+    roughness: 0.2,
+    metalness: 0.5,
   });
 
   // South Needle: Deep Brand Violet
@@ -42,7 +42,7 @@ export function createCompassMaterials() {
     emissive: 0x4f46ff,
     emissiveIntensity: 0.85,
     roughness: 0.35,
-    metalness: 0.40,
+    metalness: 0.4,
   });
 
   // Central Bearing Pivot: Subtle Gold Warm Accent (sparingly used)

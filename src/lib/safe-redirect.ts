@@ -62,3 +62,35 @@ export function sameOriginRedirectUrl(path = "/auth/callback"): string {
   if (typeof window === "undefined") return path;
   return `${window.location.origin}${safeRedirect(path, "/auth/callback")}`;
 }
+
+/**
+ * Safe external URL validator for rendering user-supplied outbound links.
+ * Strictly permits only http:// and https:// schemes.
+ * Rejects javascript:, data:, vbscript:, file:, control characters, and malformed URLs.
+ */
+export function safeExternalUrl(url?: string | null): string | undefined {
+  if (!url || typeof url !== "string") return undefined;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.length > 2048) return undefined;
+
+  // Reject control characters
+  // eslint-disable-next-line no-control-regex
+  if (/[\x00-\x1f\x7f]/.test(trimmed)) return undefined;
+
+  // Reject dangerous schemes immediately
+  if (/^(javascript|data|vbscript|file|blob):/i.test(trimmed)) return undefined;
+
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.toString();
+    }
+    return undefined;
+  } catch {
+    // If not prefixed with scheme but is a valid domain/path (e.g. "linkedin.com/in/user"), prepend https://
+    if (!trimmed.includes(":") && /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/.test(trimmed)) {
+      return `https://${trimmed}`;
+    }
+    return undefined;
+  }
+}

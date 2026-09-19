@@ -38,7 +38,8 @@ export function formatDateRange(start: string | null, end: string | null): strin
   if (!start && !end) return "Dates TBA";
   const s = start ? new Date(start) : null;
   const e = end ? new Date(end) : null;
-  const fmt = (d: Date) => d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
   if (s && e) return `${fmt(s)} — ${fmt(e)}`;
   if (s) return `From ${fmt(s)}`;
   return `Until ${fmt(e!)}`;
@@ -51,6 +52,7 @@ export async function listPublicHackathons() {
     .from("hackathons")
     .select("*")
     .neq("status", "draft")
+    .neq("status", "archived")
     .order("starts_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -58,7 +60,11 @@ export async function listPublicHackathons() {
 }
 
 export async function getHackathonBySlug(slug: string) {
-  const { data, error } = await supabase.from("hackathons").select("*").eq("slug", slug).maybeSingle();
+  const { data, error } = await supabase
+    .from("hackathons")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -103,10 +109,19 @@ export async function listMyRegistrations(userId: string) {
   return data ?? [];
 }
 
-export async function registerForHackathon(hackathonId: string, userId: string, motivation?: string) {
+export async function registerForHackathon(
+  hackathonId: string,
+  userId: string,
+  motivation?: string,
+) {
   const { data, error } = await supabase
     .from("registrations")
-    .insert({ hackathon_id: hackathonId, user_id: userId, status: "approved", motivation: motivation ?? null })
+    .insert({
+      hackathon_id: hackathonId,
+      user_id: userId,
+      status: "approved",
+      motivation: motivation ?? null,
+    })
     .select()
     .single();
   if (error) throw error;

@@ -14,24 +14,24 @@
   /* ==========================================================================
      1. PRIMARY BACKGROUNDS (Obsidian & Graphite Foundation)
      ========================================================================== */
-  --cc-bg-0: #09090B; /* Obsidian deepest void background */
+  --cc-bg-0: #09090b; /* Obsidian deepest void background */
   --cc-bg-1: #111116; /* Graphite elevated background */
-  --cc-bg-2: #18181F; /* Prominent graphite plane */
+  --cc-bg-2: #18181f; /* Prominent graphite plane */
 
   /* ==========================================================================
      2. SURFACE COLORS (Layered Translucency)
      ========================================================================== */
   --cc-surface-1: rgba(255, 255, 255, 0.035); /* Hairline card backdrop */
-  --cc-surface-2: rgba(255, 255, 255, 0.06);  /* Hover / elevated card */
-  --cc-surface-3: rgba(255, 255, 255, 0.09);  /* Interactive / focused */
+  --cc-surface-2: rgba(255, 255, 255, 0.06); /* Hover / elevated card */
+  --cc-surface-3: rgba(255, 255, 255, 0.09); /* Interactive / focused */
   --cc-surface-interactive: rgba(255, 255, 255, 0.11);
 
   /* ==========================================================================
      3. BRAND ACCENTS (Ultraviolet & Soft Violet Energy)
      ========================================================================== */
-  --cc-ultraviolet-500: #7C5CFF; /* Primary core brand energy */
-  --cc-ultraviolet-400: #9061F9; /* Hover / luminous state */
-  --cc-ultraviolet-300: #B36BFF; /* Highlights / fine lines */
+  --cc-ultraviolet-500: #7c5cff; /* Primary core brand energy */
+  --cc-ultraviolet-400: #9061f9; /* Hover / luminous state */
+  --cc-ultraviolet-300: #b36bff; /* Highlights / fine lines */
   --cc-ultraviolet-900: rgba(124, 92, 255, 0.14); /* Soft ambient wash */
 
   /* Aliases for backward compatibility */
@@ -43,12 +43,12 @@
   /* ==========================================================================
      4. SECONDARY ACCENTS (Coral & Mint)
      ========================================================================== */
-  --cc-coral-500: #FF7A6B; /* Human / community / connect */
-  --cc-coral-400: #FDA4AF; /* Soft coral highlight */
+  --cc-coral-500: #ff7a6b; /* Human / community / connect */
+  --cc-coral-400: #fda4af; /* Soft coral highlight */
   --cc-coral-900: rgba(255, 122, 107, 0.12); /* Atmospheric wash */
 
-  --cc-mint-500: #7DD3A8; /* Verified / shipped / proof */
-  --cc-mint-400: #A7F3D0; /* Soft mint highlight */
+  --cc-mint-500: #7dd3a8; /* Verified / shipped / proof */
+  --cc-mint-400: #a7f3d0; /* Soft mint highlight */
   --cc-mint-900: rgba(125, 211, 168, 0.12);
 
   --cc-cyan-500: var(--cc-ultraviolet-300);
@@ -58,34 +58,29 @@
   /* ==========================================================================
      5. WARM ACCENT (Use Sparingly: Achievements / Gold Needle)
      ========================================================================== */
-  --cc-gold: #FDE68A;
+  --cc-gold: #fde68a;
   --cc-gold-muted: rgba(253, 230, 138, 0.15);
 
   /* ==========================================================================
      6. TEXT HIERARCHY (Warm Ivory & Warm Muted Stone)
      ========================================================================== */
-  --cc-text-primary: #F5F2EA;   /* Warm Ivory: Headlines & essential text */
-  --cc-text-secondary: #D6D3CC; /* Warm secondary subheadings */
-  --cc-text-body: #B8B4B0;      /* Warm Muted Stone: Paragraphs & readable copy */
-  --cc-text-muted: #827E7A;     /* Muted metadata, eyebrows, labels */
+  --cc-text-primary: #f5f2ea; /* Warm Ivory: Headlines & essential text */
+  --cc-text-secondary: #d6d3cc; /* Warm secondary subheadings */
+  --cc-text-body: #b8b4b0; /* Warm Muted Stone: Paragraphs & readable copy */
+  --cc-text-muted: #827e7a; /* Muted metadata, eyebrows, labels */
 
   /* ==========================================================================
      7. BORDERS (Hairline Precision)
      ========================================================================== */
   --cc-border-subtle: rgba(255, 255, 255, 0.07); /* Standard rest state */
   --cc-border-strong: rgba(255, 255, 255, 0.14); /* Hover state */
-  --cc-border-active: rgba(124, 92, 255, 0.45);  /* Active / focused */
+  --cc-border-active: rgba(124, 92, 255, 0.45); /* Active / focused */
   --cc-border-cyan: rgba(179, 107, 255, 0.35);
 
   /* ==========================================================================
      8. GRADIENTS (Ultraviolet -> Soft Violet)
      ========================================================================== */
-  --cc-gradient-brand: linear-gradient(
-    135deg,
-    #7C5CFF 0%,
-    #9061F9 50%,
-    #B36BFF 100%
-  );
+  --cc-gradient-brand: linear-gradient(135deg, #7c5cff 0%, #9061f9 50%, #b36bff 100%);
 
   --cc-gradient-atmospheric: linear-gradient(
     135deg,
@@ -108,7 +103,8 @@
   /* ==========================================================================
      9. TYPOGRAPHY (Geist & Geist Mono with Inter fallback)
      ========================================================================== */
-  --font-cc-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cc-sans:
+    "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-cc-mono: "Geist Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Line Heights */
@@ -147,11 +143,11 @@
   /* ==========================================================================
      11. BORDER RADII (Avoid Excessive Rounded SaaS Blobs)
      ========================================================================== */
-  --cc-radius-xs: 4px;   /* Micro-badges, code chips */
-  --cc-radius-sm: 8px;   /* Small controls, technical tags */
-  --cc-radius-md: 12px;  /* Buttons, utility inputs */
-  --cc-radius-lg: 16px;  /* Medium cards, popovers */
-  --cc-radius-xl: 20px;  /* Major surfaces */
+  --cc-radius-xs: 4px; /* Micro-badges, code chips */
+  --cc-radius-sm: 8px; /* Small controls, technical tags */
+  --cc-radius-md: 12px; /* Buttons, utility inputs */
+  --cc-radius-lg: 16px; /* Medium cards, popovers */
+  --cc-radius-xl: 20px; /* Major surfaces */
   --cc-radius-2xl: 24px; /* Feature panels */
   --cc-radius-3xl: 32px; /* Massive hero / stadium container only */
   --cc-radius-full: 9999px; /* Pill buttons and badges */
@@ -159,12 +155,12 @@
   /* ==========================================================================
      12. SHADOWS & ATMOSPHERIC GLOW
      ========================================================================== */
-  --cc-shadow-sm: 0 8px 30px rgba(0, 0, 0, 0.20);
-  --cc-shadow-md: 0 16px 60px rgba(0, 0, 0, 0.30);
-  --cc-shadow-lg: 0 24px 100px rgba(0, 0, 0, 0.40);
+  --cc-shadow-sm: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --cc-shadow-md: 0 16px 60px rgba(0, 0, 0, 0.3);
+  --cc-shadow-lg: 0 24px 100px rgba(0, 0, 0, 0.4);
   --cc-glow-ambient: 0 0 80px rgba(124, 92, 255, 0.12);
   --cc-glow-cyan: 0 0 60px rgba(179, 107, 255, 0.15);
-  --cc-glow-focus: 0 0 0 2px #09090B, 0 0 0 4px #7C5CFF;
+  --cc-glow-focus: 0 0 0 2px #09090b, 0 0 0 4px #7c5cff;
 
   /* ==========================================================================
      13. MOTION TOKENS (Cinematic Easing, Never Bouncy)

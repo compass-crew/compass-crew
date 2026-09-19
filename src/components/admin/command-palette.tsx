@@ -26,21 +26,32 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import { globalSearch, hitHref, KIND_LABEL, pushRecentSearch, readRecentSearches, type SearchHit } from "@/lib/admin-search";
+import {
+  globalSearch,
+  hitHref,
+  KIND_LABEL,
+  pushRecentSearch,
+  readRecentSearches,
+  type SearchHit,
+} from "@/lib/admin-search";
 
 interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
 
-const QUICK_ACTIONS: Array<{ label: string; to: string; icon: React.ComponentType<{ className?: string }> }> = [
+const QUICK_ACTIONS: Array<{
+  label: string;
+  to: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
   { label: "Admin overview", to: "/admin", icon: LayoutDashboard },
   { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
   { label: "Users", to: "/admin/users", icon: Users },
   { label: "Media library", to: "/admin/media", icon: ImageIcon },
   { label: "Security center", to: "/admin/security", icon: ShieldCheck },
   { label: "Storage", to: "/admin/storage", icon: FolderOpen },
-  { label: "Audit logs", to: "/admin/audit", icon: History },
+  { label: "Audit logs", to: "/admin/audit-logs", icon: History },
   { label: "Notifications", to: "/admin/admin-notifications", icon: Bell },
   { label: "System health", to: "/admin/system", icon: HeartPulse },
   { label: "Platform settings", to: "/admin/platform-settings", icon: Settings },
@@ -101,7 +112,11 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Search users, hackathons, posts, applications…" value={query} onValueChange={setQuery} />
+      <CommandInput
+        placeholder="Search users, hackathons, posts, applications…"
+        value={query}
+        onValueChange={setQuery}
+      />
       <CommandList>
         <CommandEmpty>{busy ? "Searching…" : "No results. Try a different keyword."}</CommandEmpty>
 
@@ -134,10 +149,16 @@ export function CommandPalette({ open, onOpenChange }: Props) {
         {Object.entries(grouped).map(([kind, list]) => (
           <CommandGroup key={kind} heading={KIND_LABEL[kind as keyof typeof KIND_LABEL] ?? kind}>
             {list.map((h) => (
-              <CommandItem key={`${h.kind}-${h.id}`} value={`${h.kind}-${h.id}-${h.title ?? ""}`} onSelect={() => go(hitHref(h))}>
+              <CommandItem
+                key={`${h.kind}-${h.id}`}
+                value={`${h.kind}-${h.id}-${h.title ?? ""}`}
+                onSelect={() => go(hitHref(h))}
+              >
                 <Search className="mr-2 h-4 w-4 shrink-0" />
                 <span className="truncate">{h.title ?? "(untitled)"}</span>
-                {h.subtitle && <span className="ml-2 truncate text-xs text-muted-foreground">{h.subtitle}</span>}
+                {h.subtitle && (
+                  <span className="ml-2 truncate text-xs text-muted-foreground">{h.subtitle}</span>
+                )}
               </CommandItem>
             ))}
           </CommandGroup>

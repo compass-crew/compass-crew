@@ -94,7 +94,8 @@ export function HeroTransitionTrack() {
 
     // Scroll smoothly to Discover (~25% of total track)
     const totalScrollable = track.offsetHeight - window.innerHeight;
-    const targetScrollY = window.scrollY + track.getBoundingClientRect().top + totalScrollable * 0.25;
+    const targetScrollY =
+      window.scrollY + track.getBoundingClientRect().top + totalScrollable * 0.25;
 
     window.scrollTo({
       top: targetScrollY,
@@ -115,7 +116,7 @@ export function HeroTransitionTrack() {
   // 2. Discover / Manifesto Easing (0.10 -> 0.28)
   const rawDiscoverT = clamp01((progress - 0.11) / 0.14);
   const discoverExit = clamp01((progress - 0.24) / 0.04);
-  const discoverOpacity = (1 - discoverExit) * clamp01((progress - 0.10) / 0.03);
+  const discoverOpacity = (1 - discoverExit) * clamp01((progress - 0.1) / 0.03);
 
   // 3. Build Scene Easing (0.24 -> 0.42)
   const rawBuildT = clamp01((progress - 0.25) / 0.14);
@@ -134,16 +135,16 @@ export function HeroTransitionTrack() {
 
   // 6. Compete Scene Easing (0.66 -> 0.84)
   const rawCompeteT = clamp01((progress - 0.67) / 0.14);
-  const competeExit = clamp01((progress - 0.80) / 0.04);
+  const competeExit = clamp01((progress - 0.8) / 0.04);
   const competeOpacity = (1 - competeExit) * clamp01((progress - 0.66) / 0.03);
 
   // 7. Ship Scene Easing (0.80 -> 0.93)
-  const rawShipT = clamp01((progress - 0.81) / 0.10);
+  const rawShipT = clamp01((progress - 0.81) / 0.1);
   const shipExit = clamp01((progress - 0.89) / 0.03);
-  const shipOpacity = (1 - shipExit) * clamp01((progress - 0.80) / 0.03);
+  const shipOpacity = (1 - shipExit) * clamp01((progress - 0.8) / 0.03);
 
   // 8. Grow Scene Easing (0.89 -> 1.00)
-  const rawGrowT = clamp01((progress - 0.90) / 0.10);
+  const rawGrowT = clamp01((progress - 0.9) / 0.1);
   const growOpacity = clamp01((progress - 0.89) / 0.03);
 
   return (
@@ -175,23 +176,23 @@ export function HeroTransitionTrack() {
                   : progress > 0.67
                     ? 0.74
                     : progress > 0.53
-                      ? 0.60
+                      ? 0.6
                       : progress > 0.39
                         ? 0.46
                         : progress > 0.25
                           ? 0.32
-                          : progress > 0.10
+                          : progress > 0.1
                             ? 0.18
                             : 0
               : progress
           }
           interactive={
             progress < 0.14 ||
-            (progress > 0.24 && progress < 0.40) ||
+            (progress > 0.24 && progress < 0.4) ||
             (progress > 0.38 && progress < 0.54) ||
             (progress > 0.52 && progress < 0.68) ||
             (progress > 0.66 && progress < 0.82) ||
-            (progress > 0.80 && progress < 0.91) ||
+            (progress > 0.8 && progress < 0.91) ||
             progress > 0.89
           }
           className="w-full h-full"
@@ -211,7 +212,7 @@ export function HeroTransitionTrack() {
           )}
 
           {/* Layer 2: Discover / Manifesto Foreground */}
-          {progress >= 0.10 && progress <= 0.28 && (
+          {progress >= 0.1 && progress <= 0.28 && (
             <div
               style={{
                 opacity: discoverOpacity,
@@ -256,7 +257,7 @@ export function HeroTransitionTrack() {
           )}
 
           {/* Layer 5: Connect Foreground */}
-          {progress >= 0.52 && progress <= 0.70 && (
+          {progress >= 0.52 && progress <= 0.7 && (
             <div
               style={{
                 opacity: connectOpacity,
@@ -265,7 +266,7 @@ export function HeroTransitionTrack() {
               className="absolute inset-0 transition-opacity duration-150"
             >
               <ConnectContent
-                progress={prefersReducedMotion ? (progress > 0.60 ? 1 : 0) : rawConnectT}
+                progress={prefersReducedMotion ? (progress > 0.6 ? 1 : 0) : rawConnectT}
               />
             </div>
           )}
@@ -286,17 +287,15 @@ export function HeroTransitionTrack() {
           )}
 
           {/* Layer 7: Ship Foreground */}
-          {progress >= 0.80 && progress <= 0.93 && (
+          {progress >= 0.8 && progress <= 0.93 && (
             <div
               style={{
                 opacity: shipOpacity,
-                pointerEvents: progress < 0.81 || progress > 0.90 ? "none" : "auto",
+                pointerEvents: progress < 0.81 || progress > 0.9 ? "none" : "auto",
               }}
               className="absolute inset-0 transition-opacity duration-150"
             >
-              <ShipContent
-                progress={prefersReducedMotion ? (progress > 0.86 ? 1 : 0) : rawShipT}
-              />
+              <ShipContent progress={prefersReducedMotion ? (progress > 0.86 ? 1 : 0) : rawShipT} />
             </div>
           )}
 
@@ -305,13 +304,11 @@ export function HeroTransitionTrack() {
             <div
               style={{
                 opacity: growOpacity,
-                pointerEvents: progress < 0.90 ? "none" : "auto",
+                pointerEvents: progress < 0.9 ? "none" : "auto",
               }}
               className="absolute inset-0 transition-opacity duration-150"
             >
-              <GrowContent
-                progress={prefersReducedMotion ? (progress > 0.94 ? 1 : 0) : rawGrowT}
-              />
+              <GrowContent progress={prefersReducedMotion ? (progress > 0.94 ? 1 : 0) : rawGrowT} />
             </div>
           )}
         </CompassWorld>

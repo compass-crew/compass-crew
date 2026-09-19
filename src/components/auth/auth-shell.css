@@ -91,8 +91,12 @@
 }
 
 @keyframes auth-orbit-spin {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to   { transform: translate(-50%, -50%) rotate(360deg); }
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 /* Ambient floating particles (CSS only) */
@@ -113,34 +117,67 @@
 }
 
 .auth-visual__particle:nth-child(1) {
-  left: 15%; top: 20%; animation-duration: 18s; animation-delay: 0s;
-  width: 3px; height: 3px; background: rgba(179, 107, 255, 0.3);
+  left: 15%;
+  top: 20%;
+  animation-duration: 18s;
+  animation-delay: 0s;
+  width: 3px;
+  height: 3px;
+  background: rgba(179, 107, 255, 0.3);
 }
 .auth-visual__particle:nth-child(2) {
-  left: 70%; top: 30%; animation-duration: 22s; animation-delay: -4s;
+  left: 70%;
+  top: 30%;
+  animation-duration: 22s;
+  animation-delay: -4s;
 }
 .auth-visual__particle:nth-child(3) {
-  left: 40%; top: 65%; animation-duration: 16s; animation-delay: -8s;
-  width: 3px; height: 3px;
+  left: 40%;
+  top: 65%;
+  animation-duration: 16s;
+  animation-delay: -8s;
+  width: 3px;
+  height: 3px;
 }
 .auth-visual__particle:nth-child(4) {
-  left: 80%; top: 75%; animation-duration: 25s; animation-delay: -2s;
+  left: 80%;
+  top: 75%;
+  animation-duration: 25s;
+  animation-delay: -2s;
   background: rgba(255, 255, 255, 0.15);
 }
 .auth-visual__particle:nth-child(5) {
-  left: 25%; top: 80%; animation-duration: 20s; animation-delay: -6s;
+  left: 25%;
+  top: 80%;
+  animation-duration: 20s;
+  animation-delay: -6s;
   background: rgba(124, 92, 255, 0.25);
 }
 .auth-visual__particle:nth-child(6) {
-  left: 55%; top: 15%; animation-duration: 28s; animation-delay: -10s;
-  width: 1.5px; height: 1.5px; background: rgba(255, 255, 255, 0.12);
+  left: 55%;
+  top: 15%;
+  animation-duration: 28s;
+  animation-delay: -10s;
+  width: 1.5px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 @keyframes auth-particle-float {
-  0%   { transform: translateY(0) translateX(0); opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { transform: translateY(-80px) translateX(30px); opacity: 0; }
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-80px) translateX(30px);
+    opacity: 0;
+  }
 }
 
 /* Visual brand content */
@@ -238,7 +275,6 @@
   box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
 }
 
-
 /* --- Auth Panel (right) --- */
 .auth-panel {
   display: flex;
@@ -295,7 +331,6 @@
   background-clip: text;
 }
 
-
 /* --- Auth Header --- */
 .auth-header {
   display: flex;
@@ -323,7 +358,6 @@
   width: 14px;
   height: 14px;
 }
-
 
 /* --- Form Area --- */
 .auth-form-area {
@@ -359,7 +393,6 @@
   margin-bottom: 1.75rem;
 }
 
-
 /* --- Form Inputs --- */
 .auth-field {
   margin-bottom: 1.125rem;
@@ -390,7 +423,9 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .auth-input::placeholder {
@@ -430,7 +465,9 @@
   color: #6b6966;
   cursor: pointer;
   border-radius: 6px;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .auth-pw-toggle:hover {
@@ -506,7 +543,6 @@
   color: #ff7a6b;
 }
 
-
 /* --- Buttons --- */
 .auth-btn-primary {
   width: 100%;
@@ -523,7 +559,10 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.15s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
   box-shadow: 0 1px 3px rgba(124, 92, 255, 0.25);
   margin-top: 0.375rem;
 }
@@ -563,7 +602,10 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .auth-btn-oauth:hover:not(:disabled) {
@@ -587,7 +629,6 @@
   height: 18px;
   flex-shrink: 0;
 }
-
 
 /* --- Divider --- */
 .auth-divider {
@@ -613,7 +654,6 @@
   letter-spacing: 0.1em;
   color: #6b6966;
 }
-
 
 /* --- Signup / Switch link --- */
 .auth-switch {
@@ -641,7 +681,6 @@
   color: #b36bff;
 }
 
-
 /* --- Trust badge --- */
 .auth-trust {
   display: flex;
@@ -660,7 +699,6 @@
   height: 14px;
   color: #7c5cff;
 }
-
 
 /* --- Auth Footer --- */
 .auth-footer {
@@ -689,7 +727,6 @@
 .auth-footer__sep {
   color: #3a3835;
 }
-
 
 /* --- Entry Animation --- */
 .auth-entry {
@@ -722,7 +759,6 @@
   }
 }
 
-
 /* --- Tabs --- */
 .auth-tabs {
   display: flex;
@@ -748,7 +784,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .auth-tab:hover {
@@ -765,7 +803,6 @@
   outline: 2px solid #7c5cff;
   outline-offset: -1px;
 }
-
 
 /* --- Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
@@ -790,7 +827,6 @@
   }
 }
 
-
 /* --- Password strength --- */
 .auth-pw-strength {
   margin-top: 0.375rem;
@@ -810,7 +846,9 @@
 .auth-pw-strength__fill {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.3s ease, background 0.3s ease;
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
 }
 
 .auth-pw-strength__label {
@@ -819,7 +857,6 @@
   color: #6b6966;
   white-space: nowrap;
 }
-
 
 /* --- Scrollable signup form --- */
 .auth-signup-scroll {
@@ -843,7 +880,6 @@
   border-radius: 2px;
 }
 
-
 /* --- Checkbox override for dark theme --- */
 .auth-checkbox-wrap {
   display: flex;
@@ -863,7 +899,6 @@
 .auth-checkbox-wrap a:hover {
   color: #b36bff;
 }
-
 
 /* --- Grid helpers for signup form --- */
 .auth-grid-2 {
@@ -950,7 +985,9 @@
   cursor: pointer;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
 }
 
 .onboarding-header__skip:hover {
@@ -985,7 +1022,9 @@
   height: 8px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
-  transition: background 0.35s, box-shadow 0.35s;
+  transition:
+    background 0.35s,
+    box-shadow 0.35s;
 }
 
 .onboarding-progress__dot--active {
@@ -1018,8 +1057,14 @@
 }
 
 @keyframes ob-fadein {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .onboarding-step__title {
@@ -1049,7 +1094,9 @@
   font-family: inherit;
   appearance: none;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 12 12'%3E%3Cpath stroke='%236b6966' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.875rem center;
@@ -1145,7 +1192,9 @@
   font-size: 0.875rem;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .onboarding-btn-back:hover {
@@ -1189,8 +1238,13 @@
 }
 
 @keyframes ob-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.2); }
-  50%      { box-shadow: 0 0 0 16px rgba(124, 92, 255, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(124, 92, 255, 0);
+  }
 }
 
 .onboarding-welcome__heading {
@@ -1341,7 +1395,11 @@
   border-radius: 10px;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.15s ease;
 }
 
 .auth-btn-secondary:hover:not(:disabled) {
@@ -1372,7 +1430,9 @@
   border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
 .auth-btn-ghost:hover:not(:disabled) {

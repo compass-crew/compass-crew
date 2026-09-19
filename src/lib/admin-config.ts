@@ -46,7 +46,11 @@ export interface ResourceConfig {
   hasSlug?: boolean;
   defaultOrder?: { column: string; ascending: boolean };
   searchColumns: string[];
-  filterField?: { name: string; label: string; options: readonly { value: string; label: string }[] };
+  filterField?: {
+    name: string;
+    label: string;
+    options: readonly { value: string; label: string }[];
+  };
   listColumns: ListColumn[];
   fields: FieldConfig[];
 }
@@ -157,7 +161,13 @@ export const RESOURCES: ResourceConfig[] = [
       { key: "updated_at", label: "Updated", type: "date" },
     ],
     fields: [
-      { name: "key", label: "Key (unique)", type: "text", required: true, helpText: "Machine-readable id, e.g. hero, stats, faq" },
+      {
+        name: "key",
+        label: "Key (unique)",
+        type: "text",
+        required: true,
+        helpText: "Machine-readable id, e.g. hero, stats, faq",
+      },
       { name: "title", label: "Title", type: "text" },
       { name: "subtitle", label: "Subtitle", type: "text" },
       { name: "body", label: "Body", type: "markdown", rows: 8 },
@@ -225,7 +235,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "title", label: "Title", type: "text", required: true },
       { name: "slug", label: "Slug", type: "slug", from: "title", required: true },
       { name: "description", label: "Description", type: "textarea", rows: 3 },
-      { name: "category", label: "Category", type: "select", options: RESOURCE_CATEGORIES, required: true },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        options: RESOURCE_CATEGORIES,
+        required: true,
+      },
       { name: "tags", label: "Tags", type: "tags" },
       { name: "cover_url", label: "Cover image", type: "image", folder: "resources" },
       { name: "url", label: "External URL", type: "url" },
@@ -267,9 +283,24 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "ends_at", label: "Ends at", type: "datetime" },
       { name: "registration_url", label: "Registration URL", type: "url" },
       { name: "body_md", label: "Details (Markdown)", type: "markdown", rows: 10 },
-      { name: "speakers", label: "Speakers (JSON array)", type: "json", helpText: '[{"name":"...","title":"...","avatar_url":"..."}]' },
-      { name: "schedule", label: "Schedule (JSON array)", type: "json", helpText: '[{"time":"10:00","title":"..."}]' },
-      { name: "resources", label: "Resources (JSON array)", type: "json", helpText: '[{"label":"Slides","url":"..."}]' },
+      {
+        name: "speakers",
+        label: "Speakers (JSON array)",
+        type: "json",
+        helpText: '[{"name":"...","title":"...","avatar_url":"..."}]',
+      },
+      {
+        name: "schedule",
+        label: "Schedule (JSON array)",
+        type: "json",
+        helpText: '[{"time":"10:00","title":"..."}]',
+      },
+      {
+        name: "resources",
+        label: "Resources (JSON array)",
+        type: "json",
+        helpText: '[{"label":"Slides","url":"..."}]',
+      },
       { name: "featured", label: "Featured", type: "boolean" },
       { name: "status", label: "Status", type: "select", options: CONTENT_STATUS, required: true },
       { name: "published_at", label: "Publish date", type: "datetime" },
@@ -297,7 +328,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "body", label: "Body", type: "markdown", rows: 6, required: true },
       { name: "link_url", label: "Link URL", type: "url" },
       { name: "link_label", label: "Link label", type: "text" },
-      { name: "audience", label: "Audience", type: "select", options: ANNOUNCEMENT_AUDIENCE, required: true },
+      {
+        name: "audience",
+        label: "Audience",
+        type: "select",
+        options: ANNOUNCEMENT_AUDIENCE,
+        required: true,
+      },
       { name: "pinned", label: "Pinned", type: "boolean" },
       { name: "status", label: "Status", type: "select", options: CONTENT_STATUS, required: true },
       { name: "published_at", label: "Publish date", type: "datetime" },
@@ -382,7 +419,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "website", label: "Website", type: "url" },
       { name: "partnership_type", label: "Type", type: "text" },
       { name: "message", label: "Message", type: "textarea", rows: 6, required: true },
-      { name: "status", label: "Status", type: "select", options: APPLICATION_STATUS, required: true },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: APPLICATION_STATUS,
+        required: true,
+      },
       { name: "admin_notes", label: "Admin notes", type: "textarea", rows: 3 },
     ],
   },
@@ -442,7 +485,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "linkedin_url", label: "LinkedIn", type: "url" },
       { name: "why_you", label: "Why you", type: "textarea", rows: 4, required: true },
       { name: "prior_experience", label: "Prior experience", type: "textarea", rows: 3 },
-      { name: "status", label: "Status", type: "select", options: APPLICATION_STATUS, required: true },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: APPLICATION_STATUS,
+        required: true,
+      },
       { name: "admin_notes", label: "Admin notes", type: "textarea", rows: 3 },
     ],
   },
@@ -474,7 +523,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "years_experience", label: "Years of experience", type: "number" },
       { name: "motivation", label: "Motivation", type: "textarea", rows: 4, required: true },
       { name: "availability", label: "Availability", type: "text" },
-      { name: "status", label: "Status", type: "select", options: APPLICATION_STATUS, required: true },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: APPLICATION_STATUS,
+        required: true,
+      },
       { name: "admin_notes", label: "Admin notes", type: "textarea", rows: 3 },
     ],
   },
@@ -499,7 +554,13 @@ export const RESOURCES: ResourceConfig[] = [
     fields: [
       { name: "title", label: "Title", type: "text", required: true },
       { name: "slug", label: "Slug", type: "slug", from: "title", required: true },
-      { name: "category", label: "Category", type: "select", options: CAREER_CATEGORY, required: true },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        options: CAREER_CATEGORY,
+        required: true,
+      },
       { name: "description", label: "Description", type: "textarea", rows: 3 },
       { name: "body_md", label: "Details (Markdown)", type: "markdown", rows: 10 },
       { name: "location", label: "Location", type: "text" },

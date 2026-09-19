@@ -58,7 +58,10 @@ const passwordSchema = z
       .regex(/[0-9]/, "Add a number"),
     confirm: z.string(),
   })
-  .refine((d) => d.password === d.confirm, { message: "Passwords do not match", path: ["confirm"] });
+  .refine((d) => d.password === d.confirm, {
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
 type PasswordValues = z.infer<typeof passwordSchema>;
 
 function SettingsPage() {
@@ -162,17 +165,34 @@ function PasswordCard() {
             <p className="text-xs text-muted-foreground">Change your password.</p>
           </div>
         </div>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
+        >
           <div className="space-y-1.5">
-            <Label htmlFor="new-pw" className="text-xs">New password</Label>
-            <Input id="new-pw" type="password" autoComplete="new-password" {...form.register("password")} />
+            <Label htmlFor="new-pw" className="text-xs">
+              New password
+            </Label>
+            <Input
+              id="new-pw"
+              type="password"
+              autoComplete="new-password"
+              {...form.register("password")}
+            />
             {form.formState.errors.password && (
               <p className="text-xs text-destructive">{form.formState.errors.password.message}</p>
             )}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="confirm-pw" className="text-xs">Confirm</Label>
-            <Input id="confirm-pw" type="password" autoComplete="new-password" {...form.register("confirm")} />
+            <Label htmlFor="confirm-pw" className="text-xs">
+              Confirm
+            </Label>
+            <Input
+              id="confirm-pw"
+              type="password"
+              autoComplete="new-password"
+              {...form.register("confirm")}
+            />
             {form.formState.errors.confirm && (
               <p className="text-xs text-destructive">{form.formState.errors.confirm.message}</p>
             )}
@@ -210,7 +230,9 @@ function ConnectedAccountsCard() {
           </span>
           <div>
             <p className="font-semibold">Connected accounts</p>
-            <p className="text-xs text-muted-foreground">Manage your third-party sign-in methods.</p>
+            <p className="text-xs text-muted-foreground">
+              Manage your third-party sign-in methods.
+            </p>
           </div>
         </div>
         <div className="space-y-2">
@@ -279,7 +301,9 @@ function NotificationsCard({ onSaved }: { onSaved: () => void }) {
         <div className="flex items-center justify-between rounded-xl border border-border bg-muted/30 p-3">
           <div>
             <p className="text-sm font-medium">Monthly newsletter</p>
-            <p className="text-xs text-muted-foreground">Hackathons, workshops and community stories.</p>
+            <p className="text-xs text-muted-foreground">
+              Hackathons, workshops and community stories.
+            </p>
           </div>
           <Switch checked={newsletter} onCheckedChange={setNewsletter} />
         </div>
@@ -315,7 +339,9 @@ function DeleteAccountCard() {
       return;
     }
     await signOut();
-    toast.success("Your profile data has been removed. Contact support to delete your login credentials.");
+    toast.success(
+      "Your profile data has been removed. Contact support to delete your login credentials.",
+    );
     navigate({ to: "/" });
   }
 
@@ -329,7 +355,8 @@ function DeleteAccountCard() {
           <div>
             <p className="font-semibold text-destructive">Delete account</p>
             <p className="text-xs text-muted-foreground">
-              This removes your Compass Crew profile data. To also delete your login credentials, contact support.
+              This removes your Compass Crew profile data. To also delete your login credentials,
+              contact support.
             </p>
           </div>
         </div>

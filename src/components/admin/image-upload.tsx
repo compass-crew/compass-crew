@@ -52,7 +52,6 @@ export function ImageUpload({ value, onChange, folder = "misc", label = "Image" 
       <div className="flex items-start gap-4">
         <div className="relative grid h-28 w-28 shrink-0 place-items-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/30">
           {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt={label} className="h-full w-full object-cover" />
           ) : (
             <ImagePlus className="h-6 w-6 text-muted-foreground" />
@@ -73,7 +72,11 @@ export function ImageUpload({ value, onChange, folder = "misc", label = "Image" 
             disabled={busy}
             onClick={() => inputRef.current?.click()}
           >
-            {busy ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <ImagePlus className="mr-1.5 h-4 w-4" />}
+            {busy ? (
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+            ) : (
+              <ImagePlus className="mr-1.5 h-4 w-4" />
+            )}
             {preview ? "Replace" : "Upload"}
           </Button>
           {preview && (

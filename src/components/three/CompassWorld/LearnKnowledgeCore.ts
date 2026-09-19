@@ -55,7 +55,7 @@ export class LearnKnowledgeCore {
       name: "EXPERIMENTATION",
       targetOffset: new THREE.Vector3(-1.9, -0.8, -0.1),
       color: 0xb36bff, // Soft Violet
-      size: 0.10,
+      size: 0.1,
     },
     {
       id: "opensource",
@@ -289,7 +289,7 @@ export class LearnKnowledgeCore {
     // =========================================================================
     // STAGE 1: KNOWLEDGE CORE EMERGENCE & ROTATION (0.08 -> 0.40)
     // =========================================================================
-    const coreAlpha = THREE.MathUtils.smoothstep(this.currentProgress, 0.10, 0.38);
+    const coreAlpha = THREE.MathUtils.smoothstep(this.currentProgress, 0.1, 0.38);
     const coreScale = THREE.MathUtils.lerp(0.2, isMobile ? 0.75 : 1.0, coreAlpha);
 
     this.seedMesh.scale.setScalar(coreScale * (1 + Math.sin(elapsedTime * 2.0) * 0.1));
@@ -314,7 +314,7 @@ export class LearnKnowledgeCore {
     // STAGE 2: KNOWLEDGE NODES SEPARATION (0.35 -> 0.72)
     // =========================================================================
     const nodeEmergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.32, 0.68);
-    const offsetMult = isMobile ? 0.70 : 1.0;
+    const offsetMult = isMobile ? 0.7 : 1.0;
 
     this.nodeConfigs.forEach((cfg, i) => {
       const mesh = this.nodeMeshes[i];
@@ -329,14 +329,23 @@ export class LearnKnowledgeCore {
       const floatY = Math.sin(elapsedTime * 1.1 + i * 1.3) * 0.04;
       const floatZ = Math.cos(elapsedTime * 0.8 + i * 1.1) * 0.03;
 
-      mesh.position.set(this._scratchVec2.x, this._scratchVec2.y + floatY, this._scratchVec2.z + floatZ);
+      mesh.position.set(
+        this._scratchVec2.x,
+        this._scratchVec2.y + floatY,
+        this._scratchVec2.z + floatZ,
+      );
       halo.position.copy(mesh.position);
 
       const pulse = 1 + Math.sin(elapsedTime * 1.8 + i) * 0.14;
       const nodeScale = cfg.size * (isMobile ? 0.75 : 1.0) * nodeEmergence * pulse;
       mesh.scale.setScalar(nodeScale);
 
-      const haloScale = cfg.size * 1.6 * (isMobile ? 0.75 : 1.0) * nodeEmergence * (1 + Math.sin(elapsedTime * 1.4 + i) * 0.18);
+      const haloScale =
+        cfg.size *
+        1.6 *
+        (isMobile ? 0.75 : 1.0) *
+        nodeEmergence *
+        (1 + Math.sin(elapsedTime * 1.4 + i) * 0.18);
       halo.scale.setScalar(haloScale);
       halo.rotation.z = elapsedTime * 0.25 + i;
 

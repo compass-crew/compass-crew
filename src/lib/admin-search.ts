@@ -89,10 +89,13 @@ export function hitHref(hit: SearchHit): string {
 export async function globalSearch(q: string): Promise<SearchHit[]> {
   const term = q.trim();
   if (term.length < 1) return [];
-  const { data, error } = await supabase.rpc("admin_global_search" as never, {
-    _q: term,
-    _limit: 6,
-  } as never);
+  const { data, error } = await supabase.rpc(
+    "admin_global_search" as never,
+    {
+      _q: term,
+      _limit: 6,
+    } as never,
+  );
   if (error) throw error;
   return (data as unknown as SearchHit[]) ?? [];
 }
@@ -105,8 +108,22 @@ export interface SecurityOverview {
   role_changes_30d: number;
   suspicious_events_7d: number;
   recent_logins: Array<{ id: string; email: string; last_sign_in_at: string; created_at: string }>;
-  recent_role_changes: Array<{ id: string; actor_email: string | null; action: string; resource_id: string | null; meta: Record<string, unknown>; created_at: string }>;
-  recent_suspensions: Array<{ id: string; actor_email: string | null; action: string; resource_id: string | null; meta: Record<string, unknown>; created_at: string }>;
+  recent_role_changes: Array<{
+    id: string;
+    actor_email: string | null;
+    action: string;
+    resource_id: string | null;
+    meta: Record<string, unknown>;
+    created_at: string;
+  }>;
+  recent_suspensions: Array<{
+    id: string;
+    actor_email: string | null;
+    action: string;
+    resource_id: string | null;
+    meta: Record<string, unknown>;
+    created_at: string;
+  }>;
 }
 
 export async function fetchSecurityOverview(): Promise<SecurityOverview> {

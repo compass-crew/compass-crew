@@ -79,17 +79,17 @@ export class DirectionalSystem {
       const p0 = new THREE.Vector3(
         Math.sin(angleRad) * startRadius,
         Math.cos(angleRad) * startRadius,
-        0
+        0,
       );
       const pMid = new THREE.Vector3(
         Math.sin(angleRad + 0.18) * (startRadius + (endRadius - startRadius) * 0.5),
         Math.cos(angleRad + 0.18) * (startRadius + (endRadius - startRadius) * 0.5),
-        elevation * 0.5
+        elevation * 0.5,
       );
       const pEnd = new THREE.Vector3(
         Math.sin(angleRad + 0.32) * endRadius,
         Math.cos(angleRad + 0.32) * endRadius,
-        elevation
+        elevation,
       );
 
       const curve = new THREE.QuadraticBezierCurve3(p0, pMid, pEnd);
@@ -114,7 +114,7 @@ export class DirectionalSystem {
       const pos = new THREE.Vector3(
         Math.sin(angleRad + 0.32) * distance,
         Math.cos(angleRad + 0.32) * distance,
-        zOffset
+        zOffset,
       );
 
       this.nodeData.push({

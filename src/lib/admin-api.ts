@@ -88,7 +88,10 @@ export async function updateRow(res: ResourceConfig, id: string, values: Row): P
 
 export async function softDeleteRow(res: ResourceConfig, id: string): Promise<void> {
   if (!res.softDelete) {
-    const { error } = await supabase.from(res.table as never).delete().eq("id", id);
+    const { error } = await supabase
+      .from(res.table as never)
+      .delete()
+      .eq("id", id);
     if (error) throw error;
     return;
   }
@@ -109,7 +112,10 @@ export async function restoreRow(res: ResourceConfig, id: string): Promise<void>
 }
 
 export async function hardDeleteRow(res: ResourceConfig, id: string): Promise<void> {
-  const { error } = await supabase.from(res.table as never).delete().eq("id", id);
+  const { error } = await supabase
+    .from(res.table as never)
+    .delete()
+    .eq("id", id);
   if (error) throw error;
 }
 

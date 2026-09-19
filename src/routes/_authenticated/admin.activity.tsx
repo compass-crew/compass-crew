@@ -16,18 +16,40 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/empty-state";
 import { fetchActivity, type ActivityItem, type ActivityKind } from "@/lib/admin-ops";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/activity")({
+  beforeLoad: requireRole(["super_admin"]),
   head: () => ({
     meta: [{ title: "Activity Feed — Admin" }, { name: "robots", content: "noindex" }],
   }),
   component: ActivityPage,
 });
 
-const KIND_META: Record<ActivityKind, { icon: typeof ClipboardList; color: string; label: string }> = {
-  registration: { icon: ClipboardList, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", label: "Registration" },
-  team: { icon: UsersRound, color: "bg-purple-500/15 text-purple-600 dark:text-purple-400", label: "Team" },
-  submission: { icon: UploadCloud, color: "bg-amber-500/15 text-amber-600 dark:text-amber-400", label: "Submission" },
-  certificate: { icon: Award, color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400", label: "Certificate" },
+const KIND_META: Record<
+  ActivityKind,
+  { icon: typeof ClipboardList; color: string; label: string }
+> = {
+  registration: {
+    icon: ClipboardList,
+    color: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+    label: "Registration",
+  },
+  team: {
+    icon: UsersRound,
+    color: "bg-purple-500/15 text-purple-600 dark:text-purple-400",
+    label: "Team",
+  },
+  submission: {
+    icon: UploadCloud,
+    color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    label: "Submission",
+  },
+  certificate: {
+    icon: Award,
+    color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+    label: "Certificate",
+  },
   audit: { icon: Shield, color: "bg-muted text-muted-foreground", label: "Audit" },
 };
 
@@ -58,11 +80,16 @@ function ActivityPage() {
         <div>
           <h1 className="font-display text-3xl font-semibold">Activity Feed</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Real-time platform events — registrations, teams, submissions, certificates and audit entries.
+            Real-time platform events — registrations, teams, submissions, certificates and audit
+            entries.
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="mr-2 h-4 w-4" />
+          )}
           Refresh
         </Button>
       </header>
@@ -72,7 +99,11 @@ function ActivityPage() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : items.length === 0 ? (
-        <EmptyState icon={Activity} title="No activity yet" description="Platform events will stream here as they happen." />
+        <EmptyState
+          icon={Activity}
+          title="No activity yet"
+          description="Platform events will stream here as they happen."
+        />
       ) : (
         <Card>
           <CardContent className="p-0">
@@ -82,7 +113,9 @@ function ActivityPage() {
                 const Icon = meta.icon;
                 return (
                   <li key={`${it.ref ?? ""}-${idx}`} className="flex items-start gap-3 p-4">
-                    <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${meta.color}`}>
+                    <span
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${meta.color}`}
+                    >
                       <Icon className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">

@@ -166,7 +166,7 @@ export class SpatialText3D {
         const alpha = Math.min(fadeIn, fadeOut);
 
         // Restrained matte opacity
-        mat.opacity = alpha * 0.40;
+        mat.opacity = alpha * 0.4;
         mesh.visible = mat.opacity > 0.02;
 
         // Subtle architectural float

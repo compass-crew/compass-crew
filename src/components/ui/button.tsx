@@ -10,22 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/92 hover:shadow-md",
-        premium:
-          "btn-premium hover:btn-premium-hover",
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/92 hover:shadow-md",
+        premium: "btn-premium hover:btn-premium-hover",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md",
         outline:
           "border border-border bg-background/60 backdrop-blur-sm text-foreground shadow-xs hover:bg-accent/40 hover:border-foreground/20",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/85",
-        ghost:
-          "text-foreground/80 hover:text-foreground hover:bg-muted/60",
-        link:
-          "text-primary underline-offset-4 hover:underline p-0 h-auto",
-        subtle:
-          "bg-muted text-foreground hover:bg-muted/70",
+        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/85",
+        ghost: "text-foreground/80 hover:text-foreground hover:bg-muted/60",
+        link: "text-primary underline-offset-4 hover:underline p-0 h-auto",
+        subtle: "bg-muted text-foreground hover:bg-muted/70",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -50,7 +44,10 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, loading = false, disabled, children, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button";
     if (asChild) {
       return (

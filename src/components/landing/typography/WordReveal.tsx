@@ -5,7 +5,7 @@ interface WordRevealProps {
   className?: string;
   wordClassName?: string;
   progress?: number; // Normalized progress (0 to 1)
-  active?: boolean;   // Boolean trigger
+  active?: boolean; // Boolean trigger
   staggerMs?: number; // Stagger delay in ms
   durationMs?: number; // Duration in ms
   revealFrom?: "bottom" | "top";
@@ -50,7 +50,8 @@ export function WordReveal({
   }
 
   // Detect gradient styling
-  const isGradient = className.includes("text-cc-brand-gradient") || className.includes("bg-gradient");
+  const isGradient =
+    className.includes("text-cc-brand-gradient") || className.includes("bg-gradient");
   const gradientClass = isGradient ? "text-cc-brand-gradient bg-clip-text text-transparent" : "";
 
   return (

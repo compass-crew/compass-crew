@@ -12,8 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  acceptEmailInvitation, declineEmailInvitation,
-  acceptDirectInvitation, declineDirectInvitation,
+  acceptEmailInvitation,
+  declineEmailInvitation,
+  acceptDirectInvitation,
+  declineDirectInvitation,
   listMyPendingInvitations,
 } from "@/lib/teams";
 
@@ -55,7 +57,10 @@ function InvitationsPage() {
       const { data: teams } = await supabase
         .from("teams")
         .select("id, name, hackathon:hackathons(title, slug)")
-        .in("id", rows.map((r) => r.team_id));
+        .in(
+          "id",
+          rows.map((r) => r.team_id),
+        );
       const map = new Map((teams ?? []).map((t) => [t.id, t]));
       return rows.map((r) => ({
         id: r.id,
@@ -113,13 +118,24 @@ function InvitationsPage() {
       />
       <Section>
         {loading ? (
-          <div className="space-y-3">{[0, 1].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}</div>
+          <div className="space-y-3">
+            {[0, 1].map((i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            ))}
+          </div>
         ) : empty ? (
           <EmptyState
             icon={Mail}
             title="No pending invitations"
             description="When someone invites you to their team you'll see it here."
-            action={<Button asChild variant="outline"><Link to="/teams"><Users className="mr-2 h-4 w-4" />My teams</Link></Button>}
+            action={
+              <Button asChild variant="outline">
+                <Link to="/teams">
+                  <Users className="mr-2 h-4 w-4" />
+                  My teams
+                </Link>
+              </Button>
+            }
           />
         ) : (
           <div className="space-y-3">
@@ -128,14 +144,22 @@ function InvitationsPage() {
                 <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
                   <div>
                     <Badge variant="outline">{inv.team?.hackathon?.title ?? "Hackathon"}</Badge>
-                    <h3 className="mt-2 font-display text-lg font-semibold">{inv.team?.name ?? "Team"}</h3>
+                    <h3 className="mt-2 font-display text-lg font-semibold">
+                      {inv.team?.name ?? "Team"}
+                    </h3>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => declineDirect.mutate(inv.id)}>
-                      <X className="mr-1 h-4 w-4" />Decline
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => declineDirect.mutate(inv.id)}
+                    >
+                      <X className="mr-1 h-4 w-4" />
+                      Decline
                     </Button>
                     <Button size="sm" onClick={() => acceptDirect.mutate(inv.id)}>
-                      <Check className="mr-1 h-4 w-4" />Accept
+                      <Check className="mr-1 h-4 w-4" />
+                      Accept
                     </Button>
                   </div>
                 </CardContent>
@@ -146,15 +170,19 @@ function InvitationsPage() {
                 <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
                   <div>
                     <Badge variant="outline">{inv.team?.hackathon?.title ?? "Hackathon"}</Badge>
-                    <h3 className="mt-2 font-display text-lg font-semibold">{inv.team?.name ?? "Team"}</h3>
+                    <h3 className="mt-2 font-display text-lg font-semibold">
+                      {inv.team?.name ?? "Team"}
+                    </h3>
                     <p className="text-xs text-muted-foreground">Invited as {inv.email}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => declineEmail.mutate(inv.id)}>
-                      <X className="mr-1 h-4 w-4" />Decline
+                      <X className="mr-1 h-4 w-4" />
+                      Decline
                     </Button>
                     <Button size="sm" onClick={() => acceptEmail.mutate(inv.id)}>
-                      <Check className="mr-1 h-4 w-4" />Accept
+                      <Check className="mr-1 h-4 w-4" />
+                      Accept
                     </Button>
                   </div>
                 </CardContent>

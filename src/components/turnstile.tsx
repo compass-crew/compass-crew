@@ -61,9 +61,11 @@ export interface TurnstileHandle {
 export function Turnstile({
   onToken,
   size = "flexible",
+  theme = "auto",
 }: {
   onToken: (token: string | null) => void;
   size?: "normal" | "compact" | "flexible";
+  theme?: "light" | "dark" | "auto";
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
@@ -98,6 +100,7 @@ export function Turnstile({
     const id = window.turnstile.render(ref.current, {
       sitekey: siteKey,
       size,
+      theme,
       callback: (t) => onToken(t),
       "expired-callback": () => onToken(null),
       "error-callback": () => {
@@ -139,4 +142,3 @@ export function Turnstile({
   }
   return <div ref={ref} className="cf-turnstile" data-testid="cf-turnstile" />;
 }
-

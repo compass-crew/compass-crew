@@ -15,9 +15,15 @@ export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
       { title: "Blog — Compass Crew" },
-      { name: "description", content: "Reports, playbooks and stories from India's student builder community." },
+      {
+        name: "description",
+        content: "Reports, playbooks and stories from India's student builder community.",
+      },
       { property: "og:title", content: "Blog — Compass Crew" },
-      { property: "og:description", content: "Reports, playbooks and interviews from student builders." },
+      {
+        property: "og:description",
+        content: "Reports, playbooks and interviews from student builders.",
+      },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/blog" }],
@@ -27,16 +33,16 @@ export const Route = createFileRoute("/blog")({
 
 function fmtDate(iso: string | null) {
   if (!iso) return "";
-  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function BlogCard({ p, featured = false }: { p: BlogPost; featured?: boolean }) {
   return (
-    <Link
-      to="/blog/$slug"
-      params={{ slug: p.slug }}
-      className="group block"
-    >
+    <Link to="/blog/$slug" params={{ slug: p.slug }} className="group block">
       <Card className="h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-elegant">
         <div className={`${featured ? "h-56" : "h-40"} relative overflow-hidden bg-gradient-brand`}>
           {p.cover_url ? (
@@ -58,11 +64,22 @@ function BlogCard({ p, featured = false }: { p: BlogPost; featured?: boolean }) 
         <CardContent className="space-y-3 p-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             {p.published_at && <span>{fmtDate(p.published_at)}</span>}
-            {p.reading_minutes ? (<><span>·</span><span>{p.reading_minutes} min read</span></>) : null}
+            {p.reading_minutes ? (
+              <>
+                <span>·</span>
+                <span>{p.reading_minutes} min read</span>
+              </>
+            ) : null}
           </div>
-          <h3 className={`font-display font-semibold leading-snug ${featured ? "text-2xl" : "text-lg"}`}>{p.title}</h3>
+          <h3
+            className={`font-display font-semibold leading-snug ${featured ? "text-2xl" : "text-lg"}`}
+          >
+            {p.title}
+          </h3>
           {p.excerpt && <p className="line-clamp-3 text-sm text-muted-foreground">{p.excerpt}</p>}
-          {p.author_name && <p className="pt-2 text-xs font-medium text-foreground/80">By {p.author_name}</p>}
+          {p.author_name && (
+            <p className="pt-2 text-xs font-medium text-foreground/80">By {p.author_name}</p>
+          )}
         </CardContent>
       </Card>
     </Link>
@@ -155,7 +172,11 @@ function BlogPage() {
             </div>
 
             {filtered.length === 0 ? (
-              <EmptyState icon={Search} title="No posts match your search." description="Try a different keyword or clear filters." />
+              <EmptyState
+                icon={Search}
+                title="No posts match your search."
+                description="Try a different keyword or clear filters."
+              />
             ) : (
               <>
                 {featured && (
@@ -165,7 +186,9 @@ function BlogPage() {
                 )}
                 {rest.length > 0 && (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {rest.map((p) => <BlogCard key={p.id} p={p} />)}
+                    {rest.map((p) => (
+                      <BlogCard key={p.id} p={p} />
+                    ))}
                   </div>
                 )}
               </>

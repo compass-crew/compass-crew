@@ -62,8 +62,7 @@ function VerifyEmailPage() {
     (search.error_description && /expired/i.test(search.error_description));
   const isInvalid =
     !isExpired &&
-    (search.error ||
-      (search.error_description && /invalid|token/i.test(search.error_description)));
+    (search.error || (search.error_description && /invalid|token/i.test(search.error_description)));
 
   const [isVerified, setIsVerified] = useState(false);
 
@@ -192,9 +191,7 @@ function VerifyEmailPage() {
       backLabel="Back to sign in"
       brandProps={{
         state: isVerified ? "success" : "verify",
-        subtitle: isVerified
-          ? "Account verified and active."
-          : "Verify your email to continue.",
+        subtitle: isVerified ? "Account verified and active." : "Verify your email to continue.",
       }}
     >
       {/* 1. Already Verified State */}
@@ -203,9 +200,7 @@ function VerifyEmailPage() {
           <div className="auth-status-card__icon auth-status-card__icon--success">
             <CheckCircle2 size={32} aria-hidden="true" />
           </div>
-          <span className="auth-status-card__badge auth-status-card__badge--green">
-            Verified
-          </span>
+          <span className="auth-status-card__badge auth-status-card__badge--green">Verified</span>
           <h1 className="auth-status-card__title">Email Verified</h1>
           <p className="auth-status-card__desc">
             Your email is confirmed and your Compass Crew account is active. You're all set.
@@ -232,7 +227,8 @@ function VerifyEmailPage() {
             </span>
             <h1 className="auth-status-card__title">Verification link expired</h1>
             <p className="auth-status-card__desc">
-              That verification link has expired for your security. Enter your email below to receive a fresh verification link.
+              That verification link has expired for your security. Enter your email below to
+              receive a fresh verification link.
             </p>
           </div>
 
@@ -288,7 +284,8 @@ function VerifyEmailPage() {
             </span>
             <h1 className="auth-status-card__title">Invalid verification link</h1>
             <p className="auth-status-card__desc">
-              This verification link is no longer valid or has already been used. Please request a new verification email.
+              This verification link is no longer valid or has already been used. Please request a
+              new verification email.
             </p>
           </div>
 
@@ -344,7 +341,8 @@ function VerifyEmailPage() {
             </span>
             <h1 className="auth-status-card__title">Check your inbox</h1>
             <p className="auth-status-card__desc">
-              We sent a secure verification link to your email. Click the link to verify your account and join the crew.
+              We sent a secure verification link to your email. Click the link to verify your
+              account and join the crew.
             </p>
 
             {masked ? (
@@ -382,11 +380,7 @@ function VerifyEmailPage() {
               onClick={handleCheckStatus}
               disabled={checking}
             >
-              {checking ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <RefreshCw size={15} />
-              )}
+              {checking ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={15} />}
               {checking ? "Checking status…" : "I've verified my email"}
             </button>
 

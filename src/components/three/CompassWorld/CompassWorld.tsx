@@ -59,6 +59,20 @@ export function CompassWorld({
     ctaHoveredRef.current = ctaHovered;
   }, [ctaHovered]);
 
+  const narrativeProgressRef = useRef(narrativeProgress);
+  useEffect(() => {
+    narrativeProgressRef.current = narrativeProgress;
+  }, [narrativeProgress]);
+
+  const manualScrollProgressRef = useRef(manualScrollProgress);
+  useEffect(() => {
+    manualScrollProgressRef.current = manualScrollProgress;
+  }, [manualScrollProgress]);
+
+  const performanceControllerRef = useRef<PerformanceController | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const particleFieldRef = useRef<ParticleField | null>(null);
+
   // Client-side detection & fallbacks
   const [mounted, setMounted] = useState(false);
   const [webGLSupported, setWebGLSupported] = useState(true);
@@ -110,7 +124,7 @@ export function CompassWorld({
     // 1. Scene & Performance Init
     const scene = new THREE.Scene();
     const performanceController = new PerformanceController(quality);
-    setQualityState(performanceController.quality);
+    performanceControllerRef.current = performanceController;
 
     const width = container.clientWidth || window.innerWidth;
     const height = container.clientHeight || window.innerHeight;
@@ -130,6 +144,7 @@ export function CompassWorld({
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
     // 4. Lighting Rig
     const lightingRig = new LightingRig();
@@ -146,9 +161,10 @@ export function CompassWorld({
     const particleField = new ParticleField(2500);
     particleField.setConfig(
       SCENE_CONFIGS[activeScene].particles,
-      performanceController.getParticleMultiplier()
+      performanceController.getParticleMultiplier(),
     );
     scene.add(particleField.mesh);
+    particleFieldRef.current = particleField;
 
     // 7. Spatial Grid
     const spatialGrid = new SpatialGrid(32, 32);
@@ -198,7 +214,7 @@ export function CompassWorld({
 
     // 14. Interaction & Scroll Controllers
     const pointerController = new PointerController(0.06);
-    if (interactive) pointerController.init(container);
+    if (interactive) pointerController.init(window);
 
     const scrollController = new ScrollController();
     scrollController.init();
@@ -231,6 +247,9 @@ export function CompassWorld({
       pointerController.update();
       const pointer = pointerController.state;
 
+      const manualScrollProgress = manualScrollProgressRef.current;
+      const narrativeProgress = narrativeProgressRef.current;
+
       // Handle manual or scroll-driven progression
       if (manualScrollProgress !== undefined) {
         scrollController.setProgressManually(manualScrollProgress);
@@ -249,7 +268,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.hero,
             SCENE_CONFIGS.discover,
-            u
+            u,
           );
           const isDesktop = container.clientWidth >= 1024;
           const heroX = isDesktop ? 1.8 : 0;
@@ -281,7 +300,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.discover,
             SCENE_CONFIGS.build,
-            v
+            v,
           );
           const isDesktop = container.clientWidth >= 1024;
           const discoverX = isDesktop ? 1.0 : 0;
@@ -311,7 +330,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.build,
             SCENE_CONFIGS.learn,
-            w
+            w,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -332,7 +351,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.learn,
             SCENE_CONFIGS.connect,
-            k
+            k,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -347,13 +366,13 @@ export function CompassWorld({
           competeArenaCore.setProgress(0);
           shipProofCore.setProgress(0);
           growOpportunityField.setProgress(0);
-        } else if (narrativeProgress <= 0.70) {
+        } else if (narrativeProgress <= 0.7) {
           // Chapter 5: Connect -> Compete
           const m = (narrativeProgress - 0.56) / 0.14;
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.connect,
             SCENE_CONFIGS.compete,
-            m
+            m,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -370,11 +389,11 @@ export function CompassWorld({
           growOpportunityField.setProgress(0);
         } else if (narrativeProgress <= 0.84) {
           // Chapter 6: Compete -> Ship
-          const s = (narrativeProgress - 0.70) / 0.14;
+          const s = (narrativeProgress - 0.7) / 0.14;
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.compete,
             SCENE_CONFIGS.ship,
-            s
+            s,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -395,7 +414,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.ship,
             SCENE_CONFIGS.grow,
-            g
+            g,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -417,7 +436,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.grow,
             SCENE_CONFIGS.direction,
-            d
+            d,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -440,7 +459,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.direction,
             SCENE_CONFIGS.cta,
-            c
+            c,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -477,7 +496,7 @@ export function CompassWorld({
           const rawTargetConfig = SceneTransition.interpolateScenes(
             SCENE_CONFIGS.cta,
             SCENE_CONFIGS.footer,
-            f
+            f,
           );
           targetConfig = {
             ...rawTargetConfig,
@@ -502,7 +521,11 @@ export function CompassWorld({
       } else if (transitionFrom && transitionTo && transitionProgress !== undefined) {
         const fromConf = SCENE_CONFIGS[transitionFrom];
         const toConf = SCENE_CONFIGS[transitionTo];
-        const rawTargetConfig = SceneTransition.interpolateScenes(fromConf, toConf, transitionProgress);
+        const rawTargetConfig = SceneTransition.interpolateScenes(
+          fromConf,
+          toConf,
+          transitionProgress,
+        );
         targetConfig = {
           ...rawTargetConfig,
           compass: { ...rawTargetConfig.compass },
@@ -513,7 +536,11 @@ export function CompassWorld({
           const isDesktop = container.clientWidth >= 1024;
           const heroX = isDesktop ? 1.8 : 0;
           const discoverX = 0;
-          targetConfig.compass.position[0] = THREE.MathUtils.lerp(heroX, discoverX, transitionProgress);
+          targetConfig.compass.position[0] = THREE.MathUtils.lerp(
+            heroX,
+            discoverX,
+            transitionProgress,
+          );
         }
 
         directionalSystem.setTransitionProgress(transitionProgress);
@@ -563,7 +590,7 @@ export function CompassWorld({
 
       particleField.setConfig(
         currentConfig.particles,
-        performanceController.getParticleMultiplier()
+        performanceController.getParticleMultiplier(),
       );
       particleField.update(elapsedTime, pointer);
 
@@ -591,7 +618,7 @@ export function CompassWorld({
       const frameStats = performanceController.update(
         time,
         renderer.info.render.calls,
-        renderer.info.render.triangles
+        renderer.info.render.triangles,
       );
 
       if (debug && time - lastStatsTime > 500) {
@@ -607,7 +634,7 @@ export function CompassWorld({
     return () => {
       cancelAnimationFrame(animId);
       resizeObserver.disconnect();
-      pointerController.dispose(container);
+      pointerController.dispose(window);
       scrollController.dispose();
 
       directionalSystem.dispose();
@@ -630,7 +657,21 @@ export function CompassWorld({
         container.removeChild(renderer.domElement);
       }
     };
-  }, [mounted, webGLSupported, reducedMotion, quality, manualScrollProgress, interactive]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted, webGLSupported, reducedMotion, interactive]);
+
+  // Dynamic in-place quality adjustment without destroying WebGL context
+  useEffect(() => {
+    if (!performanceControllerRef.current || !rendererRef.current) return;
+    performanceControllerRef.current.setQuality(quality);
+    rendererRef.current.setPixelRatio(performanceControllerRef.current.dpr);
+    if (particleFieldRef.current) {
+      particleFieldRef.current.setConfig(
+        SCENE_CONFIGS[activeScene].particles,
+        performanceControllerRef.current.getParticleMultiplier(),
+      );
+    }
+  }, [quality, activeScene]);
 
   // Context value for child components
   const contextValue = {
@@ -674,16 +715,10 @@ export function CompassWorld({
     <CompassWorldContext.Provider value={contextValue}>
       <div className={`relative w-full h-full overflow-hidden ${className}`}>
         {/* WebGL Canvas Container */}
-        <div
-          ref={mountRef}
-          className="absolute inset-0 pointer-events-none"
-          aria-hidden="true"
-        />
+        <div ref={mountRef} className="absolute inset-0 pointer-events-none" aria-hidden="true" />
 
         {/* DOM Layer (Semantic Content & Child Views) */}
-        <div className="relative z-10 w-full h-full">
-          {children}
-        </div>
+        <div className="relative z-10 w-full h-full">{children}</div>
 
         {/* Optional Development Debug HUD */}
         {debug && (

@@ -47,8 +47,8 @@ export function LandingHeader() {
         inFooter
           ? "opacity-0 pointer-events-none -translate-y-2.5"
           : nearBottom
-          ? "opacity-75 hover:opacity-100"
-          : "opacity-100"
+            ? "opacity-75 hover:opacity-100"
+            : "opacity-100"
       }`}
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">

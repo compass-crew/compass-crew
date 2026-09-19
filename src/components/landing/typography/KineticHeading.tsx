@@ -42,9 +42,12 @@ export function KineticHeading({
 }: KineticHeadingProps) {
   const variantStyles = {
     hero: "text-[clamp(44px,12vw,72px)] sm:text-[clamp(64px,8vw,144px)] leading-[0.90] tracking-[-0.05em] font-extrabold font-cc-sans",
-    scene: "text-[clamp(36px,10vw,54px)] sm:text-[clamp(54px,7vw,108px)] leading-[0.92] tracking-[-0.045em] font-extrabold font-cc-sans",
-    statement: "text-[clamp(26px,7vw,40px)] sm:text-[clamp(36px,5vw,76px)] leading-[0.96] tracking-[-0.04em] font-bold font-cc-sans",
-    supporting: "text-[clamp(18px,4.5vw,26px)] sm:text-[clamp(24px,3.5vw,36px)] leading-[1.05] tracking-[-0.035em] font-medium font-cc-sans",
+    scene:
+      "text-[clamp(36px,10vw,54px)] sm:text-[clamp(54px,7vw,108px)] leading-[0.92] tracking-[-0.045em] font-extrabold font-cc-sans",
+    statement:
+      "text-[clamp(26px,7vw,40px)] sm:text-[clamp(36px,5vw,76px)] leading-[0.96] tracking-[-0.04em] font-bold font-cc-sans",
+    supporting:
+      "text-[clamp(18px,4.5vw,26px)] sm:text-[clamp(24px,3.5vw,36px)] leading-[1.05] tracking-[-0.035em] font-medium font-cc-sans",
   };
 
   const alignStyles = {

@@ -84,11 +84,7 @@ export function LineReveal({
         const easeBezier = "cubic-bezier(0.16, 1, 0.3, 1)";
 
         return (
-          <span
-            key={idx}
-            aria-hidden="true"
-            className="block overflow-hidden"
-          >
+          <span key={idx} aria-hidden="true" className="block overflow-hidden">
             <span
               style={
                 progress !== undefined

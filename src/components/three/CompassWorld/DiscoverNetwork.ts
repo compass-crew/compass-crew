@@ -69,8 +69,8 @@ export class DiscoverNetwork {
       sublabel: "AI, CODE & SYSTEMS",
       basePosition: new THREE.Vector3(-2.2, 2.1, 0.5),
       color: 0x7c5cff, // Ultraviolet
-      size: 0.10,
-      activationProgress: 0.50,
+      size: 0.1,
+      activationProgress: 0.5,
     },
     {
       id: "community",
@@ -85,11 +85,11 @@ export class DiscoverNetwork {
 
   private satellitePositions: THREE.Vector3[] = [
     new THREE.Vector3(-3.8, -1.3, -0.2), // Founders
-    new THREE.Vector3(-1.8, -2.4, 0.2),  // Mentors
-    new THREE.Vector3(2.3, 2.3, 0.4),    // Hackathons
-    new THREE.Vector3(-1.4, 2.9, -0.2),  // Open Source
-    new THREE.Vector3(3.7, -1.3, -0.2),  // Venture
-    new THREE.Vector3(2.4, -2.3, 0.2),   // Research
+    new THREE.Vector3(-1.8, -2.4, 0.2), // Mentors
+    new THREE.Vector3(2.3, 2.3, 0.4), // Hackathons
+    new THREE.Vector3(-1.4, 2.9, -0.2), // Open Source
+    new THREE.Vector3(3.7, -1.3, -0.2), // Venture
+    new THREE.Vector3(2.4, -2.3, 0.2), // Research
   ];
 
   // Meshes
@@ -304,7 +304,7 @@ export class DiscoverNetwork {
       const emergence = THREE.MathUtils.smoothstep(
         this.currentProgress,
         node.activationProgress - 0.12,
-        node.activationProgress + 0.15
+        node.activationProgress + 0.15,
       );
 
       // Subtle float & depth sway
@@ -314,7 +314,7 @@ export class DiscoverNetwork {
       mesh.position.set(
         node.basePosition.x,
         node.basePosition.y + floatY,
-        node.basePosition.z + floatZ
+        node.basePosition.z + floatZ,
       );
       halo.position.copy(mesh.position);
 
@@ -347,9 +347,9 @@ export class DiscoverNetwork {
     this.satelliteMesh.instanceMatrix.needsUpdate = true;
 
     // 3. Radial Lines (Compass -> Core Nodes)
-    const radialEmergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.24, 0.70);
+    const radialEmergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.24, 0.7);
     this.lineMaterials[0].opacity = radialEmergence * 0.65; // cyan
-    this.lineMaterials[1].opacity = radialEmergence * 0.50; // indigo
+    this.lineMaterials[1].opacity = radialEmergence * 0.5; // indigo
 
     // 4. Inter-Node Connection Arcs (Emerge between 0.55 and 0.88)
     const interEmergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.55, 0.85);
@@ -365,11 +365,7 @@ export class DiscoverNetwork {
   /**
    * Projects 3D node world coordinates to 2D screen pixels for crisp HTML micro-labels
    */
-  public getProjectedNodes(
-    camera: THREE.Camera,
-    width: number,
-    height: number
-  ): ProjectedNode[] {
+  public getProjectedNodes(camera: THREE.Camera, width: number, height: number): ProjectedNode[] {
     const results: ProjectedNode[] = [];
     const tempVec = new THREE.Vector3();
 
@@ -388,7 +384,7 @@ export class DiscoverNetwork {
       const emergence = THREE.MathUtils.smoothstep(
         this.currentProgress,
         node.activationProgress - 0.05,
-        node.activationProgress + 0.15
+        node.activationProgress + 0.15,
       );
 
       results.push({

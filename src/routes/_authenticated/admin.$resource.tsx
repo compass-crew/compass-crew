@@ -2,7 +2,10 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AdminList } from "@/components/admin/admin-list";
 import { getResource } from "@/lib/admin-config";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/$resource")({
+  beforeLoad: requireRole(["super_admin"]),
   component: ResourcePage,
   notFoundComponent: () => (
     <div className="rounded-xl border border-border bg-card p-8 text-center">

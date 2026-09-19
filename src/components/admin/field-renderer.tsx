@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "./image-upload";
 import { MarkdownEditor } from "./markdown-editor";
@@ -26,14 +32,15 @@ function toIsoLocal(value: unknown): string {
 
 export function FieldRenderer({ field, value, values, onChange }: Props) {
   const [jsonText, setJsonText] = useState<string>(() =>
-    field.type === "json" ? JSON.stringify(value ?? (field.name === "data" ? {} : []), null, 2) : "",
+    field.type === "json"
+      ? JSON.stringify(value ?? (field.name === "data" ? {} : []), null, 2)
+      : "",
   );
 
   useEffect(() => {
     if (field.type === "json") {
       setJsonText(JSON.stringify(value ?? (field.name === "data" ? {} : []), null, 2));
     }
-     
   }, [value !== undefined ? JSON.stringify(value) : ""]);
 
   const commonId = `f-${field.name}`;
@@ -42,8 +49,12 @@ export function FieldRenderer({ field, value, values, onChange }: Props) {
     return (
       <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card/40 px-4 py-3">
         <div>
-          <Label htmlFor={commonId} className="font-medium">{field.label}</Label>
-          {field.helpText && <p className="mt-0.5 text-xs text-muted-foreground">{field.helpText}</p>}
+          <Label htmlFor={commonId} className="font-medium">
+            {field.label}
+          </Label>
+          {field.helpText && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{field.helpText}</p>
+          )}
         </div>
         <Switch id={commonId} checked={Boolean(value)} onCheckedChange={(v) => onChange(v)} />
       </div>

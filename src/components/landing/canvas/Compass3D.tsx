@@ -193,7 +193,7 @@ export function Compass3D({
 
     // 8. Animation Loop
     let animId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);

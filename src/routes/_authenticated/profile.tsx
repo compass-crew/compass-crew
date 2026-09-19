@@ -47,9 +47,33 @@ const schema = z.object({
   year_of_study: z.string().trim().max(20).optional().or(z.literal("")),
   branch: z.string().trim().max(80).optional().or(z.literal("")),
   skills: z.string().trim().max(400).optional().or(z.literal("")),
-  github_url: z.string().trim().max(255).optional().or(z.literal("")),
-  linkedin_url: z.string().trim().max(255).optional().or(z.literal("")),
-  portfolio_url: z.string().trim().max(255).optional().or(z.literal("")),
+  github_url: z
+    .string()
+    .trim()
+    .max(255)
+    .refine((v) => !v || /^https?:\/\//i.test(v), {
+      message: "Must be a valid URL starting with http:// or https://",
+    })
+    .optional()
+    .or(z.literal("")),
+  linkedin_url: z
+    .string()
+    .trim()
+    .max(255)
+    .refine((v) => !v || /^https?:\/\//i.test(v), {
+      message: "Must be a valid URL starting with http:// or https://",
+    })
+    .optional()
+    .or(z.literal("")),
+  portfolio_url: z
+    .string()
+    .trim()
+    .max(255)
+    .refine((v) => !v || /^https?:\/\//i.test(v), {
+      message: "Must be a valid URL starting with http:// or https://",
+    })
+    .optional()
+    .or(z.literal("")),
   is_public: z.boolean(),
 });
 type Values = z.infer<typeof schema>;
@@ -179,7 +203,11 @@ function ProfilePage() {
               <div className="rounded-xl border border-border bg-muted/40 p-3 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 font-medium">
-                    {isPublic ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                    {isPublic ? (
+                      <Eye className="h-3.5 w-3.5" />
+                    ) : (
+                      <EyeOff className="h-3.5 w-3.5" />
+                    )}
                     Visibility
                   </span>
                   <Badge variant="secondary">{isPublic ? "Public" : "Private"}</Badge>
@@ -210,34 +238,62 @@ function ProfilePage() {
                   <Input placeholder="https://…" {...form.register("avatar_url")} />
                 </F>
                 <F label="Bio" error={form.formState.errors.bio?.message}>
-                  <Textarea rows={3} placeholder="Tell the crew what you're building." {...form.register("bio")} />
+                  <Textarea
+                    rows={3}
+                    placeholder="Tell the crew what you're building."
+                    {...form.register("bio")}
+                  />
                 </F>
 
                 <SectionTitle title="Location" />
                 <Grid2>
-                  <F label="Country"><Input {...form.register("country")} /></F>
-                  <F label="State"><Input {...form.register("state")} /></F>
+                  <F label="Country">
+                    <Input {...form.register("country")} />
+                  </F>
+                  <F label="State">
+                    <Input {...form.register("state")} />
+                  </F>
                 </Grid2>
 
                 <SectionTitle title="Education" />
-                <F label="College / University"><Input {...form.register("college")} /></F>
+                <F label="College / University">
+                  <Input {...form.register("college")} />
+                </F>
                 <Grid3>
-                  <F label="Degree"><Input {...form.register("degree")} /></F>
-                  <F label="Year"><Input {...form.register("year_of_study")} /></F>
-                  <F label="Branch"><Input {...form.register("branch")} /></F>
+                  <F label="Degree">
+                    <Input {...form.register("degree")} />
+                  </F>
+                  <F label="Year">
+                    <Input {...form.register("year_of_study")} />
+                  </F>
+                  <F label="Branch">
+                    <Input {...form.register("branch")} />
+                  </F>
                 </Grid3>
 
                 <SectionTitle title="Skills" />
                 <F label="Skills (comma separated)" error={form.formState.errors.skills?.message}>
-                  <Input placeholder="React, Python, ML, Product design" {...form.register("skills")} />
+                  <Input
+                    placeholder="React, Python, ML, Product design"
+                    {...form.register("skills")}
+                  />
                 </F>
 
                 <SectionTitle title="Links" />
                 <Grid2>
-                  <F label="GitHub"><Input placeholder="https://github.com/you" {...form.register("github_url")} /></F>
-                  <F label="LinkedIn"><Input placeholder="https://linkedin.com/in/you" {...form.register("linkedin_url")} /></F>
+                  <F label="GitHub">
+                    <Input placeholder="https://github.com/you" {...form.register("github_url")} />
+                  </F>
+                  <F label="LinkedIn">
+                    <Input
+                      placeholder="https://linkedin.com/in/you"
+                      {...form.register("linkedin_url")}
+                    />
+                  </F>
                 </Grid2>
-                <F label="Portfolio"><Input placeholder="https://you.dev" {...form.register("portfolio_url")} /></F>
+                <F label="Portfolio">
+                  <Input placeholder="https://you.dev" {...form.register("portfolio_url")} />
+                </F>
 
                 <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 p-4">
                   <div>
@@ -253,8 +309,16 @@ function ProfilePage() {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" disabled={saving} className="bg-gradient-brand text-white hover:opacity-90">
-                    {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                  <Button
+                    type="submit"
+                    disabled={saving}
+                    className="bg-gradient-brand text-white hover:opacity-90"
+                  >
+                    {saving ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="mr-2 h-4 w-4" />
+                    )}
                     Save profile
                   </Button>
                 </div>
@@ -267,11 +331,19 @@ function ProfilePage() {
   );
 }
 
-function SectionTitle({ icon: Icon, title }: { icon?: React.ComponentType<{ className?: string }>; title: string }) {
+function SectionTitle({
+  icon: Icon,
+  title,
+}: {
+  icon?: React.ComponentType<{ className?: string }>;
+  title: string;
+}) {
   return (
     <div className="flex items-center gap-2 border-b border-border pb-2 pt-2">
       {Icon ? <Icon className="h-4 w-4 text-primary" /> : null}
-      <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{title}</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        {title}
+      </h3>
     </div>
   );
 }

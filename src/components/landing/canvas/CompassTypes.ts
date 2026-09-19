@@ -4,14 +4,14 @@
  */
 
 export type CompassMode =
-  | "hero"        // Primary majestic awakening; slow rotational drift and gentle mouse tilt
-  | "search"      // Directional scanner; needle sweeps rapidly across coordinate grid
-  | "orbit"       // Outer rings expand into 6 concentric capability nodes
-  | "timeline"    // Tilts to horizontal rail perspective for events
-  | "arena"       // Base geometry expands to form stadium ground plane
-  | "network"     // Disperses into particle network nodes
+  | "hero" // Primary majestic awakening; slow rotational drift and gentle mouse tilt
+  | "search" // Directional scanner; needle sweeps rapidly across coordinate grid
+  | "orbit" // Outer rings expand into 6 concentric capability nodes
+  | "timeline" // Tilts to horizontal rail perspective for events
+  | "arena" // Base geometry expands to form stadium ground plane
+  | "network" // Disperses into particle network nodes
   | "convergence" // Inward magnetic pull back to True North
-  | "cta";        // High-contrast vertical True North alignment with light beam
+  | "cta"; // High-contrast vertical True North alignment with light beam
 
 export interface CompassProps {
   /** Size in pixels (width and height of the canvas container) */

@@ -35,8 +35,12 @@ export class ParticleField {
   private lerpFactor = 0.05;
 
   constructor(maxCount = 2500) {
-    this.maxCount = maxCount;
-    this.activeCount = 1500;
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
+    const resolvedMax = isMobile ? Math.min(maxCount, 1200) : maxCount;
+    this.maxCount = resolvedMax;
+    this.activeCount = isMobile ? Math.min(800, resolvedMax) : Math.min(1500, resolvedMax);
 
     // Small, delicate low-poly sphere geometry for subtle ambient digital dust
     this.geometry = new THREE.SphereGeometry(0.018, 6, 6);
@@ -110,9 +114,9 @@ export class ParticleField {
       if (!p) continue;
 
       // Update positions with flow and gentle sinusoidal drift
-      p.x += (this.targetFlow[0] * this.currentSpeed + Math.sin(elapsedTime * 0.5 + p.phase) * 0.01);
-      p.y += (this.targetFlow[1] * this.currentSpeed + Math.cos(elapsedTime * 0.4 + p.phase) * 0.01);
-      p.z += (this.targetFlow[2] * this.currentSpeed);
+      p.x += this.targetFlow[0] * this.currentSpeed + Math.sin(elapsedTime * 0.5 + p.phase) * 0.01;
+      p.y += this.targetFlow[1] * this.currentSpeed + Math.cos(elapsedTime * 0.4 + p.phase) * 0.01;
+      p.z += this.targetFlow[2] * this.currentSpeed;
 
       // Wrap boundaries
       if (p.x > halfX) p.x -= spreadX;
@@ -128,7 +132,7 @@ export class ParticleField {
       this.dummy.position.set(
         p.x + pointerInfluenceX * (0.3 + p.scale * 0.2),
         p.y + pointerInfluenceY * (0.3 + p.scale * 0.2),
-        p.z
+        p.z,
       );
       this.dummy.scale.setScalar(currentScale);
       this.dummy.updateMatrix();
@@ -136,14 +140,8 @@ export class ParticleField {
       this.mesh.setMatrixAt(i, this.dummy.matrix);
     }
 
-    // Hide inactive instances
-    for (let i = this.activeCount; i < this.maxCount; i++) {
-      this.dummy.position.set(0, -999, 0);
-      this.dummy.scale.setScalar(0);
-      this.dummy.updateMatrix();
-      this.mesh.setMatrixAt(i, this.dummy.matrix);
-    }
-
+    // Only render active instances using native InstancedMesh count (skips inactive matrices)
+    this.mesh.count = this.activeCount;
     this.mesh.instanceMatrix.needsUpdate = true;
   }
 

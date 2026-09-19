@@ -6,7 +6,11 @@ export type SubmissionUpdate = Database["public"]["Tables"]["submissions"]["Upda
 export type SubmissionInsert = Database["public"]["Tables"]["submissions"]["Insert"];
 
 export async function getTeamSubmission(teamId: string): Promise<Submission | null> {
-  const { data, error } = await supabase.from("submissions").select("*").eq("team_id", teamId).maybeSingle();
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .eq("team_id", teamId)
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -35,7 +39,11 @@ export async function upsertDraft(input: {
     status: "draft",
     ...input.patch,
   };
-  const { data, error } = await supabase.from("submissions").insert(insertPayload).select().single();
+  const { data, error } = await supabase
+    .from("submissions")
+    .insert(insertPayload)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }

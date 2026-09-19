@@ -8,7 +8,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { AlertTriangle, Sparkles } from "lucide-react";
+import type { PlatformSectionSettings, ContentSectionSettings } from "@/lib/platform-settings";
 
 import appCss from "../styles.css?url";
 import { reportAppError } from "../lib/error-reporting";
@@ -16,7 +18,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
@@ -51,7 +53,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">This page didn't load</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          This page didn't load
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">Something went wrong on our end.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -130,6 +134,101 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function PlatformStatusOverlay() {
+  const { hasRole, loading } = useAuth();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [platformSettings, setPlatformSettings] = useState<PlatformSectionSettings | null>(null);
+  const [contentSettings, setContentSettings] = useState<ContentSectionSettings | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("platform_settings")
+      .select("section, data")
+      .in("section", ["platform", "content"])
+      .then(({ data }) => {
+        for (const row of data ?? []) {
+          if (row.section === "platform")
+            setPlatformSettings(row.data as unknown as PlatformSectionSettings);
+          if (row.section === "content")
+            setContentSettings(row.data as unknown as ContentSectionSettings);
+        }
+      });
+  }, []);
+
+  const isSuperAdmin = hasRole("super_admin");
+  const isExcludedRoute = pathname.startsWith("/admin") || pathname.startsWith("/auth");
+
+  // Maintenance mode handling
+  if (platformSettings?.maintenance_mode) {
+    // If not super_admin and visiting a non-admin/auth route, display maintenance screen
+    if (!loading && !isSuperAdmin && !isExcludedRoute) {
+      return (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background px-4 text-center">
+          <div className="max-w-md space-y-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-lg">
+              <AlertTriangle className="h-7 w-7" />
+            </div>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Scheduled Maintenance
+            </h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {platformSettings.maintenance_message ||
+                "Compass Crew is currently undergoing scheduled platform maintenance. We will be back online shortly!"}
+            </p>
+            <div className="pt-4">
+              <Link
+                to="/auth"
+                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-4"
+              >
+                Administrator Login
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // If super admin is browsing, show a top banner
+    if (isSuperAdmin && !pathname.startsWith("/admin")) {
+      return (
+        <div className="relative z-50 flex items-center justify-between bg-amber-500/15 border-b border-amber-500/30 px-4 py-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">
+          <span className="flex items-center gap-1.5">
+            <AlertTriangle className="h-3.5 w-3.5" />
+            Maintenance mode is currently ACTIVE. Public visitors see maintenance screen.
+          </span>
+          <Link to="/admin/settings" className="underline hover:opacity-80">
+            Configure in Admin Settings
+          </Link>
+        </div>
+      );
+    }
+  }
+
+  // Announcement banner
+  if (
+    contentSettings?.announcement_banner_enabled &&
+    contentSettings.announcement_banner_text &&
+    !isExcludedRoute
+  ) {
+    return (
+      <div className="relative z-40 flex items-center justify-center gap-2 bg-gradient-brand px-4 py-1.5 text-xs font-medium text-white shadow-sm">
+        <Sparkles className="h-3.5 w-3.5 shrink-0" />
+        <span>{contentSettings.announcement_banner_text}</span>
+        {contentSettings.announcement_banner_link && (
+          <Link
+            to={contentSettings.announcement_banner_link}
+            className="ml-1 underline font-semibold hover:opacity-90"
+          >
+            Learn more →
+          </Link>
+        )}
+      </div>
+    );
+  }
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
@@ -151,6 +250,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <AuthProvider>
+          <PlatformStatusOverlay />
           <div className="flex min-h-dvh flex-col bg-background text-foreground">
             {!isAuthPage && <Navbar />}
             <main className="flex-1">

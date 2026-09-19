@@ -11,7 +11,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { listMyCertificates, CERT_TYPE_LABEL, certPdfUrl } from "@/lib/certificates";
@@ -41,7 +45,11 @@ function MyCertificatesPage() {
     const all = q.data ?? [];
     return all.filter((c) => {
       if (typeFilter !== "all" && c.type !== typeFilter) return false;
-      if (search && !`${c.title} ${c.recipient_name} ${c.code}`.toLowerCase().includes(search.toLowerCase())) return false;
+      if (
+        search &&
+        !`${c.title} ${c.recipient_name} ${c.code}`.toLowerCase().includes(search.toLowerCase())
+      )
+        return false;
       return true;
     });
   }, [q.data, search, typeFilter]);
@@ -54,24 +62,39 @@ function MyCertificatesPage() {
         description="Every certificate the crew has issued in your name, ready to download and share."
       />
       <Section>
-        <Card className="mb-4"><CardContent className="flex flex-wrap items-center gap-3 p-4">
-          <div className="relative flex-1 min-w-64">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, hackathon or code" className="pl-9" />
-          </div>
-          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
-              {(Object.keys(CERT_TYPE_LABEL) as CertificateType[]).map((k) => (
-                <SelectItem key={k} value={k}>{CERT_TYPE_LABEL[k]}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </CardContent></Card>
+        <Card className="mb-4">
+          <CardContent className="flex flex-wrap items-center gap-3 p-4">
+            <div className="relative flex-1 min-w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name, hackathon or code"
+                className="pl-9"
+              />
+            </div>
+            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
+              <SelectTrigger className="w-56">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                {(Object.keys(CERT_TYPE_LABEL) as CertificateType[]).map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {CERT_TYPE_LABEL[k]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
         {q.isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2">{[0, 1].map((i) => <Skeleton key={i} className="h-40 w-full" />)}</div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {[0, 1].map((i) => (
+              <Skeleton key={i} className="h-40 w-full" />
+            ))}
+          </div>
         ) : !filtered.length ? (
           <EmptyState
             icon={Award}
@@ -84,8 +107,17 @@ function MyCertificatesPage() {
               <Card key={c.id} className="transition hover:shadow-elegant">
                 <CardContent className="space-y-3 p-6">
                   <div className="flex items-center justify-between">
-                    <Badge variant="secondary"><Award className="mr-1 h-3 w-3" />{CERT_TYPE_LABEL[c.type]}</Badge>
-                    <span className="text-xs text-muted-foreground">{new Date(c.issued_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                    <Badge variant="secondary">
+                      <Award className="mr-1 h-3 w-3" />
+                      {CERT_TYPE_LABEL[c.type]}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(c.issued_at).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
                   </div>
                   <h3 className="font-display text-lg font-semibold">{c.title}</h3>
                   <p className="text-sm text-muted-foreground">{c.subtitle}</p>
@@ -100,7 +132,9 @@ function MyCertificatesPage() {
                       </a>
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <a href={`/verify/${c.code}`} target="_blank" rel="noopener noreferrer">Verify link</a>
+                      <a href={`/verify/${c.code}`} target="_blank" rel="noopener noreferrer">
+                        Verify link
+                      </a>
                     </Button>
                   </div>
                 </CardContent>

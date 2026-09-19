@@ -16,6 +16,7 @@ export class PointerController {
 
   private prevX = 0;
   private prevY = 0;
+  private currentTarget: HTMLElement | Window | null = null;
   private isListening = false;
   private damping = 0.06;
 
@@ -23,7 +24,7 @@ export class PointerController {
     this.damping = damping;
   }
 
-  public init(targetElement?: HTMLElement): void {
+  public init(targetElement?: HTMLElement | Window): void {
     if (typeof window === "undefined" || this.isListening) return;
 
     this.state.isTouch = window.matchMedia("(pointer: coarse)").matches;
@@ -35,11 +36,18 @@ export class PointerController {
     this.prevY = this.state.y;
 
     const target = targetElement || window;
+    this.currentTarget = target;
 
-    target.addEventListener("pointermove", this.handlePointerMove as EventListener, { passive: true });
-    target.addEventListener("pointerdown", this.handlePointerDown as EventListener, { passive: true });
+    target.addEventListener("pointermove", this.handlePointerMove as EventListener, {
+      passive: true,
+    });
+    target.addEventListener("pointerdown", this.handlePointerDown as EventListener, {
+      passive: true,
+    });
     target.addEventListener("pointerup", this.handlePointerUp as EventListener, { passive: true });
-    target.addEventListener("pointerleave", this.handlePointerLeave as EventListener, { passive: true });
+    target.addEventListener("pointerleave", this.handlePointerLeave as EventListener, {
+      passive: true,
+    });
 
     this.isListening = true;
   }
@@ -97,15 +105,16 @@ export class PointerController {
     this.state.vy *= 0.85;
   }
 
-  public dispose(targetElement?: HTMLElement): void {
+  public dispose(targetElement?: HTMLElement | Window): void {
     if (typeof window === "undefined" || !this.isListening) return;
 
-    const target = targetElement || window;
+    const target = targetElement || this.currentTarget || window;
     target.removeEventListener("pointermove", this.handlePointerMove as EventListener);
     target.removeEventListener("pointerdown", this.handlePointerDown as EventListener);
     target.removeEventListener("pointerup", this.handlePointerUp as EventListener);
     target.removeEventListener("pointerleave", this.handlePointerLeave as EventListener);
 
+    this.currentTarget = null;
     this.isListening = false;
   }
 }

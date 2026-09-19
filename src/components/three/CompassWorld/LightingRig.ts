@@ -79,16 +79,20 @@ export class LightingRig {
   public update(pointer?: PointerState): void {
     // Smoothly lerp light intensities and colors
     this.keyLight.color.lerp(this.targetKeyColor, this.lerpFactor);
-    this.keyLight.intensity += (this.targetKeyIntensity - this.keyLight.intensity) * this.lerpFactor;
+    this.keyLight.intensity +=
+      (this.targetKeyIntensity - this.keyLight.intensity) * this.lerpFactor;
 
     this.rimLight.color.lerp(this.targetRimColor, this.lerpFactor);
-    this.rimLight.intensity += (this.targetRimIntensity - this.rimLight.intensity) * this.lerpFactor;
+    this.rimLight.intensity +=
+      (this.targetRimIntensity - this.rimLight.intensity) * this.lerpFactor;
 
     this.ambientLight.color.lerp(this.targetAmbientColor, this.lerpFactor);
-    this.ambientLight.intensity += (this.targetAmbientIntensity - this.ambientLight.intensity) * this.lerpFactor;
+    this.ambientLight.intensity +=
+      (this.targetAmbientIntensity - this.ambientLight.intensity) * this.lerpFactor;
 
     this.warmLight.color.lerp(this.targetWarmColor, this.lerpFactor);
-    this.warmLight.intensity += (this.targetWarmIntensity - this.warmLight.intensity) * this.lerpFactor;
+    this.warmLight.intensity +=
+      (this.targetWarmIntensity - this.warmLight.intensity) * this.lerpFactor;
 
     // Pointer-driven subtle light movement
     if (pointer && !pointer.isTouch) {

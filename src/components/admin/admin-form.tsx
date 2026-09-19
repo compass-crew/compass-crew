@@ -57,7 +57,10 @@ export function AdminForm({ resource, initial, id }: Props) {
       if (isNew) {
         const created = await createRow(resource, payload);
         toast.success(`${resource.singular} created.`);
-        navigate({ to: "/admin/$resource/$itemId", params: { resource: resource.key, itemId: (created.id as string) ?? "" } });
+        navigate({
+          to: "/admin/$resource/$itemId",
+          params: { resource: resource.key, itemId: (created.id as string) ?? "" },
+        });
       } else {
         await updateRow(resource, id!, payload);
         toast.success("Saved.");
@@ -71,7 +74,8 @@ export function AdminForm({ resource, initial, id }: Props) {
 
   async function onDelete() {
     if (!id) return;
-    if (!confirm(`Delete this ${resource.singular.toLowerCase()}? It can be restored later.`)) return;
+    if (!confirm(`Delete this ${resource.singular.toLowerCase()}? It can be restored later.`))
+      return;
     setDeleting(true);
     try {
       await softDeleteRow(resource, id);
@@ -103,16 +107,34 @@ export function AdminForm({ resource, initial, id }: Props) {
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
         <div className="flex gap-2">
-          <Button type="submit" disabled={busy} className="bg-gradient-brand text-white hover:opacity-90">
-            {busy ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Save className="mr-1.5 h-4 w-4" />}
+          <Button
+            type="submit"
+            disabled={busy}
+            className="bg-gradient-brand text-white hover:opacity-90"
+          >
+            {busy ? (
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-1.5 h-4 w-4" />
+            )}
             {isNew ? "Create" : "Save changes"}
           </Button>
-          <Button type="button" variant="ghost" onClick={() => navigate({ to: "/admin/$resource", params: { resource: resource.key } })}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => navigate({ to: "/admin/$resource", params: { resource: resource.key } })}
+          >
             Cancel
           </Button>
         </div>
         {!isNew && resource.softDelete && (
-          <Button type="button" variant="ghost" className="text-destructive hover:text-destructive" onClick={onDelete} disabled={deleting}>
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={onDelete}
+            disabled={deleting}
+          >
             <Trash2 className="mr-1.5 h-4 w-4" /> Delete
           </Button>
         )}

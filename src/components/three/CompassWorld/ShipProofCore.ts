@@ -238,7 +238,7 @@ export class ShipProofCore {
     this.currentProgress = THREE.MathUtils.lerp(
       this.currentProgress,
       this.targetProgress,
-      this.lerpFactor
+      this.lerpFactor,
     );
 
     // Hide if out of scene
@@ -276,7 +276,7 @@ export class ShipProofCore {
     // =========================================================================
     // STAGE 3: PORTFOLIO CONVERGENCE INTO UNIFIED ARTIFACT (0.70 -> 0.92)
     // =========================================================================
-    const convergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.70, 0.90);
+    const convergence = THREE.MathUtils.smoothstep(this.currentProgress, 0.7, 0.9);
 
     this.layerConfigs.forEach((cfg, i) => {
       const plane = this.layerPlanes[i];
@@ -298,7 +298,11 @@ export class ShipProofCore {
       const hoverZ = isHovered ? 0.06 : 0;
       const hoverScale = isHovered ? 1.03 : 1.0;
 
-      plane.position.set(this._scratchVec4.x, this._scratchVec4.y + floatY, this._scratchVec4.z + floatZ + hoverZ);
+      plane.position.set(
+        this._scratchVec4.x,
+        this._scratchVec4.y + floatY,
+        this._scratchVec4.z + floatZ + hoverZ,
+      );
       border.position.copy(plane.position);
 
       plane.scale.setScalar(scaleMult * layerEmergence * hoverScale);

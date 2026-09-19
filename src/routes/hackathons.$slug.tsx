@@ -48,19 +48,26 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { requireAuth } from "@/lib/auth-guard";
 
 export const Route = createFileRoute("/hackathons/$slug")({
+  beforeLoad: requireAuth({ requireOnboarding: false }),
   component: HackathonDetail,
 });
 
 /* ----------------------------- helpers ----------------------------- */
 
-const STATUS_TONE: Record<
-  Hackathon["status"],
-  { chip: string; dot: string; pulse: boolean }
-> = {
-  draft: { chip: "bg-muted/70 text-muted-foreground ring-border/60", dot: "bg-muted-foreground/60", pulse: false },
-  published: { chip: "bg-primary/15 text-primary ring-primary/25", dot: "bg-primary", pulse: false },
+const STATUS_TONE: Record<Hackathon["status"], { chip: string; dot: string; pulse: boolean }> = {
+  draft: {
+    chip: "bg-muted/70 text-muted-foreground ring-border/60",
+    dot: "bg-muted-foreground/60",
+    pulse: false,
+  },
+  published: {
+    chip: "bg-primary/15 text-primary ring-primary/25",
+    dot: "bg-primary",
+    pulse: false,
+  },
   registrations_open: {
     chip: "bg-emerald-500/15 text-emerald-600 ring-emerald-500/30 dark:text-emerald-400",
     dot: "bg-emerald-500",
@@ -81,7 +88,11 @@ const STATUS_TONE: Record<
     dot: "bg-blue-500",
     pulse: false,
   },
-  archived: { chip: "bg-muted/70 text-muted-foreground ring-border/60", dot: "bg-muted-foreground/60", pulse: false },
+  archived: {
+    chip: "bg-muted/70 text-muted-foreground ring-border/60",
+    dot: "bg-muted-foreground/60",
+    pulse: false,
+  },
 };
 
 function fmtDate(iso?: string | null) {
@@ -139,12 +150,15 @@ function HackathonDetail() {
   const { slug } = Route.useParams();
   const router = useRouter();
   const qc = useQueryClient();
-  const { user } = useAuth();
+  const { user, hasAnyRole } = useAuth();
 
   const { data: h, isLoading } = useQuery({
     queryKey: ["hackathon", slug],
     queryFn: () => getHackathonBySlug(slug),
   });
+
+  const isAdminOrOrganizer =
+    hasAnyRole(["super_admin", "organizer"]) || (!!user && !!h && h.created_by === user.id);
 
   const { data: tracks } = useQuery({
     queryKey: ["hackathon", slug, "tracks"],
@@ -196,7 +210,10 @@ function HackathonDetail() {
       const top = visible.reduce((a, b) => (a.intersectionRatio > b.intersectionRatio ? a : b));
       setActiveSection((top.target as HTMLElement).id);
     };
-    const io = new IntersectionObserver(cb, { rootMargin: "-30% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] });
+    const io = new IntersectionObserver(cb, {
+      rootMargin: "-30% 0px -60% 0px",
+      threshold: [0, 0.25, 0.5, 1],
+    });
     SECTIONS.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) io.observe(el);
@@ -253,14 +270,17 @@ function HackathonDetail() {
   /* Loading */
   if (isLoading) return <DetailSkeleton />;
 
-  if (!h) {
+  // Conceal draft hackathons from non-admin / non-organizer visitors
+  if (!h || (h.status === "draft" && !isAdminOrOrganizer)) {
     return (
       <div className="mx-auto max-w-3xl px-5 py-24 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-dashed border-border bg-card/60 p-12 text-center backdrop-blur">
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
             <Compass className="h-5 w-5" />
           </span>
-          <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">Hackathon not found</h1>
+          <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">
+            Hackathon not found
+          </h1>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
             This hackathon may have been unpublished or the link is incorrect.
           </p>
@@ -276,7 +296,24 @@ function HackathonDetail() {
     );
   }
 
-  return <DetailLoaded {...{ h, tracks, criteria, myReg, register, user, router, slug, activeSection, bookmarked, toggleBookmark, shareHackathon }} />;
+  return (
+    <DetailLoaded
+      {...{
+        h,
+        tracks,
+        criteria,
+        myReg,
+        register,
+        user,
+        router,
+        slug,
+        activeSection,
+        bookmarked,
+        toggleBookmark,
+        shareHackathon,
+      }}
+    />
+  );
 }
 
 /* Split into inner component so hooks that depend on `h` are unconditional. */
@@ -322,7 +359,7 @@ function DetailLoaded({
       : h.status === "published"
         ? h.starts_at
         : h.status === "ongoing"
-          ? h.submission_deadline ?? h.ends_at
+          ? (h.submission_deadline ?? h.ends_at)
           : null;
   const countdownLabel =
     h.status === "registrations_open"
@@ -335,11 +372,26 @@ function DetailLoaded({
   const countdown = useCountdown(countdownTarget);
 
   const timeline = useMemo(() => {
-    const items: { key: string; label: string; iso: string | null; icon: React.ComponentType<{ className?: string }> }[] = [
+    const items: {
+      key: string;
+      label: string;
+      iso: string | null;
+      icon: React.ComponentType<{ className?: string }>;
+    }[] = [
       { key: "reg_opens", label: "Registrations open", iso: h.registration_opens_at, icon: Play },
-      { key: "reg_closes", label: "Registrations close", iso: h.registration_closes_at, icon: Timer },
+      {
+        key: "reg_closes",
+        label: "Registrations close",
+        iso: h.registration_closes_at,
+        icon: Timer,
+      },
       { key: "kickoff", label: "Kick-off", iso: h.starts_at, icon: Flag },
-      { key: "submissions", label: "Submission deadline", iso: h.submission_deadline, icon: ScrollText },
+      {
+        key: "submissions",
+        label: "Submission deadline",
+        iso: h.submission_deadline,
+        icon: ScrollText,
+      },
       { key: "ends", label: "Hacking ends", iso: h.ends_at, icon: CheckCircle2 },
       { key: "results", label: "Results announced", iso: h.results_at, icon: Award },
     ];
@@ -348,6 +400,30 @@ function DetailLoaded({
 
   return (
     <>
+      {h.status === "draft" && (
+        <aside
+          role="status"
+          aria-label="Admin preview status"
+          className="sticky top-16 z-40 flex items-center justify-between border-b border-amber-500/30 bg-amber-500/15 px-4 py-2.5 text-xs font-medium text-amber-600 backdrop-blur-md dark:text-amber-400"
+        >
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+            <span>
+              <strong>ADMIN PREVIEW MODE:</strong> This hackathon is currently in{" "}
+              <strong>Draft</strong> status and is completely hidden from public users.
+            </span>
+          </div>
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="h-7 border-amber-500/40 text-xs text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+          >
+            <Link to="/admin/hackathons">Admin Console</Link>
+          </Button>
+        </aside>
+      )}
+
       {/* ============================ HERO ============================ */}
       <section className="relative overflow-hidden border-b border-border">
         {h.banner_url ? (
@@ -358,14 +434,20 @@ function DetailLoaded({
               className="absolute inset-0 h-full w-full object-cover"
               aria-hidden
             />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background"
+            />
             <div aria-hidden className="absolute inset-0 bg-grid opacity-10" />
           </>
         ) : (
           <>
             <div aria-hidden className="absolute inset-0 bg-gradient-brand" />
             <div aria-hidden className="absolute inset-0 bg-grid opacity-20 mix-blend-overlay" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background"
+            />
           </>
         )}
 
@@ -387,7 +469,9 @@ function DetailLoaded({
             >
               <span className="relative flex h-1.5 w-1.5">
                 {tone.pulse && (
-                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-70 ${tone.dot}`} />
+                  <span
+                    className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-70 ${tone.dot}`}
+                  />
                 )}
                 <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${tone.dot}`} />
               </span>
@@ -421,10 +505,28 @@ function DetailLoaded({
 
           {/* Quick meta strip */}
           <dl className="mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
-            <QuickMeta icon={Calendar} label="Dates" value={formatDateRange(h.starts_at, h.ends_at)} />
-            <QuickMeta icon={Users} label="Team size" value={`${h.min_team_size}–${h.max_team_size}`} />
-            <QuickMeta icon={Trophy} label="Prizes" value={prizes.length > 0 ? `${prizes.length} tier${prizes.length > 1 ? "s" : ""}` : "TBA"} />
-            <QuickMeta icon={Flag} label="Tracks" value={(tracks?.length ?? 0) > 0 ? String(tracks!.length) : "TBA"} />
+            <QuickMeta
+              icon={Calendar}
+              label="Dates"
+              value={formatDateRange(h.starts_at, h.ends_at)}
+            />
+            <QuickMeta
+              icon={Users}
+              label="Team size"
+              value={`${h.min_team_size}–${h.max_team_size}`}
+            />
+            <QuickMeta
+              icon={Trophy}
+              label="Prizes"
+              value={
+                prizes.length > 0 ? `${prizes.length} tier${prizes.length > 1 ? "s" : ""}` : "TBA"
+              }
+            />
+            <QuickMeta
+              icon={Flag}
+              label="Tracks"
+              value={(tracks?.length ?? 0) > 0 ? String(tracks!.length) : "TBA"}
+            />
           </dl>
 
           {/* Countdown */}
@@ -438,9 +540,18 @@ function DetailLoaded({
                   {countdownLabel}
                 </p>
                 <div className="mt-0.5 flex items-baseline gap-2 font-display text-xl font-semibold tabular-nums">
-                  <span>{countdown.days}<span className="ml-0.5 text-xs font-medium text-muted-foreground">d</span></span>
-                  <span>{countdown.hours}<span className="ml-0.5 text-xs font-medium text-muted-foreground">h</span></span>
-                  <span>{countdown.minutes}<span className="ml-0.5 text-xs font-medium text-muted-foreground">m</span></span>
+                  <span>
+                    {countdown.days}
+                    <span className="ml-0.5 text-xs font-medium text-muted-foreground">d</span>
+                  </span>
+                  <span>
+                    {countdown.hours}
+                    <span className="ml-0.5 text-xs font-medium text-muted-foreground">h</span>
+                  </span>
+                  <span>
+                    {countdown.minutes}
+                    <span className="ml-0.5 text-xs font-medium text-muted-foreground">m</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -523,7 +634,9 @@ function DetailLoaded({
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <div className="min-w-0">
-                        <h3 className="font-display text-[16px] font-semibold tracking-tight">{t.name}</h3>
+                        <h3 className="font-display text-[16px] font-semibold tracking-tight">
+                          {t.name}
+                        </h3>
                         {t.description && (
                           <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">
                             {t.description}
@@ -555,12 +668,26 @@ function DetailLoaded({
                       )}
                     >
                       {emphasis && (
-                        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-24 h-32 bg-gradient-brand opacity-20 blur-3xl" />
+                        <div
+                          aria-hidden
+                          className="pointer-events-none absolute inset-x-0 -top-24 h-32 bg-gradient-brand opacity-20 blur-3xl"
+                        />
                       )}
                       <CardContent className="relative p-6">
                         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                          <Trophy className={cn("h-3.5 w-3.5", emphasis ? "text-primary" : "text-muted-foreground")} />
-                          <span>{rank === 1 ? "Grand prize" : rank === 2 ? "Runner-up" : `Prize ${rank}`}</span>
+                          <Trophy
+                            className={cn(
+                              "h-3.5 w-3.5",
+                              emphasis ? "text-primary" : "text-muted-foreground",
+                            )}
+                          />
+                          <span>
+                            {rank === 1
+                              ? "Grand prize"
+                              : rank === 2
+                                ? "Runner-up"
+                                : `Prize ${rank}`}
+                          </span>
                         </div>
                         <h3 className="mt-3 font-display text-[17px] font-semibold tracking-tight">
                           {(p.title as string) ?? (p.name as string) ?? `Prize ${rank}`}
@@ -597,7 +724,9 @@ function DetailLoaded({
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                       {t.label}
                     </p>
-                    <p className="mt-1 text-[14.5px] font-medium">{fmtDateTime(t.iso) ?? fmtDate(t.iso)}</p>
+                    <p className="mt-1 text-[14.5px] font-medium">
+                      {fmtDateTime(t.iso) ?? fmtDate(t.iso)}
+                    </p>
                   </li>
                 ))}
               </ol>
@@ -613,7 +742,9 @@ function DetailLoaded({
                     <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">
                       <ShieldCheck className="h-4 w-4" />
                     </span>
-                    <h3 className="font-display text-[16px] font-semibold tracking-tight">Eligibility</h3>
+                    <h3 className="font-display text-[16px] font-semibold tracking-tight">
+                      Eligibility
+                    </h3>
                   </div>
                   {h.eligibility ? (
                     <p className="mt-4 whitespace-pre-wrap text-[13.5px] leading-relaxed text-muted-foreground">
@@ -662,7 +793,9 @@ function DetailLoaded({
                         )}
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="font-display text-lg font-semibold tabular-nums">/{c.max_score}</p>
+                        <p className="font-display text-lg font-semibold tabular-nums">
+                          /{c.max_score}
+                        </p>
                         <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                           weight {Number(c.weight).toFixed(2)}
                         </p>
@@ -701,14 +834,18 @@ function DetailLoaded({
                           </span>
                         )}
                         <div className="min-w-0">
-                          <p className="truncate text-[14px] font-semibold tracking-tight">{name}</p>
+                          <p className="truncate text-[14px] font-semibold tracking-tight">
+                            {name}
+                          </p>
                           {tier && (
                             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                               {tier}
                             </p>
                           )}
                         </div>
-                        {url && <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+                        {url && (
+                          <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        )}
                       </CardContent>
                     </Card>
                   );
@@ -780,7 +917,10 @@ function DetailLoaded({
                   />
                   <SideRow label="Kick-off" value={fmtDate(h.starts_at) ?? "TBA"} />
                   <SideRow label="Team size" value={`${h.min_team_size}–${h.max_team_size}`} />
-                  <SideRow label="Mode" value={`${HACKATHON_MODE_LABEL[h.mode]}${h.location ? ` · ${h.location}` : ""}`} />
+                  <SideRow
+                    label="Mode"
+                    value={`${HACKATHON_MODE_LABEL[h.mode]}${h.location ? ` · ${h.location}` : ""}`}
+                  />
                 </dl>
 
                 <PrimaryCTA
@@ -811,7 +951,12 @@ function DetailLoaded({
                       </>
                     )}
                   </Button>
-                  <Button variant="ghost" size="sm" className="flex-1 justify-start gap-2" onClick={shareHackathon}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 justify-start gap-2"
+                    onClick={shareHackathon}
+                  >
                     <Share2 className="h-4 w-4" /> Share
                   </Button>
                 </div>
@@ -862,7 +1007,9 @@ function Section({
   return (
     <section id={id} className="scroll-mt-32">
       <header className="mb-5">
-        <h2 className="font-display text-[22px] font-semibold tracking-tight sm:text-[26px]">{title}</h2>
+        <h2 className="font-display text-[22px] font-semibold tracking-tight sm:text-[26px]">
+          {title}
+        </h2>
         {subtitle && <p className="mt-1 text-[13.5px] text-muted-foreground">{subtitle}</p>}
       </header>
       {children}
@@ -933,7 +1080,10 @@ function PrimaryCTA({
   if (registered) {
     return (
       <div className="space-y-2">
-        <Button className="h-11 w-full rounded-lg bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400" disabled>
+        <Button
+          className="h-11 w-full rounded-lg bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400"
+          disabled
+        >
           <CheckCircle2 className="mr-2 h-4 w-4" /> Registered
         </Button>
         <Button asChild variant="outline" className="h-10 w-full rounded-lg border-border/70">
@@ -948,7 +1098,9 @@ function PrimaryCTA({
     return (
       <Button
         className="h-11 w-full rounded-lg text-sm font-semibold btn-premium hover:btn-premium-hover text-white"
-        onClick={() => router.navigate({ to: "/auth", search: { redirect: `/hackathons/${slug}` } })}
+        onClick={() =>
+          router.navigate({ to: "/auth", search: { redirect: `/hackathons/${slug}` } })
+        }
       >
         Sign in to register
       </Button>

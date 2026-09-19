@@ -29,7 +29,11 @@ export async function upsertTrack(input: {
   if (input.id) {
     const { data, error } = await supabase
       .from("hackathon_tracks")
-      .update({ name: input.name, description: input.description ?? null, sort_order: input.sort_order ?? 0 })
+      .update({
+        name: input.name,
+        description: input.description ?? null,
+        sort_order: input.sort_order ?? 0,
+      })
       .eq("id", input.id)
       .select()
       .single();
@@ -72,7 +76,12 @@ export async function upsertCriterion(input: {
     sort_order: input.sort_order ?? 0,
   };
   if (input.id) {
-    const { data, error } = await supabase.from("scoring_criteria").update(payload).eq("id", input.id).select().single();
+    const { data, error } = await supabase
+      .from("scoring_criteria")
+      .update(payload)
+      .eq("id", input.id)
+      .select()
+      .single();
     if (error) throw error;
     return data;
   }
@@ -98,7 +107,10 @@ export interface Prize {
   rank?: number;
 }
 export async function savePrizes(hackathonId: string, prizes: Prize[]) {
-  const { error } = await supabase.from("hackathons").update({ prizes: prizes as never }).eq("id", hackathonId);
+  const { error } = await supabase
+    .from("hackathons")
+    .update({ prizes: prizes as never })
+    .eq("id", hackathonId);
   if (error) throw error;
 }
 
@@ -115,20 +127,33 @@ export async function listRegistrations(hackathonId: string): Promise<Registrati
   const { data: profs } = await supabase
     .from("profiles")
     .select("id, full_name, username, college, branch, year_of_study")
-    .in("id", rows.map((r) => r.user_id));
+    .in(
+      "id",
+      rows.map((r) => r.user_id),
+    );
   const map = new Map((profs ?? []).map((p) => [p.id, p]));
   return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
 }
-export async function updateRegistrationStatus(id: string, status: Database["public"]["Enums"]["registration_status"]) {
+export async function updateRegistrationStatus(
+  id: string,
+  status: Database["public"]["Enums"]["registration_status"],
+) {
   const { error } = await supabase.from("registrations").update({ status }).eq("id", id);
   if (error) throw error;
 }
 
 /* -------- Judges -------- */
 export interface JudgeAssignmentWithProfile extends JudgeAssignment {
-  profile: { id: string; full_name: string | null; username: string | null; avatar_url: string | null } | null;
+  profile: {
+    id: string;
+    full_name: string | null;
+    username: string | null;
+    avatar_url: string | null;
+  } | null;
 }
-export async function listJudgeAssignments(hackathonId: string): Promise<JudgeAssignmentWithProfile[]> {
+export async function listJudgeAssignments(
+  hackathonId: string,
+): Promise<JudgeAssignmentWithProfile[]> {
   const { data, error } = await supabase
     .from("judge_assignments")
     .select("*")
@@ -140,12 +165,17 @@ export async function listJudgeAssignments(hackathonId: string): Promise<JudgeAs
   const { data: profs } = await supabase
     .from("profiles")
     .select("id, full_name, username, avatar_url")
-    .in("id", rows.map((r) => r.judge_id));
+    .in(
+      "id",
+      rows.map((r) => r.judge_id),
+    );
   const map = new Map((profs ?? []).map((p) => [p.id, p]));
   return rows.map((r) => ({ ...r, profile: map.get(r.judge_id) ?? null }));
 }
 export async function assignJudgeByEmail(hackathonId: string, email: string) {
-  const { data: userId } = await supabase.rpc("find_user_id_by_email", { _email: email.trim().toLowerCase() });
+  const { data: userId } = await supabase.rpc("find_user_id_by_email", {
+    _email: email.trim().toLowerCase(),
+  });
   if (!userId) throw new Error("No user found with that email. Ask them to sign up first.");
   const { error } = await supabase
     .from("judge_assignments")
@@ -180,7 +210,11 @@ export async function createAnnouncement(input: {
   body: string;
   audience?: Database["public"]["Enums"]["announcement_audience"];
 }) {
-  const { data, error } = await supabase.from("announcements").insert({ ...input }).select().single();
+  const { data, error } = await supabase
+    .from("announcements")
+    .insert({ ...input })
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }

@@ -19,8 +19,10 @@ import { HackathonCard } from "@/components/hackathon-card";
 import { listPublicHackathons, type Hackathon, type HackathonMode } from "@/lib/hackathons";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { requireAuth } from "@/lib/auth-guard";
 
 export const Route = createFileRoute("/hackathons")({
+  beforeLoad: requireAuth({ requireOnboarding: false }),
   head: () => ({
     meta: [
       { title: "Hackathons — Compass Crew" },
@@ -85,7 +87,8 @@ function HackathonsPage() {
       if (status !== "all" && bucketOf(h) !== status) return false;
       if (mode !== "all" && h.mode !== mode) return false;
       if (q) {
-        const hay = `${h.title} ${h.tagline ?? ""} ${h.theme ?? ""} ${h.location ?? ""}`.toLowerCase();
+        const hay =
+          `${h.title} ${h.tagline ?? ""} ${h.theme ?? ""} ${h.location ?? ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -135,11 +138,11 @@ function HackathonsPage() {
             size="lg"
             className="h-11 rounded-lg px-5 text-sm font-semibold btn-premium hover:btn-premium-hover"
           >
-            <Link to="/community">Join community</Link>
+            <Link to="/dashboard">My dashboard</Link>
           </Button>
         )}
         <Button asChild size="lg" variant="outline" className="h-11 rounded-lg border-border/70">
-          <Link to="/partner">Sponsor a hackathon</Link>
+          <Link to="/sponsors">Sponsor a hackathon</Link>
         </Button>
       </PageHeader>
 
@@ -179,7 +182,9 @@ function HackathonsPage() {
                     <span
                       className={cn(
                         "ml-0.5 rounded-full px-1.5 py-px text-[10.5px] font-semibold tabular-nums",
-                        active ? "bg-background/20 text-background" : "bg-muted/70 text-muted-foreground",
+                        active
+                          ? "bg-background/20 text-background"
+                          : "bg-muted/70 text-muted-foreground",
                       )}
                     >
                       {counts[t.key]}
@@ -247,7 +252,10 @@ function HackathonsPage() {
               <Skeleton className="inline-block h-4 w-32 align-middle" />
             ) : (
               <>
-                Showing <span className="font-semibold text-foreground tabular-nums">{filtered.length}</span>{" "}
+                Showing{" "}
+                <span className="font-semibold text-foreground tabular-nums">
+                  {filtered.length}
+                </span>{" "}
                 {filtered.length === 1 ? "hackathon" : "hackathons"}
                 {hasFilters && all.length > filtered.length && (
                   <>

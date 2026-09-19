@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getRequestHost } from "@tanstack/react-start/server";
+import { enforceRateLimit } from "@/lib/rate-limit.server";
 import type { Database } from "@/integrations/supabase/types";
 
 type CertificateType = Database["public"]["Enums"]["certificate_type"];
 
-const CERT_TYPES: readonly CertificateType[] = [
+const CERT_TYPES = [
   "participation",
   "winner",
   "runner_up",
@@ -44,15 +46,26 @@ const SUBTITLE_BY_TYPE: Record<CertificateType, string> = {
 function genCode(): string {
   // CC-XXXXXX-XXXX pattern
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const pick = (n: number) => Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
+  const pick = (n: number) =>
+    Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
   return `CC-${pick(6)}-${pick(4)}`;
 }
 
-async function verifyOrganizer(supabase: import("@supabase/supabase-js").SupabaseClient, userId: string, hackathonId: string | null) {
-  const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "super_admin" });
+async function verifyOrganizer(
+  supabase: import("@supabase/supabase-js").SupabaseClient,
+  userId: string,
+  hackathonId: string | null,
+) {
+  const { data: isAdmin } = await supabase.rpc("has_role", {
+    _user_id: userId,
+    _role: "super_admin",
+  });
   if (isAdmin) return;
   if (!hackathonId) throw new Error("Forbidden");
-  const { data: ok } = await supabase.rpc("is_hackathon_organizer", { _user_id: userId, _hackathon_id: hackathonId });
+  const { data: ok } = await supabase.rpc("is_hackathon_organizer", {
+    _user_id: userId,
+    _hackathon_id: hackathonId,
+  });
   if (!ok) throw new Error("Forbidden");
 }
 
@@ -85,7 +98,15 @@ async function buildPdf(input: {
   // Background frame
   page.drawRectangle({ x: 0, y: 0, width: 842, height: 595, color: rgb(1, 1, 1) });
   page.drawRectangle({ x: 24, y: 24, width: 794, height: 547, borderColor: brand, borderWidth: 2 });
-  page.drawRectangle({ x: 32, y: 32, width: 778, height: 531, borderColor: brand, borderWidth: 0.5, opacity: 0.4 });
+  page.drawRectangle({
+    x: 32,
+    y: 32,
+    width: 778,
+    height: 531,
+    borderColor: brand,
+    borderWidth: 0.5,
+    opacity: 0.4,
+  });
 
   // Accent corners
   page.drawRectangle({ x: 32, y: 501, width: 240, height: 62, color: soft });
@@ -93,10 +114,18 @@ async function buildPdf(input: {
 
   // Brand
   page.drawText("COMPASS CREW", {
-    x: 60, y: 528, size: 14, font: helvBold, color: brand,
+    x: 60,
+    y: 528,
+    size: 14,
+    font: helvBold,
+    color: brand,
   });
   page.drawText("India's student innovation platform", {
-    x: 60, y: 512, size: 8, font: helv, color: muted,
+    x: 60,
+    y: 512,
+    size: 8,
+    font: helv,
+    color: muted,
   });
 
   // Title
@@ -105,8 +134,10 @@ async function buildPdf(input: {
   page.drawText(title, { x: (842 - titleWidth) / 2, y: 430, size: 30, font: helvBold, color: ink });
 
   page.drawLine({
-    start: { x: 321, y: 415 }, end: { x: 521, y: 415 },
-    thickness: 1.2, color: brand,
+    start: { x: 321, y: 415 },
+    end: { x: 521, y: 415 },
+    thickness: 1.2,
+    color: brand,
   });
 
   const presented = "This certificate is proudly presented to";
@@ -121,7 +152,13 @@ async function buildPdf(input: {
   // Body
   const body = `${input.subtitleLead}${input.hackathonTitle ? ` ${input.hackathonTitle}` : ""}.`;
   const bw = italic.widthOfTextAtSize(body, 13);
-  page.drawText(body, { x: (842 - Math.min(bw, 700)) / 2, y: 290, size: 13, font: italic, color: ink });
+  page.drawText(body, {
+    x: (842 - Math.min(bw, 700)) / 2,
+    y: 290,
+    size: 13,
+    font: italic,
+    color: ink,
+  });
 
   // Role line
   const roleLine = `Role: ${input.role}`;
@@ -131,15 +168,35 @@ async function buildPdf(input: {
   // Left bottom: date + organizer signature line
   page.drawText("Issued on", { x: 80, y: 130, size: 9, font: helv, color: muted });
   page.drawText(input.issueDate, { x: 80, y: 112, size: 12, font: helvBold, color: ink });
-  page.drawLine({ start: { x: 80, y: 100 }, end: { x: 240, y: 100 }, thickness: 0.7, color: muted });
+  page.drawLine({
+    start: { x: 80, y: 100 },
+    end: { x: 240, y: 100 },
+    thickness: 0.7,
+    color: muted,
+  });
   page.drawText("Issue Date", { x: 80, y: 86, size: 8, font: helv, color: muted });
 
   page.drawText(input.organizerName, { x: 300, y: 112, size: 12, font: helvBold, color: ink });
-  page.drawLine({ start: { x: 300, y: 100 }, end: { x: 500, y: 100 }, thickness: 0.7, color: muted });
-  page.drawText("Authorised Signatory · Compass Crew", { x: 300, y: 86, size: 8, font: helv, color: muted });
+  page.drawLine({
+    start: { x: 300, y: 100 },
+    end: { x: 500, y: 100 },
+    thickness: 0.7,
+    color: muted,
+  });
+  page.drawText("Authorised Signatory · Compass Crew", {
+    x: 300,
+    y: 86,
+    size: 8,
+    font: helv,
+    color: muted,
+  });
 
   // QR code (right bottom)
-  const qrData = await QRCode.toDataURL(input.verifyUrl, { margin: 0, width: 220, color: { dark: "#0E1226", light: "#FFFFFF" } });
+  const qrData = await QRCode.toDataURL(input.verifyUrl, {
+    margin: 0,
+    width: 220,
+    color: { dark: "#0E1226", light: "#FFFFFF" },
+  });
   const qrBytes = Uint8Array.from(atob(qrData.split(",")[1]), (c) => c.charCodeAt(0));
   const qrImg = await pdf.embedPng(qrBytes);
   page.drawImage(qrImg, { x: 700, y: 70, width: 90, height: 90 });
@@ -148,129 +205,184 @@ async function buildPdf(input: {
 
   // Watermark
   page.drawText("COMPASS CREW", {
-    x: 200, y: 250, size: 82, font: helvBold, color: brand, opacity: 0.04, rotate: degrees(-18),
+    x: 200,
+    y: 250,
+    size: 82,
+    font: helvBold,
+    color: brand,
+    opacity: 0.04,
+    rotate: degrees(-18),
   });
 
   return await pdf.save();
 }
 
+const generateCertSchema = z.object({
+  hackathonId: z.string().trim().uuid(),
+  userId: z.string().trim().uuid(),
+  type: z.enum(CERT_TYPES),
+  achievement: z.string().trim().max(120).optional(),
+  recipientName: z.string().trim().max(120).optional(),
+});
+
 export const generateCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: {
-    hackathonId: string;
-    userId: string;
-    type: CertificateType;
-    achievement?: string;
-    recipientName?: string;
-  }) => {
-    if (!CERT_TYPES.includes(d.type)) throw new Error("Invalid certificate type");
-    if (!d.userId) throw new Error("userId required");
-    return d;
-  })
+  .validator((d: unknown) => generateCertSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
+
+    await enforceRateLimit({
+      key: "cert:generate",
+      limit: 30,
+      windowSeconds: 60,
+      identifier: callerId,
+      errorMessage: "Certificate generation limit reached. Please wait a minute.",
+    });
+
     await verifyOrganizer(supabase, callerId, data.hackathonId ?? null);
 
-    // Load hackathon + recipient profile + caller profile
-    const [{ data: hack }, { data: recipient }, { data: caller }] = await Promise.all([
-      supabase.from("hackathons").select("id, title, results_at").eq("id", data.hackathonId).maybeSingle(),
-      supabase.from("profiles").select("id, full_name, username").eq("id", data.userId).maybeSingle(),
-      supabase.from("profiles").select("id, full_name").eq("id", callerId).maybeSingle(),
-    ]);
-    if (!hack) throw new Error("Hackathon not found");
-
-    const recipientName =
-      data.recipientName?.trim() ||
-      recipient?.full_name?.trim() ||
-      recipient?.username?.trim() ||
-      "Recipient";
-    const organizerName = caller?.full_name?.trim() || "Compass Crew";
-
-    // Generate unique code (retry on collision)
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    let code = genCode();
-    for (let i = 0; i < 5; i++) {
-      const { data: exists } = await supabaseAdmin.from("certificates").select("id").eq("code", code).maybeSingle();
-      if (!exists) break;
-      code = genCode();
-    }
-
-    let host = "";
     try {
-      host = getRequestHost();
-    } catch {
-      host = "";
-    }
-    const origin = host ? `https://${host}` : "";
-    const verifyUrl = `${origin}/verify/${code}`;
+      // Load hackathon + recipient profile + caller profile
+      const [{ data: hack }, { data: recipient }, { data: caller }] = await Promise.all([
+        supabase
+          .from("hackathons")
+          .select("id, title, results_at")
+          .eq("id", data.hackathonId)
+          .maybeSingle(),
+        supabase
+          .from("profiles")
+          .select("id, full_name, username")
+          .eq("id", data.userId)
+          .maybeSingle(),
+        supabase.from("profiles").select("id, full_name").eq("id", callerId).maybeSingle(),
+      ]);
+      if (!hack) throw new Error("Hackathon not found");
 
-    const title = TITLE_BY_TYPE[data.type];
-    const subtitleLead = SUBTITLE_BY_TYPE[data.type];
-    const roleLabel =
-      data.achievement?.trim() ||
-      {
-        participation: "Participant",
-        winner: "Winner",
-        runner_up: "Runner-up",
-        special_mention: "Special Mention",
-        judge: "Judge",
-        mentor: "Mentor",
-        organizer: "Organizer",
-        campus_ambassador: "Campus Ambassador",
-        volunteer: "Volunteer",
-      }[data.type];
+      const recipientName =
+        data.recipientName?.trim() ||
+        recipient?.full_name?.trim() ||
+        recipient?.username?.trim() ||
+        "Recipient";
+      const organizerName = caller?.full_name?.trim() || "Compass Crew";
 
-    const issueDate = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+      // Generate unique code (retry on collision)
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      let code = genCode();
+      for (let i = 0; i < 5; i++) {
+        const { data: exists } = await supabaseAdmin
+          .from("certificates")
+          .select("id")
+          .eq("code", code)
+          .maybeSingle();
+        if (!exists) break;
+        code = genCode();
+      }
 
-    const pdfBytes = await buildPdf({
-      code, title, subtitleLead,
-      recipient: recipientName,
-      hackathonTitle: hack.title,
-      role: roleLabel,
-      issueDate,
-      verifyUrl,
-      organizerName,
-    });
+      let host = "";
+      try {
+        host = getRequestHost();
+      } catch {
+        host = "";
+      }
+      const origin = host ? `https://${host}` : "";
+      const verifyUrl = `${origin}/verify/${code}`;
 
-    const path = `${data.hackathonId}/${code}.pdf`;
-    const { error: upErr } = await supabaseAdmin.storage
-      .from("certificates")
-      .upload(path, pdfBytes, { contentType: "application/pdf", upsert: true });
-    if (upErr) throw upErr;
+      const title = TITLE_BY_TYPE[data.type];
+      const subtitleLead = SUBTITLE_BY_TYPE[data.type];
+      const roleLabel =
+        data.achievement?.trim() ||
+        {
+          participation: "Participant",
+          winner: "Winner",
+          runner_up: "Runner-up",
+          special_mention: "Special Mention",
+          judge: "Judge",
+          mentor: "Mentor",
+          organizer: "Organizer",
+          campus_ambassador: "Campus Ambassador",
+          volunteer: "Volunteer",
+        }[data.type];
 
-    // Insert or update certificate row (unique on code)
-    const { data: inserted, error: insErr } = await supabaseAdmin
-      .from("certificates")
-      .insert({
+      const issueDate = new Date().toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      const pdfBytes = await buildPdf({
         code,
-        user_id: data.userId,
-        hackathon_id: data.hackathonId,
-        type: data.type,
         title,
-        subtitle: `${subtitleLead}${hack.title ? ` ${hack.title}` : ""}`,
-        recipient_name: recipientName,
-        pdf_url: path,
-      })
-      .select()
-      .single();
-    if (insErr) throw insErr;
+        subtitleLead,
+        recipient: recipientName,
+        hackathonTitle: hack.title,
+        role: roleLabel,
+        issueDate,
+        verifyUrl,
+        organizerName,
+      });
 
-    await supabaseAdmin.from("notifications").insert({
-      user_id: data.userId,
-      type: "certificate_ready",
-      title: "Your certificate is ready",
-      body: `${title} for ${hack.title}`,
-      link: `/certificates`,
-    });
+      const path = `${data.hackathonId}/${code}.pdf`;
+      const { error: upErr } = await supabaseAdmin.storage
+        .from("certificates")
+        .upload(path, pdfBytes, { contentType: "application/pdf", upsert: true });
+      if (upErr) {
+        console.error("[Cert Storage Error]", upErr);
+        throw new Error("Failed to store certificate PDF.");
+      }
 
-    return { id: inserted.id, code, path };
+      // Insert or update certificate row (unique on code)
+      const { data: inserted, error: insErr } = await supabaseAdmin
+        .from("certificates")
+        .insert({
+          code,
+          user_id: data.userId,
+          hackathon_id: data.hackathonId,
+          type: data.type,
+          title,
+          subtitle: `${subtitleLead}${hack.title ? ` ${hack.title}` : ""}`,
+          recipient_name: recipientName,
+          pdf_url: path,
+        })
+        .select()
+        .single();
+      if (insErr) {
+        console.error("[Cert Insert Error]", insErr);
+        throw new Error("Failed to record certificate.");
+      }
+
+      await supabaseAdmin.from("notifications").insert({
+        user_id: data.userId,
+        type: "certificate_ready",
+        title: "Your certificate is ready",
+        body: `${title} for ${hack.title}`,
+        link: `/certificates`,
+      });
+
+      return { id: inserted.id, code, path };
+    } catch (err) {
+      if (err instanceof Error) throw err;
+      throw new Error("Certificate creation failed.");
+    }
   });
+
+const bulkGenerateSchema = z.object({
+  hackathonId: z.string().trim().uuid(),
+});
 
 export const bulkGenerateParticipation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { hackathonId: string }) => d)
+  .validator((d: unknown) => bulkGenerateSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
+
+    await enforceRateLimit({
+      key: "cert:bulk-generate",
+      limit: 5,
+      windowSeconds: 300,
+      identifier: callerId,
+      errorMessage: "Bulk certificate generation is throttled. Please wait before retrying.",
+    });
+
     await verifyOrganizer(supabase, callerId, data.hackathonId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: regs, error } = await supabaseAdmin
@@ -278,7 +390,10 @@ export const bulkGenerateParticipation = createServerFn({ method: "POST" })
       .select("user_id")
       .eq("hackathon_id", data.hackathonId)
       .eq("status", "approved");
-    if (error) throw error;
+    if (error) {
+      console.error("[Bulk Cert Fetch Error]", error);
+      throw new Error("Failed to fetch registrations.");
+    }
     const { data: existing } = await supabaseAdmin
       .from("certificates")
       .select("user_id, type")
@@ -289,7 +404,9 @@ export const bulkGenerateParticipation = createServerFn({ method: "POST" })
     for (const r of regs ?? []) {
       if (has.has(r.user_id)) continue;
       try {
-        await generateCertificate({ data: { hackathonId: data.hackathonId, userId: r.user_id, type: "participation" } });
+        await generateCertificate({
+          data: { hackathonId: data.hackathonId, userId: r.user_id, type: "participation" },
+        });
         issued += 1;
       } catch (e) {
         console.error("cert gen failed for", r.user_id, e);
@@ -298,26 +415,51 @@ export const bulkGenerateParticipation = createServerFn({ method: "POST" })
     return { issued, total: regs?.length ?? 0 };
   });
 
+const publishResultsSchema = z.object({
+  hackathonId: z.string().trim().uuid(),
+  freeze: z.boolean().optional(),
+});
+
 export const publishResults = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { hackathonId: string; freeze?: boolean }) => d)
+  .validator((d: unknown) => publishResultsSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
+
+    await enforceRateLimit({
+      key: "hackathon:publish-results",
+      limit: 10,
+      windowSeconds: 60,
+      identifier: callerId,
+      errorMessage: "Publishing is throttled. Please wait.",
+    });
+
     await verifyOrganizer(supabase, callerId, data.hackathonId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Compute leaderboard using admin (server-side)
     const [{ data: subs }, { data: crit }] = await Promise.all([
-      supabaseAdmin.from("submissions").select("*").eq("hackathon_id", data.hackathonId).eq("status", "submitted"),
+      supabaseAdmin
+        .from("submissions")
+        .select("*")
+        .eq("hackathon_id", data.hackathonId)
+        .eq("status", "submitted"),
       supabaseAdmin.from("scoring_criteria").select("*").eq("hackathon_id", data.hackathonId),
     ]);
     const { data: scores } = await supabaseAdmin
       .from("scores")
       .select("*")
-      .in("submission_id", (subs ?? []).map((s) => s.id))
+      .in(
+        "submission_id",
+        (subs ?? []).map((s) => s.id),
+      )
       .eq("is_final", true);
     const { rankSubmissions } = await import("@/lib/leaderboard");
-    const ranked = rankSubmissions((subs ?? []) as never, (crit ?? []) as never, (scores ?? []) as never);
+    const ranked = rankSubmissions(
+      (subs ?? []) as never,
+      (crit ?? []) as never,
+      (scores ?? []) as never,
+    );
 
     for (const entry of ranked) {
       let award: string | null = null;
@@ -339,7 +481,10 @@ export const publishResults = createServerFn({ method: "POST" })
       .eq("id", data.hackathonId);
 
     // Notify all registered users
-    const { data: regs } = await supabaseAdmin.from("registrations").select("user_id").eq("hackathon_id", data.hackathonId);
+    const { data: regs } = await supabaseAdmin
+      .from("registrations")
+      .select("user_id")
+      .eq("hackathon_id", data.hackathonId);
     if (regs?.length) {
       await supabaseAdmin.from("notifications").insert(
         regs.map((r) => ({
@@ -354,13 +499,21 @@ export const publishResults = createServerFn({ method: "POST" })
     return { ok: true, ranked: ranked.length };
   });
 
+const revokeCertSchema = z.object({
+  certificateId: z.string().trim().uuid(),
+});
+
 export const revokeCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { certificateId: string }) => d)
+  .validator((d: unknown) => revokeCertSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId: callerId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: cert } = await supabaseAdmin.from("certificates").select("*").eq("id", data.certificateId).maybeSingle();
+    const { data: cert } = await supabaseAdmin
+      .from("certificates")
+      .select("*")
+      .eq("id", data.certificateId)
+      .maybeSingle();
     if (!cert) throw new Error("Not found");
     await verifyOrganizer(supabase, callerId, cert.hackathon_id);
     if (cert.pdf_url) {

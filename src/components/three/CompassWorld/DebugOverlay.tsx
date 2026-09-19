@@ -81,10 +81,18 @@ export function DebugOverlay({
           onChange={(e) => onQualityChange(e.target.value as QualityLevel)}
           className="w-full rounded border border-white/20 bg-white/10 px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#7C5CFF]"
         >
-          <option value="ultra" className="bg-[#111116] text-white">Ultra (DPR 1.5, 2.5k pts)</option>
-          <option value="high" className="bg-[#111116] text-white">High (DPR 1.25, 2.0k pts)</option>
-          <option value="medium" className="bg-[#111116] text-white">Medium (DPR 1.0, 1.2k pts)</option>
-          <option value="low" className="bg-[#111116] text-white">Low (DPR 1.0, 500 pts)</option>
+          <option value="ultra" className="bg-[#111116] text-white">
+            Ultra (DPR 1.5, 2.5k pts)
+          </option>
+          <option value="high" className="bg-[#111116] text-white">
+            High (DPR 1.25, 2.0k pts)
+          </option>
+          <option value="medium" className="bg-[#111116] text-white">
+            Medium (DPR 1.0, 1.2k pts)
+          </option>
+          <option value="low" className="bg-[#111116] text-white">
+            Low (DPR 1.0, 500 pts)
+          </option>
         </select>
       </div>
     </aside>

@@ -1,24 +1,35 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  createFileRoute,
-  Link,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-  Loader2,
-  ArrowLeft,
-  Check,
-  Compass,
-} from "lucide-react";
+import { Loader2, ArrowLeft, Check, Compass } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/use-auth";
+import { requireAuth } from "@/lib/auth-guard";
+import { safeRedirect } from "@/lib/safe-redirect";
 import "@/components/auth/auth-shell.css";
 
 /* ============================ Route ============================ */
 
 export const Route = createFileRoute("/auth/onboarding")({
+  beforeLoad: async ({ location }) => {
+    // 1. Require authenticated session, but allow incomplete onboarding
+    const authCheck = requireAuth({ requireOnboarding: false });
+    const { user } = await authCheck({ location });
+
+    // 2. If user has already completed onboarding, route them to dashboard
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("college")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.college && profile.college.trim().length > 0) {
+      throw redirect({ to: "/dashboard" });
+    }
+
+    return { user };
+  },
   head: () => ({
     meta: [
       { title: "Complete your profile — Compass Crew" },
@@ -31,13 +42,23 @@ export const Route = createFileRoute("/auth/onboarding")({
 /* ============================ Constants ============================ */
 
 const DEGREE_OPTIONS = [
-  "", "B.Tech", "B.E.", "BCA", "MCA", "B.Sc.", "M.Sc.", "MBA", "BBA",
-  "B.Des", "M.Des", "Ph.D.", "Diploma", "Other",
+  "",
+  "B.Tech",
+  "B.E.",
+  "BCA",
+  "MCA",
+  "B.Sc.",
+  "M.Sc.",
+  "MBA",
+  "BBA",
+  "B.Des",
+  "M.Des",
+  "Ph.D.",
+  "Diploma",
+  "Other",
 ];
 
-const YEAR_OPTIONS = [
-  "", "1st year", "2nd year", "3rd year", "4th year", "5th year+", "Graduated",
-];
+const YEAR_OPTIONS = ["", "1st year", "2nd year", "3rd year", "4th year", "5th year+", "Graduated"];
 
 const INTEREST_OPTIONS = [
   "AI / ML",
@@ -63,14 +84,6 @@ const MAX_INTERESTS = 5;
 
 function OnboardingPage() {
   const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
-
-  // Redirect unauthenticated users
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate({ to: "/auth" });
-    }
-  }, [authLoading, user, navigate]);
 
   if (authLoading || !user) {
     return (
@@ -145,7 +158,17 @@ function OnboardingWizard({ userId }: { userId: string }) {
   const stepIndex = STEPS.indexOf(step);
 
   const goToDashboard = useCallback(() => {
-    navigate({ to: "/dashboard" });
+    let target = "/dashboard";
+    try {
+      const saved = sessionStorage.getItem("cc:post-auth-redirect");
+      if (saved) {
+        target = safeRedirect(saved, "/dashboard");
+        sessionStorage.removeItem("cc:post-auth-redirect");
+      }
+    } catch {
+      /* ignore */
+    }
+    navigate({ to: target.startsWith("/auth") ? "/dashboard" : target });
   }, [navigate]);
 
   /* --- Save Profile --- */
@@ -161,10 +184,7 @@ function OnboardingWizard({ userId }: { userId: string }) {
     if (profile.state.trim()) patch.state = profile.state.trim();
 
     if (Object.keys(patch).length > 0) {
-      const { error } = await supabase
-        .from("profiles")
-        .update(patch)
-        .eq("id", userId);
+      const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
       if (error) {
         toast.error("Couldn't save your profile. Please try again.");
         setSaving(false);
@@ -220,11 +240,7 @@ function OnboardingWizard({ userId }: { userId: string }) {
           </span>
         </Link>
         {step !== "welcome" && (
-          <button
-            type="button"
-            className="onboarding-header__skip"
-            onClick={goToDashboard}
-          >
+          <button type="button" className="onboarding-header__skip" onClick={goToDashboard}>
             Skip for now
           </button>
         )}
@@ -276,9 +292,7 @@ function OnboardingWizard({ userId }: { userId: string }) {
           />
         )}
 
-        {step === "welcome" && (
-          <WelcomeStep onContinue={goToDashboard} />
-        )}
+        {step === "welcome" && <WelcomeStep onContinue={goToDashboard} />}
       </div>
 
       {/* Footer */}
@@ -315,9 +329,7 @@ function ProfileStep({
   return (
     <div className="onboarding-step" key="profile">
       <h1 className="onboarding-step__title">Complete your profile</h1>
-      <p className="onboarding-step__subtitle">
-        Help us personalize your Compass Crew experience.
-      </p>
+      <p className="onboarding-step__subtitle">Help us personalize your Compass Crew experience.</p>
 
       {/* College */}
       <div className="auth-field">
@@ -427,22 +439,13 @@ function ProfileStep({
 
       {/* Actions */}
       <div className="onboarding-actions">
-        <button
-          type="button"
-          className="auth-btn-primary"
-          onClick={onNext}
-          disabled={saving}
-        >
+        <button type="button" className="auth-btn-primary" onClick={onNext} disabled={saving}>
           {saving && <Loader2 size={18} className="animate-spin" />}
           {saving ? "Saving…" : "Continue"}
         </button>
       </div>
 
-      <button
-        type="button"
-        className="onboarding-skip-link"
-        onClick={onSkip}
-      >
+      <button type="button" className="onboarding-skip-link" onClick={onSkip}>
         Skip for now
       </button>
     </div>
@@ -488,9 +491,7 @@ function InterestsStep({
               onClick={() => onToggle(interest)}
               aria-pressed={isSelected}
             >
-              {isSelected && (
-                <Check className="onboarding-chip__check" />
-              )}
+              {isSelected && <Check className="onboarding-chip__check" />}
               {interest}
             </button>
           );
@@ -499,30 +500,17 @@ function InterestsStep({
 
       {/* Actions */}
       <div className="onboarding-actions">
-        <button
-          type="button"
-          className="onboarding-btn-back"
-          onClick={onBack}
-        >
+        <button type="button" className="onboarding-btn-back" onClick={onBack}>
           <ArrowLeft size={16} />
           Back
         </button>
-        <button
-          type="button"
-          className="auth-btn-primary"
-          onClick={onNext}
-          disabled={saving}
-        >
+        <button type="button" className="auth-btn-primary" onClick={onNext} disabled={saving}>
           {saving && <Loader2 size={18} className="animate-spin" />}
           {saving ? "Saving…" : "Continue"}
         </button>
       </div>
 
-      <button
-        type="button"
-        className="onboarding-skip-link"
-        onClick={onSkip}
-      >
+      <button type="button" className="onboarding-skip-link" onClick={onSkip}>
         Skip for now
       </button>
     </div>
@@ -541,11 +529,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
       <p className="onboarding-welcome__sub">
         Welcome to Compass Crew. Your next build starts here.
       </p>
-      <button
-        type="button"
-        className="auth-btn-primary"
-        onClick={onContinue}
-      >
+      <button type="button" className="auth-btn-primary" onClick={onContinue}>
         Continue to Compass Crew
       </button>
     </div>

@@ -56,32 +56,54 @@ function VerifyPage() {
                 </span>
                 <div>
                   <Badge variant="secondary">Verified</Badge>
-                  <p className="mt-1 text-sm text-muted-foreground">Authentic Compass Crew certificate</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Authentic Compass Crew certificate
+                  </p>
                 </div>
               </div>
               <dl className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recipient</dt>
-                  <dd className="mt-0.5 font-display text-lg font-semibold">{certQ.data.recipient_name}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Recipient
+                  </dt>
+                  <dd className="mt-0.5 font-display text-lg font-semibold">
+                    {certQ.data.recipient_name}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Type
+                  </dt>
                   <dd className="mt-0.5">{CERT_TYPE_LABEL[certQ.data.type]}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Hackathon</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Hackathon
+                  </dt>
                   <dd className="mt-0.5">{hack?.title ?? "—"}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Issued</dt>
-                  <dd className="mt-0.5">{new Date(certQ.data.issued_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Issued
+                  </dt>
+                  <dd className="mt-0.5">
+                    {new Date(certQ.data.issued_at).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </dd>
                 </div>
                 <div className="sm:col-span-2">
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Achievement</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Achievement
+                  </dt>
                   <dd className="mt-0.5 text-sm">{certQ.data.subtitle}</dd>
                 </div>
                 <div className="sm:col-span-2">
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Certificate ID</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Certificate ID
+                  </dt>
                   <dd className="mt-0.5 font-mono text-sm">{certQ.data.code}</dd>
                 </div>
               </dl>

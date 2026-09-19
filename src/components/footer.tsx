@@ -8,36 +8,50 @@ import { Button } from "@/components/ui/button";
 import { subscribeNewsletter } from "@/lib/public-cms";
 import { Turnstile } from "@/components/turnstile";
 
-const columns = [
+type FooterColLink = {
+  label: string;
+  to?: string;
+  badge?: string;
+  disabled?: boolean;
+};
+
+const columns: { title: string; links: readonly FooterColLink[] }[] = [
   {
     title: "Explore",
     links: [
-      { label: "Hackathons", to: "/hackathons" as const },
-      { label: "Events", to: "/events" as const },
-      { label: "Resources", to: "/resources" as const },
-      { label: "Blog", to: "/blog" as const },
+      { label: "Hackathons", to: "/hackathons" },
+      { label: "Events", to: "/events" },
+      { label: "Community", to: "/community" },
+      { label: "Resources", to: "/resources" },
+      { label: "Blog", to: "/blog" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "Contact", to: "/contact" },
+      { label: "Sponsors", to: "/sponsors" },
+      { label: "Partners", to: "/partners" },
+      { label: "Careers", to: "/careers" },
     ],
   },
   {
     title: "Community",
     links: [
-      { label: "About", to: "/about" as const },
-      { label: "Mentors", to: "/mentors" as const },
-      { label: "Judges", to: "/judges" as const },
-      { label: "Partners", to: "/partners" as const },
+      { label: "Mentors", to: "/mentors" },
+      { label: "Judges", to: "/judges" },
     ],
   },
   {
-    title: "Platform",
+    title: "Legal",
     links: [
-      { label: "Careers", to: "/careers" as const },
-      { label: "Contact", to: "/contact" as const },
-      { label: "Privacy Policy", to: "/privacy" as const },
-      { label: "Terms of Service", to: "/terms" as const },
-      { label: "Code of Conduct", to: "/code-of-conduct" as const },
+      { label: "Privacy Policy", to: "/privacy" },
+      { label: "Terms of Service", to: "/terms" },
+      { label: "Code of Conduct", to: "/code-of-conduct" },
     ],
   },
-] as const;
+];
 
 const socials = [
   { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/compasscrewindia" },
@@ -72,11 +86,14 @@ export function Footer() {
           <div className="lg:col-span-5">
             <Logo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              A student-led community for AI, technology, innovation and startups —
-              building hackathons, learning programs, and shipping real products
-              with campuses across India.
+              A student-led community for AI, technology, innovation and startups — building
+              hackathons, learning programs, and shipping real products with campuses across India.
             </p>
-            <form className="mt-6 flex max-w-md flex-col gap-2" onSubmit={onSubscribe} aria-label="Newsletter signup">
+            <form
+              className="mt-6 flex max-w-md flex-col gap-2"
+              onSubmit={onSubscribe}
+              aria-label="Newsletter signup"
+            >
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -90,8 +107,18 @@ export function Footer() {
                     aria-label="Email address"
                   />
                 </div>
-                <Button type="submit" disabled={submitting} className="bg-gradient-brand text-white hover:opacity-90">
-                  {submitting ? "…" : <>Subscribe <ArrowRight className="ml-1 h-4 w-4" /></>}
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-gradient-brand text-white hover:opacity-90"
+                >
+                  {submitting ? (
+                    "…"
+                  ) : (
+                    <>
+                      Subscribe <ArrowRight className="ml-1 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </div>
               <Turnstile onToken={setCaptchaToken} size="compact" />
@@ -112,14 +139,39 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:col-span-7">
             {columns.map((col) => (
               <div key={col.title}>
                 <h4 className="text-sm font-semibold text-foreground">{col.title}</h4>
                 <ul className="mt-4 space-y-3">
                   {col.links.map((l) => (
-                    <li key={l.to}>
-                      <Link to={l.to} className="text-sm text-muted-foreground transition hover:text-foreground">{l.label}</Link>
+                    <li key={l.label}>
+                      {l.disabled || !l.to ? (
+                        <span
+                          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground/60 cursor-default select-none"
+                          aria-disabled="true"
+                          title={`${l.label} — Coming Soon`}
+                        >
+                          <span>{l.label}</span>
+                          {l.badge && (
+                            <span className="rounded border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium tracking-wider text-muted-foreground">
+                              {l.badge}
+                            </span>
+                          )}
+                        </span>
+                      ) : (
+                        <Link
+                          to={l.to}
+                          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground"
+                        >
+                          <span>{l.label}</span>
+                          {l.badge && (
+                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                              {l.badge}
+                            </span>
+                          )}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -130,7 +182,12 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} Compass Crew. Built by students, for students.</p>
-          <p>Made with ☕ across campuses in India.</p>
+          <a
+            href="mailto:compasscrewnetwork.team@gmail.com"
+            className="hover:text-foreground transition-colors"
+          >
+            compasscrewnetwork.team@gmail.com
+          </a>
         </div>
       </div>
     </footer>

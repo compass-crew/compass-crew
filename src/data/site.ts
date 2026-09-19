@@ -136,16 +136,56 @@ export const EVENTS = [
 ];
 
 export const BENEFITS = [
-  { icon: Trophy, title: "Hackathons", body: "Compete in national hackathons and build seasons with mentors, prizes and pilot opportunities." },
-  { icon: Handshake, title: "Networking", body: "Meet builders, founders, engineers and researchers across India in one active community." },
-  { icon: Briefcase, title: "Internships", body: "Get referred and shortlisted for internships with partner startups and product companies." },
-  { icon: Brain, title: "AI Workshops", body: "Hands-on sessions on LLMs, agents, evals, retrieval and applied ML — with real projects." },
-  { icon: BookOpen, title: "Research Opportunities", body: "Join paper reading groups and applied research pods with student and faculty collaborators." },
-  { icon: GitBranch, title: "Open Source", body: "Contribute to community-maintained repos and land your first meaningful pull request." },
-  { icon: Rocket, title: "Startup Mentorship", body: "1:1 mentorship for student founders — from idea validation to first users and first pitch." },
-  { icon: Award, title: "Certificates", body: "Earn verifiable participation and completion certificates for programs and bootcamps." },
-  { icon: Sparkles, title: "Portfolio Building", body: "Ship in public, document your work and build a portfolio that recruiters actually read." },
-  { icon: Flag, title: "Campus Ambassador", body: "Represent Compass Crew on your campus, run local events and grow into a community leader." },
+  {
+    icon: Trophy,
+    title: "Hackathons",
+    body: "Compete in national hackathons and build seasons with mentors, prizes and pilot opportunities.",
+  },
+  {
+    icon: Handshake,
+    title: "Networking",
+    body: "Meet builders, founders, engineers and researchers across India in one active community.",
+  },
+  {
+    icon: Briefcase,
+    title: "Internships",
+    body: "Get referred and shortlisted for internships with partner startups and product companies.",
+  },
+  {
+    icon: Brain,
+    title: "AI Workshops",
+    body: "Hands-on sessions on LLMs, agents, evals, retrieval and applied ML — with real projects.",
+  },
+  {
+    icon: BookOpen,
+    title: "Research Opportunities",
+    body: "Join paper reading groups and applied research pods with student and faculty collaborators.",
+  },
+  {
+    icon: GitBranch,
+    title: "Open Source",
+    body: "Contribute to community-maintained repos and land your first meaningful pull request.",
+  },
+  {
+    icon: Rocket,
+    title: "Startup Mentorship",
+    body: "1:1 mentorship for student founders — from idea validation to first users and first pitch.",
+  },
+  {
+    icon: Award,
+    title: "Certificates",
+    body: "Earn verifiable participation and completion certificates for programs and bootcamps.",
+  },
+  {
+    icon: Sparkles,
+    title: "Portfolio Building",
+    body: "Ship in public, document your work and build a portfolio that recruiters actually read.",
+  },
+  {
+    icon: Flag,
+    title: "Campus Ambassador",
+    body: "Represent Compass Crew on your campus, run local events and grow into a community leader.",
+  },
 ];
 
 /**
@@ -201,16 +241,13 @@ export const BLOG_POSTS: {
 }[] = [];
 
 export const MISSION = {
-  what:
-    "Compass Crew is a student-led community for AI, technology, innovation and startups — a home for the next generation of Indian builders.",
+  what: "Compass Crew is a student-led community for AI, technology, innovation and startups — a home for the next generation of Indian builders.",
   mission:
     "To give every student in India a real path into building — through hackathons, workshops, open-source, research and startup programs.",
   vision:
     "A generation of Indian students who don't just learn technology, but ship it — and build companies, tools and research that matter globally.",
-  why:
-    "Talent is everywhere. Opportunity isn't. Compass Crew exists to close that gap — with community, mentorship and programs that any student can access.",
-  who:
-    "Any student in India — from tier-1 colleges to smaller campuses — curious about AI, engineering, design, product, research or startups.",
+  why: "Talent is everywhere. Opportunity isn't. Compass Crew exists to close that gap — with community, mentorship and programs that any student can access.",
+  who: "Any student in India — from tier-1 colleges to smaller campuses — curious about AI, engineering, design, product, research or startups.",
   roadmap: [
     "Launch flagship hackathon season",
     "Open campus chapters across India",

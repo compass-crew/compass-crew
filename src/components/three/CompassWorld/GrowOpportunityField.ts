@@ -214,7 +214,7 @@ export class GrowOpportunityField {
       const midPoint = new THREE.Vector3(
         cfg.position.x * 0.55 + (idx % 2 === 0 ? 0.2 : -0.2),
         cfg.position.y * 0.5 + 0.3,
-        cfg.position.z * 0.5 + (idx % 2 === 0 ? 0.3 : -0.2)
+        cfg.position.z * 0.5 + (idx % 2 === 0 ? 0.3 : -0.2),
       );
       const curve = new THREE.CatmullRomCurve3([originPoint, midPoint, cfg.position]);
       const points = curve.getPoints(48);
@@ -270,10 +270,7 @@ export class GrowOpportunityField {
       nodeSubGroup.add(crystal);
 
       // Vertical Beacon Line
-      const beaconPoints = [
-        new THREE.Vector3(0, -0.35, 0),
-        new THREE.Vector3(0, 0.35, 0),
-      ];
+      const beaconPoints = [new THREE.Vector3(0, -0.35, 0), new THREE.Vector3(0, 0.35, 0)];
       const beaconGeo = new THREE.BufferGeometry().setFromPoints(beaconPoints);
       const beaconMat = new THREE.LineBasicMaterial({
         color: cfg.glowColor,

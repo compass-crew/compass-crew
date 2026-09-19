@@ -201,12 +201,7 @@ export interface AuthAlertProps {
   className?: string;
 }
 
-export function AuthAlert({
-  variant = "error",
-  message,
-  id,
-  className = "",
-}: AuthAlertProps) {
+export function AuthAlert({ variant = "error", message, id, className = "" }: AuthAlertProps) {
   if (!message) return null;
 
   const icons = {
@@ -248,16 +243,16 @@ export function PasswordPolicyChecklist({
   const hasLower = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
   const matches =
-    confirmPassword !== undefined ? confirmPassword.length > 0 && password === confirmPassword : true;
+    confirmPassword !== undefined
+      ? confirmPassword.length > 0 && password === confirmPassword
+      : true;
 
   const items = [
     { label: "8+ characters", met: hasMin },
     { label: "Uppercase letter", met: hasUpper },
     { label: "Lowercase letter", met: hasLower },
     { label: "At least 1 number", met: hasNumber },
-    ...(confirmPassword !== undefined
-      ? [{ label: "Passwords match", met: matches }]
-      : []),
+    ...(confirmPassword !== undefined ? [{ label: "Passwords match", met: matches }] : []),
   ];
 
   return (

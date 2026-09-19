@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { BrandLogo } from "@/components/landing/primitives/BrandLogo";
 import { FooterNavGroup, type FooterLinkItem } from "./FooterNavGroup";
 import { FooterSocials } from "./FooterSocials";
+import { useAuth } from "@/hooks/use-auth";
 
 const EXPLORE_LINKS: readonly FooterLinkItem[] = [
   { label: "Hackathons", to: "/hackathons" },
@@ -18,13 +20,6 @@ const COMPANY_LINKS: readonly FooterLinkItem[] = [
   { label: "Careers", to: "/careers" },
 ];
 
-const COMMUNITY_LINKS: readonly FooterLinkItem[] = [
-  { label: "Join the Crew", to: "/auth", search: { mode: "signup" } },
-  { label: "Sign In", to: "/auth" },
-  { label: "Mentors", to: "/mentors" },
-  { label: "Judges", to: "/judges" },
-];
-
 const LEGAL_LINKS: readonly FooterLinkItem[] = [
   { label: "Privacy Policy", to: "/privacy" },
   { label: "Terms of Service", to: "/terms" },
@@ -40,6 +35,24 @@ const LEGAL_LINKS: readonly FooterLinkItem[] = [
  */
 export function ImmersiveFooter() {
   const currentYear = new Date().getFullYear();
+  const { user } = useAuth();
+
+  const communityLinks = useMemo<readonly FooterLinkItem[]>(() => {
+    if (user) {
+      return [
+        { label: "Dashboard", to: "/dashboard", badge: "Live" },
+        { label: "Community", to: "/community" },
+        { label: "Mentors", to: "/mentors" },
+        { label: "Judges", to: "/judges" },
+      ];
+    }
+    return [
+      { label: "Join the Crew", to: "/auth", search: { mode: "signup" } },
+      { label: "Sign In", to: "/auth" },
+      { label: "Mentors", to: "/mentors" },
+      { label: "Judges", to: "/judges" },
+    ];
+  }, [user]);
 
   return (
     <footer
@@ -81,7 +94,7 @@ export function ImmersiveFooter() {
           <div className="lg:col-span-8 grid grid-cols-2 gap-8 sm:grid-cols-4">
             <FooterNavGroup title="Explore" links={EXPLORE_LINKS} />
             <FooterNavGroup title="Company" links={COMPANY_LINKS} />
-            <FooterNavGroup title="Community" links={COMMUNITY_LINKS} />
+            <FooterNavGroup title="Community" links={communityLinks} />
             <FooterNavGroup title="Legal" links={LEGAL_LINKS} />
           </div>
         </div>
@@ -94,9 +107,17 @@ export function ImmersiveFooter() {
             <span>BUILT BY STUDENTS, FOR STUDENTS</span>
           </div>
 
-          <div className="flex items-center gap-2 text-[#7C5CFF]/80">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#7C5CFF]" aria-hidden="true" />
-            <span>PAN-INDIA CAMPUSES // INNOVATION PLATFORM</span>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full bg-[#7C5CFF]"
+              aria-hidden="true"
+            />
+            <a
+              href="mailto:compasscrewnetwork.team@gmail.com"
+              className="text-[#8C8882] hover:text-[#F5F2EA] transition-colors"
+            >
+              compasscrewnetwork.team@gmail.com
+            </a>
           </div>
         </div>
       </div>

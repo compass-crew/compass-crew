@@ -62,7 +62,7 @@ export class CameraRig {
     this.effectiveTargetPos.set(
       this.desiredPosition.x + parallaxX,
       this.desiredPosition.y + parallaxY,
-      this.desiredPosition.z
+      this.desiredPosition.z,
     );
 
     this.camera.position.lerp(this.effectiveTargetPos, this.lerpFactor);

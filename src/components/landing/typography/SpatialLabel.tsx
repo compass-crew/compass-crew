@@ -62,19 +62,17 @@ export function SpatialLabel({
     >
       {pulse && (
         <span className="relative flex h-1.5 w-1.5">
-          <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${pulseDotClasses[accent]} animate-pulse`} />
+          <span
+            className={`relative inline-flex h-1.5 w-1.5 rounded-full ${pulseDotClasses[accent]} animate-pulse`}
+          />
         </span>
       )}
 
       {sceneNumber && (
-        <span className={`${numColorClasses[accent]} font-semibold`}>
-          {sceneNumber}
-        </span>
+        <span className={`${numColorClasses[accent]} font-semibold`}>{sceneNumber}</span>
       )}
 
-      <span className="uppercase text-[#B8B4B0] font-normal">
-        {children}
-      </span>
+      <span className="uppercase text-[#B8B4B0] font-normal">{children}</span>
     </div>
   );
 }

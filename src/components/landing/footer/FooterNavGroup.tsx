@@ -6,6 +6,7 @@ export interface FooterLinkItem {
   href?: string;
   search?: Record<string, unknown>;
   badge?: string;
+  disabled?: boolean;
 }
 
 interface FooterNavGroupProps {
@@ -27,8 +28,29 @@ export function FooterNavGroup({ title, links }: FooterNavGroupProps) {
       <ul className="space-y-2.5">
         {links.map((link) => {
           const itemKey = `${link.label}-${link.to || link.href || ""}`;
+
+          // Non-clickable Coming Soon item
+          if (link.disabled || (!link.to && !link.href)) {
+            return (
+              <li key={itemKey}>
+                <span
+                  className="inline-flex items-center gap-2 py-1 min-h-[32px] font-cc-sans text-sm text-[#8C8882]/70 cursor-default select-none"
+                  aria-disabled="true"
+                  title={`${link.label} — Coming Soon`}
+                >
+                  <span>{link.label}</span>
+                  {link.badge && (
+                    <span className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-cc-mono text-[9px] font-medium tracking-wider text-[#8C8882]">
+                      {link.badge}
+                    </span>
+                  )}
+                </span>
+              </li>
+            );
+          }
+
           const linkClasses =
-            "group inline-flex items-center gap-1.5 font-cc-sans text-sm text-[#B8B4B0] transition-all duration-200 hover:text-[#F5F2EA] hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#7C5CFF] rounded-sm";
+            "group inline-flex items-center gap-1.5 py-1 min-h-[32px] font-cc-sans text-sm text-[#B8B4B0] transition-all duration-200 hover:text-[#F5F2EA] hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C5CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-sm";
 
           if (link.to) {
             return (
@@ -47,12 +69,7 @@ export function FooterNavGroup({ title, links }: FooterNavGroupProps) {
 
           return (
             <li key={itemKey}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noreferrer"
-                className={linkClasses}
-              >
+              <a href={link.href} target="_blank" rel="noreferrer" className={linkClasses}>
                 <span>{link.label}</span>
               </a>
             </li>

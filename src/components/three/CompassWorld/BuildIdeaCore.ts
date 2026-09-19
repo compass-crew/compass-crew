@@ -317,7 +317,11 @@ export class BuildIdeaCore {
       // Subtle breathing float on each module
       const floatY = Math.sin(elapsedTime * 1.2 + i * 1.5) * 0.035;
       const floatZ = Math.cos(elapsedTime * 0.9 + i * 1.2) * 0.025;
-      modGroup.position.set(this._scratchVec2.x, this._scratchVec2.y + floatY, this._scratchVec2.z + floatZ);
+      modGroup.position.set(
+        this._scratchVec2.x,
+        this._scratchVec2.y + floatY,
+        this._scratchVec2.z + floatZ,
+      );
 
       // Module scale
       const modScale = THREE.MathUtils.lerp(0.3, isMobile ? 0.65 : 1.0, separationProgress);

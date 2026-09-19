@@ -5,13 +5,23 @@ function neutralizeFormula(s: string): string {
   if (s.length === 0) return s;
   const first = s.charCodeAt(0);
   // = + - @ TAB CR
-  if (first === 0x3d || first === 0x2b || first === 0x2d || first === 0x40 || first === 0x09 || first === 0x0d) {
+  if (
+    first === 0x3d ||
+    first === 0x2b ||
+    first === 0x2d ||
+    first === 0x40 ||
+    first === 0x09 ||
+    first === 0x0d
+  ) {
     return "'" + s;
   }
   return s;
 }
 
-export function toCsv<T extends Record<string, unknown>>(rows: T[], columns: { key: keyof T & string; header: string }[]): string {
+export function toCsv<T extends Record<string, unknown>>(
+  rows: T[],
+  columns: { key: keyof T & string; header: string }[],
+): string {
   const escape = (v: unknown): string => {
     if (v == null) return "";
     const raw = typeof v === "string" ? v : JSON.stringify(v);

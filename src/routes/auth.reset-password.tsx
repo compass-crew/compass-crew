@@ -15,11 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  AuthShell,
-  AuthAlert,
-  PasswordPolicyChecklist,
-} from "@/components/auth/auth-shell";
+import { AuthShell, AuthAlert, PasswordPolicyChecklist } from "@/components/auth/auth-shell";
 import { passwordStrength } from "@/components/auth/auth-helpers";
 import "@/components/auth/auth-shell.css";
 
@@ -193,9 +189,7 @@ function ResetPasswordPage() {
       backLabel="Back to sign in"
       brandProps={{
         state: isDone ? "success" : "reset",
-        subtitle: isDone
-          ? "Password updated successfully."
-          : "Choose a secure new password.",
+        subtitle: isDone ? "Password updated successfully." : "Choose a secure new password.",
       }}
     >
       {/* 1. Success State */}
@@ -204,12 +198,11 @@ function ResetPasswordPage() {
           <div className="auth-status-card__icon auth-status-card__icon--success">
             <CheckCircle2 size={32} aria-hidden="true" />
           </div>
-          <span className="auth-status-card__badge auth-status-card__badge--green">
-            Updated
-          </span>
+          <span className="auth-status-card__badge auth-status-card__badge--green">Updated</span>
           <h1 className="auth-status-card__title">Password updated</h1>
           <p className="auth-status-card__desc">
-            Your password has been changed successfully. You can now use your new password to sign in.
+            Your password has been changed successfully. You can now use your new password to sign
+            in.
           </p>
 
           <button
@@ -244,7 +237,8 @@ function ResetPasswordPage() {
             </span>
             <h1 className="auth-status-card__title">Reset link expired</h1>
             <p className="auth-status-card__desc">
-              For your security, password reset links can only be used once and expire shortly after being requested.
+              For your security, password reset links can only be used once and expire shortly after
+              being requested.
             </p>
           </div>
 
@@ -272,7 +266,8 @@ function ResetPasswordPage() {
             </span>
             <h1 className="auth-status-card__title">Invalid reset link</h1>
             <p className="auth-status-card__desc">
-              This password reset link is no longer valid or has already been used. Please request a new link.
+              This password reset link is no longer valid or has already been used. Please request a
+              new link.
             </p>
           </div>
 
@@ -291,15 +286,20 @@ function ResetPasswordPage() {
       ) : (
         /* 5. Active Recovery Session: New Password Form */
         <div className="auth-entry">
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "0.25rem",
+            }}
+          >
             <ShieldCheck size={20} style={{ color: "#7c5cff" }} aria-hidden="true" />
             <h1 className="auth-welcome" style={{ margin: 0 }}>
               Set a new password
             </h1>
           </div>
-          <p className="auth-welcome-sub">
-            Choose a strong new password for your account.
-          </p>
+          <p className="auth-welcome-sub">Choose a strong new password for your account.</p>
 
           {errorMessage && <AuthAlert variant="error" message={errorMessage} />}
 
@@ -360,10 +360,7 @@ function ResetPasswordPage() {
             )}
 
             {/* Password Requirements Checklist */}
-            <PasswordPolicyChecklist
-              password={passwordVal}
-              confirmPassword={confirmVal}
-            />
+            <PasswordPolicyChecklist password={passwordVal} confirmPassword={confirmVal} />
 
             {/* Confirm Password Field */}
             <div className="auth-field">

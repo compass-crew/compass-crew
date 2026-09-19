@@ -17,7 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { fetchHealthReport, type HealthReport } from "@/lib/admin-ops";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/system")({
+  beforeLoad: requireRole(["super_admin"]),
   head: () => ({
     meta: [{ title: "System Health — Admin" }, { name: "robots", content: "noindex" }],
   }),
@@ -56,7 +59,11 @@ function SystemHealthPage() {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="mr-2 h-4 w-4" />
+          )}
           Refresh
         </Button>
       </header>
@@ -71,13 +78,23 @@ function SystemHealthPage() {
             icon={Database}
             title="Database"
             ok={report.database.ok}
-            details={report.database.ok ? `Reachable · ${report.database.latencyMs}ms` : report.database.error}
+            details={
+              report.database.ok
+                ? `Reachable · ${report.database.latencyMs}ms`
+                : report.database.error
+            }
           />
           <StatusCard
             icon={Shield}
             title="Authentication"
             ok={report.auth.ok}
-            details={report.auth.ok ? (report.auth.signedIn ? "Session active" : "No session") : report.auth.error}
+            details={
+              report.auth.ok
+                ? report.auth.signedIn
+                  ? "Session active"
+                  : "No session"
+                : report.auth.error
+            }
           />
           <StatusCard
             icon={HardDrive}
@@ -87,7 +104,11 @@ function SystemHealthPage() {
               <div className="space-y-1">
                 {report.storage.buckets.map((b) => (
                   <div key={b.name} className="flex items-center gap-2 text-xs">
-                    {b.ok ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <XCircle className="h-3.5 w-3.5 text-red-500" />}
+                    {b.ok ? (
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    ) : (
+                      <XCircle className="h-3.5 w-3.5 text-red-500" />
+                    )}
                     <span className="font-mono">{b.name}</span>
                     {b.error ? <span className="text-muted-foreground">— {b.error}</span> : null}
                   </div>
@@ -115,13 +136,20 @@ function SystemHealthPage() {
             </CardHeader>
             <CardContent className="pt-0">
               {report.recentErrors.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No recent error entries in the audit log.</p>
+                <p className="text-sm text-muted-foreground">
+                  No recent error entries in the audit log.
+                </p>
               ) : (
                 <ul className="space-y-1 text-sm">
                   {report.recentErrors.map((e) => (
-                    <li key={e.id} className="flex justify-between gap-4 border-b border-border/60 py-1 last:border-0">
+                    <li
+                      key={e.id}
+                      className="flex justify-between gap-4 border-b border-border/60 py-1 last:border-0"
+                    >
                       <span className="font-mono text-xs">{e.action}</span>
-                      <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(e.created_at).toLocaleString()}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -134,7 +162,8 @@ function SystemHealthPage() {
               <CardTitle className="text-sm font-semibold">Background jobs</CardTitle>
             </CardHeader>
             <CardContent className="pt-0 text-sm text-muted-foreground">
-              No scheduled jobs registered. Cron infrastructure is available and will be surfaced here once jobs are configured.
+              No scheduled jobs registered. Cron infrastructure is available and will be surfaced
+              here once jobs are configured.
             </CardContent>
           </Card>
         </div>
@@ -160,7 +189,13 @@ function StatusCard({
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Icon className="h-4 w-4" /> {title}
         </CardTitle>
-        <Badge className={ok ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-red-500/15 text-red-600 dark:text-red-400"}>
+        <Badge
+          className={
+            ok
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+              : "bg-red-500/15 text-red-600 dark:text-red-400"
+          }
+        >
           {ok ? "Operational" : "Degraded"}
         </Badge>
       </CardHeader>

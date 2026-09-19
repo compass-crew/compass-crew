@@ -5,7 +5,13 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
 import { Inbox } from "lucide-react";
 import type { ResourceConfig } from "@/lib/admin-config";
@@ -140,7 +146,10 @@ export function AdminList({ resource }: { resource: ResourceConfig }) {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-4 py-12 text-center text-muted-foreground">
+                  <td
+                    colSpan={columns.length + 1}
+                    className="px-4 py-12 text-center text-muted-foreground"
+                  >
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" />
                   </td>
                 </tr>
@@ -161,7 +170,12 @@ export function AdminList({ resource }: { resource: ResourceConfig }) {
                     <tr
                       key={rowId}
                       className="cursor-pointer border-t border-border transition hover:bg-muted/30"
-                      onClick={() => navigate({ to: "/admin/$resource/$itemId", params: { resource: resource.key, itemId: rowId } })}
+                      onClick={() =>
+                        navigate({
+                          to: "/admin/$resource/$itemId",
+                          params: { resource: resource.key, itemId: rowId },
+                        })
+                      }
                     >
                       {columns.map((c) => {
                         const raw = row[c.key];
@@ -170,7 +184,9 @@ export function AdminList({ resource }: { resource: ResourceConfig }) {
                           const cls = STATUS_VARIANT[s] ?? "bg-muted text-muted-foreground";
                           return (
                             <td key={c.key} className="px-4 py-3">
-                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${cls}`}>
+                              <span
+                                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${cls}`}
+                              >
                                 {s || "—"}
                               </span>
                             </td>
@@ -179,7 +195,13 @@ export function AdminList({ resource }: { resource: ResourceConfig }) {
                         if (c.type === "badge") {
                           return (
                             <td key={c.key} className="px-4 py-3">
-                              {raw ? <Badge variant="secondary" className="capitalize">{String(raw).replace(/_/g, " ")}</Badge> : "—"}
+                              {raw ? (
+                                <Badge variant="secondary" className="capitalize">
+                                  {String(raw).replace(/_/g, " ")}
+                                </Badge>
+                              ) : (
+                                "—"
+                              )}
                             </td>
                           );
                         }
@@ -205,10 +227,20 @@ export function AdminList({ resource }: { resource: ResourceConfig }) {
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
               <ChevronLeft className="h-4 w-4" /> Prev
             </Button>
-            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
               Next <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

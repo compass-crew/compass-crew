@@ -89,7 +89,12 @@ export async function getEmailTemplate(id: string): Promise<EmailTemplate | null
 
 export async function updateEmailTemplate(
   id: string,
-  patch: Partial<Pick<EmailTemplate, "subject" | "body_markdown" | "is_active" | "name" | "description" | "variables">>,
+  patch: Partial<
+    Pick<
+      EmailTemplate,
+      "subject" | "body_markdown" | "is_active" | "name" | "description" | "variables"
+    >
+  >,
 ): Promise<void> {
   const { data: userRes } = await supabase.auth.getUser();
   const { error } = await supabase
@@ -112,7 +117,12 @@ export function renderTemplatePreview(
   return out;
 }
 
-export const PROVIDER_OPTIONS: { value: EmailProvider; label: string; description: string; requiresSecrets: string[] }[] = [
+export const PROVIDER_OPTIONS: {
+  value: EmailProvider;
+  label: string;
+  description: string;
+  requiresSecrets: string[];
+}[] = [
   {
     value: "resend",
     label: "Resend",

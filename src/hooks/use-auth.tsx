@@ -4,10 +4,12 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ROLES = [
@@ -213,7 +215,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (session?.user) await loadUserData(session.user.id);
   }, [session, loadUserData]);
 
+  const queryClient = useQueryClient();
+  const signingOutRef = useRef(false);
+
   const signOut = useCallback(async () => {
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
     try {
       await supabase.auth.signOut();
     } catch (err) {
@@ -227,8 +234,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         /* ignore */
       }
+      try {
+        queryClient.clear();
+      } catch {
+        /* ignore */
+      }
+      signingOutRef.current = false;
     }
-  }, []);
+  }, [queryClient]);
 
   const value = useMemo<AuthContextValue>(() => {
     const primaryRole = pickPrimaryRole(roles);

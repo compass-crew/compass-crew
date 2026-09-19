@@ -13,12 +13,17 @@ import {
  * Status tone → semantic pill.
  * Live states get a pulsing dot to communicate urgency at a glance.
  */
-const STATUS_TONE: Record<
-  Hackathon["status"],
-  { chip: string; dot: string; pulse: boolean }
-> = {
-  draft: { chip: "bg-muted/70 text-muted-foreground ring-border/60", dot: "bg-muted-foreground/60", pulse: false },
-  published: { chip: "bg-primary/10 text-primary ring-primary/25", dot: "bg-primary", pulse: false },
+const STATUS_TONE: Record<Hackathon["status"], { chip: string; dot: string; pulse: boolean }> = {
+  draft: {
+    chip: "bg-muted/70 text-muted-foreground ring-border/60",
+    dot: "bg-muted-foreground/60",
+    pulse: false,
+  },
+  published: {
+    chip: "bg-primary/10 text-primary ring-primary/25",
+    dot: "bg-primary",
+    pulse: false,
+  },
   registrations_open: {
     chip: "bg-emerald-500/12 text-emerald-600 ring-emerald-500/25 dark:text-emerald-400",
     dot: "bg-emerald-500",
@@ -39,7 +44,11 @@ const STATUS_TONE: Record<
     dot: "bg-blue-500",
     pulse: false,
   },
-  archived: { chip: "bg-muted/70 text-muted-foreground ring-border/60", dot: "bg-muted-foreground/60", pulse: false },
+  archived: {
+    chip: "bg-muted/70 text-muted-foreground ring-border/60",
+    dot: "bg-muted-foreground/60",
+    pulse: false,
+  },
 };
 
 function prizeSummary(prizes: unknown): string | null {
@@ -62,9 +71,7 @@ export function HackathonCard({ h }: { h: Hackathon }) {
   const startsIn = h.status === "published" ? daysUntil(h.starts_at) : null;
 
   return (
-    <Card
-      className="group relative flex h-full flex-col overflow-hidden border-border/70 bg-card transition duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant focus-within:border-primary/40"
-    >
+    <Card className="group relative flex h-full flex-col overflow-hidden border-border/70 bg-card transition duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant focus-within:border-primary/40">
       {/* Banner */}
       <div className="relative h-36 overflow-hidden">
         {h.banner_url ? (
@@ -75,13 +82,19 @@ export function HackathonCard({ h }: { h: Hackathon }) {
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent"
+            />
           </>
         ) : (
           <>
             <div aria-hidden className="absolute inset-0 bg-gradient-brand" />
             <div aria-hidden className="absolute inset-0 bg-grid opacity-25 mix-blend-overlay" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent"
+            />
           </>
         )}
 
@@ -91,7 +104,9 @@ export function HackathonCard({ h }: { h: Hackathon }) {
         >
           <span className="relative flex h-1.5 w-1.5">
             {tone.pulse && (
-              <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-70 ${tone.dot}`} />
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-70 ${tone.dot}`}
+              />
             )}
             <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${tone.dot}`} />
           </span>

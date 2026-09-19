@@ -58,27 +58,27 @@ export class CompassObject3D {
       }),
       gimbal: new THREE.MeshStandardMaterial({
         color: 0x22222a,
-        roughness: 0.40,
-        metalness: 0.70,
+        roughness: 0.4,
+        metalness: 0.7,
       }),
       dialFace: new THREE.MeshStandardMaterial({
         color: 0x09090b,
         roughness: 0.85,
-        metalness: 0.20,
+        metalness: 0.2,
       }),
       northNeedle: new THREE.MeshStandardMaterial({
         color: 0x7c5cff,
         emissive: 0x7c5cff,
         emissiveIntensity: 1.25,
-        roughness: 0.20,
-        metalness: 0.50,
+        roughness: 0.2,
+        metalness: 0.5,
       }),
       southNeedle: new THREE.MeshStandardMaterial({
         color: 0x483a75,
         emissive: 0x483a75,
         emissiveIntensity: 0.65,
         roughness: 0.35,
-        metalness: 0.40,
+        metalness: 0.4,
       }),
       goldBearing: new THREE.MeshStandardMaterial({
         color: 0xd6a74a,
@@ -223,8 +223,10 @@ export class CompassObject3D {
     this.group.scale.lerp(this._scratchScale, this.lerpFactor);
 
     // 4. Rotation Lerping with Pointer Offset & Initial Emergence
-    this.group.rotation.x += (this.targetRotation.x + pointerRotX + initialTilt - this.group.rotation.x) * this.lerpFactor;
-    this.group.rotation.y += (this.targetRotation.y + pointerRotY - this.group.rotation.y) * this.lerpFactor;
+    this.group.rotation.x +=
+      (this.targetRotation.x + pointerRotX + initialTilt - this.group.rotation.x) * this.lerpFactor;
+    this.group.rotation.y +=
+      (this.targetRotation.y + pointerRotY - this.group.rotation.y) * this.lerpFactor;
     this.group.rotation.z += (this.targetRotation.z - this.group.rotation.z) * this.lerpFactor;
 
     // 4. Ring Radial Expansion Animation
@@ -241,11 +243,13 @@ export class CompassObject3D {
     // 6. Needle Bearing & Sweep Dynamics
     if (this.needleSweepSpeed > 1.0) {
       // Rapid searching radar sweep
-      this.currentNeedleAngle = Math.sin(elapsedTime * this.needleSweepSpeed) * 0.85 + this.targetNeedleAngle;
+      this.currentNeedleAngle =
+        Math.sin(elapsedTime * this.needleSweepSpeed) * 0.85 + this.targetNeedleAngle;
     } else {
       // Standard calibrated target with subtle idle breathing
       const idleWobble = Math.sin(elapsedTime * 1.2) * 0.025;
-      this.currentNeedleAngle += (this.targetNeedleAngle + idleWobble - this.currentNeedleAngle) * this.lerpFactor;
+      this.currentNeedleAngle +=
+        (this.targetNeedleAngle + idleWobble - this.currentNeedleAngle) * this.lerpFactor;
     }
     this.needleGroup.rotation.z = this.currentNeedleAngle;
 

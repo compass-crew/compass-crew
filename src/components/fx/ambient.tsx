@@ -35,17 +35,16 @@ export function AmbientOrbs({ className = "" }: { className?: string }) {
     },
   ] as const;
   return (
-    <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
+    <div
+      aria-hidden
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
+    >
       {orbs.map((o, i) => (
         <motion.div
           key={i}
           className={`absolute ${o.pos} ${o.size} rounded-full opacity-60 mix-blend-screen blur-[80px]`}
           style={o.style}
-          animate={
-            reduce
-              ? undefined
-              : { x: [0, 40, -20, 0], y: [0, -30, 20, 0] }
-          }
+          animate={reduce ? undefined : { x: [0, 40, -20, 0], y: [0, -30, 20, 0] }}
           transition={{ duration: o.d, ease: "easeInOut", repeat: Infinity }}
         />
       ))}

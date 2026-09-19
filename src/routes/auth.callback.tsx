@@ -27,10 +27,7 @@ export const Route = createFileRoute("/auth/callback")({
     error_code: typeof search.error_code === "string" ? search.error_code : undefined,
   }),
   head: () => ({
-    meta: [
-      { title: "Authenticating — Compass Crew" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Authenticating — Compass Crew" }, { name: "robots", content: "noindex" }],
   }),
   component: AuthCallbackPage,
 });
@@ -73,7 +70,10 @@ function AuthCallbackPage() {
       // 1. Check if OAuth error was returned in query params (e.g. user cancelled)
       if (search.error || search.error_description) {
         let msg = "Authentication failed. Please try signing in again.";
-        if (search.error === "access_denied" || /denied|cancel/i.test(search.error_description || "")) {
+        if (
+          search.error === "access_denied" ||
+          /denied|cancel/i.test(search.error_description || "")
+        ) {
           msg = "Google sign-in was cancelled.";
         } else if (search.error_description) {
           msg = search.error_description;
@@ -196,9 +196,7 @@ function AuthCallbackPage() {
       backLabel="Back to sign in"
       brandProps={{
         state: errorMessage ? "default" : "verify",
-        subtitle: errorMessage
-          ? "Authentication issue encountered."
-          : "Completing secure sign-in…",
+        subtitle: errorMessage ? "Authentication issue encountered." : "Completing secure sign-in…",
       }}
     >
       <div className="auth-entry">

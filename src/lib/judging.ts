@@ -36,7 +36,11 @@ export async function listJudgeHackathons(judgeId: string): Promise<JudgeHackath
   const results: JudgeHackathon[] = [];
   for (const h of hacks ?? []) {
     const [subs, myScores] = await Promise.all([
-      supabase.from("submissions").select("id", { count: "exact", head: true }).eq("hackathon_id", h.id).eq("status", "submitted"),
+      supabase
+        .from("submissions")
+        .select("id", { count: "exact", head: true })
+        .eq("hackathon_id", h.id)
+        .eq("status", "submitted"),
       supabase.from("scores").select("submission_id").eq("judge_id", judgeId).eq("is_final", true),
     ]);
     const subIds = new Set<string>();
@@ -92,7 +96,10 @@ export async function listTeamMembers(teamId: string) {
   const { data: profs } = await supabase
     .from("profiles")
     .select("id, full_name, username, avatar_url, college")
-    .in("id", rows.map((r) => r.user_id));
+    .in(
+      "id",
+      rows.map((r) => r.user_id),
+    );
   const map = new Map((profs ?? []).map((p) => [p.id, p]));
   return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
 }

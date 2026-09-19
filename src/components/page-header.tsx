@@ -23,7 +23,10 @@ export function PageHeader({
   return (
     <section className="relative overflow-hidden border-b border-border/60">
       {/* Soft radial wash + grid whisper, identical to home hero */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-60" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 hero-glow opacity-60"
+      />
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-70" />
       <div
         aria-hidden

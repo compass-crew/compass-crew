@@ -40,6 +40,7 @@ export type SiteEvent = {
   slug: string;
   title: string;
   description: string | null;
+  body_md?: string | null;
   banner_url: string | null;
   kind: string;
   mode: string;
@@ -48,6 +49,8 @@ export type SiteEvent = {
   ends_at: string | null;
   registration_url: string | null;
   featured: boolean;
+  status?: string;
+  published_at?: string | null;
 };
 
 export type Sponsor = {
@@ -129,7 +132,17 @@ export type HomepageSection = {
   sort_order: number | null;
 };
 
-const rewriteMedia = <T extends { cover_url?: string | null; banner_url?: string | null; logo_url?: string | null; avatar_url?: string | null; media_url?: string | null }>(row: T): T => ({
+const rewriteMedia = <
+  T extends {
+    cover_url?: string | null;
+    banner_url?: string | null;
+    logo_url?: string | null;
+    avatar_url?: string | null;
+    media_url?: string | null;
+  },
+>(
+  row: T,
+): T => ({
   ...row,
   ...("cover_url" in row ? { cover_url: cmsMediaUrl(row.cover_url) } : {}),
   ...("banner_url" in row ? { banner_url: cmsMediaUrl(row.banner_url) } : {}),
@@ -142,7 +155,9 @@ const rewriteMedia = <T extends { cover_url?: string | null; banner_url?: string
 export async function listBlogPosts(): Promise<BlogPost[]> {
   const { data, error } = await supabase
     .from("blog_posts")
-    .select("id,slug,title,excerpt,body_md,cover_url,category,tags,author_name,reading_minutes,featured,published_at,created_at")
+    .select(
+      "id,slug,title,excerpt,body_md,cover_url,category,tags,author_name,reading_minutes,featured,published_at,created_at",
+    )
     .eq("status", "published")
     .is("deleted_at", null)
     .order("featured", { ascending: false })
@@ -155,7 +170,9 @@ export async function listBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   const { data, error } = await supabase
     .from("blog_posts")
-    .select("id,slug,title,excerpt,body_md,cover_url,category,tags,author_name,reading_minutes,featured,published_at,created_at")
+    .select(
+      "id,slug,title,excerpt,body_md,cover_url,category,tags,author_name,reading_minutes,featured,published_at,created_at",
+    )
     .eq("status", "published")
     .eq("slug", slug)
     .is("deleted_at", null)
@@ -168,7 +185,9 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 export async function listResources(): Promise<ResourceItem[]> {
   const { data, error } = await supabase
     .from("resources")
-    .select("id,slug,title,description,category,tags,cover_url,url,download_url,is_external,published_at,sort_order")
+    .select(
+      "id,slug,title,description,category,tags,cover_url,url,download_url,is_external,published_at,sort_order",
+    )
     .eq("status", "published")
     .is("deleted_at", null)
     .order("sort_order", { ascending: true, nullsFirst: false })
@@ -177,17 +196,62 @@ export async function listResources(): Promise<ResourceItem[]> {
   return (data ?? []).map(rewriteMedia) as ResourceItem[];
 }
 
+export async function getResource(slugOrId: string): Promise<ResourceItem | null> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+
+  let q = supabase
+    .from("resources")
+    .select(
+      "id,slug,title,description,category,tags,cover_url,url,download_url,is_external,published_at,sort_order",
+    )
+    .eq("status", "published")
+    .is("deleted_at", null);
+
+  if (isUuid) {
+    q = q.or(`slug.eq.${slugOrId},id.eq.${slugOrId}`);
+  } else {
+    q = q.eq("slug", slugOrId);
+  }
+
+  const { data, error } = await q.maybeSingle();
+  if (error) throw error;
+  return data ? (rewriteMedia(data) as ResourceItem) : null;
+}
+
 // ---------- Events ----------
 export async function listEvents(): Promise<SiteEvent[]> {
   const { data, error } = await supabase
     .from("site_events")
-    .select("id,slug,title,description,banner_url,kind,mode,location,starts_at,ends_at,registration_url,featured")
+    .select(
+      "id,slug,title,description,banner_url,kind,mode,location,starts_at,ends_at,registration_url,featured",
+    )
     .eq("status", "published")
     .is("deleted_at", null)
     .order("featured", { ascending: false })
     .order("starts_at", { ascending: true, nullsFirst: false });
   if (error) throw error;
   return (data ?? []).map(rewriteMedia) as SiteEvent[];
+}
+
+export async function getEvent(slugOrId: string): Promise<SiteEvent | null> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+
+  let q = supabase
+    .from("site_events")
+    .select(
+      "id,slug,title,description,body_md,banner_url,kind,mode,location,starts_at,ends_at,registration_url,featured,status,published_at",
+    )
+    .is("deleted_at", null);
+
+  if (isUuid) {
+    q = q.or(`slug.eq.${slugOrId},id.eq.${slugOrId}`);
+  } else {
+    q = q.eq("slug", slugOrId);
+  }
+
+  const { data, error } = await q.maybeSingle();
+  if (error) throw error;
+  return data ? (rewriteMedia(data) as SiteEvent) : null;
 }
 
 // ---------- Sponsors ----------
@@ -218,7 +282,9 @@ export async function listPartners(): Promise<Partner[]> {
 export async function listMentors(): Promise<Mentor[]> {
   const { data, error } = await supabase
     .from("mentors")
-    .select("id,name,title,company,avatar_url,bio,expertise,linkedin_url,twitter_url,website_url,sort_order")
+    .select(
+      "id,name,title,company,avatar_url,bio,expertise,linkedin_url,twitter_url,website_url,sort_order",
+    )
     .eq("status", "published")
     .is("deleted_at", null)
     .order("sort_order", { ascending: true, nullsFirst: false });

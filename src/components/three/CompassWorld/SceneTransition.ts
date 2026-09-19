@@ -42,14 +42,19 @@ export class SceneTransition {
     };
   }
 
-  public static lerpLighting(a: LightingConfig, b: LightingConfig, t: number): LightingConfig {
-    const colA = new THREE.Color(a.keyColor);
-    const colB = new THREE.Color(b.keyColor);
-    const keyCol = colA.lerp(colB, t).getHex();
+  private static _colA = new THREE.Color();
+  private static _colB = new THREE.Color();
+  private static _rimA = new THREE.Color();
+  private static _rimB = new THREE.Color();
 
-    const rimA = new THREE.Color(a.rimColor);
-    const rimB = new THREE.Color(b.rimColor);
-    const rimCol = rimA.lerp(rimB, t).getHex();
+  public static lerpLighting(a: LightingConfig, b: LightingConfig, t: number): LightingConfig {
+    this._colA.setHex(a.keyColor);
+    this._colB.setHex(b.keyColor);
+    const keyCol = this._colA.lerp(this._colB, t).getHex();
+
+    this._rimA.setHex(a.rimColor);
+    this._rimB.setHex(b.rimColor);
+    const rimCol = this._rimA.lerp(this._rimB, t).getHex();
 
     return {
       keyColor: keyCol,
@@ -61,7 +66,11 @@ export class SceneTransition {
     };
   }
 
-  public static interpolateScenes(from: SceneConfig, to: SceneConfig, progress: number): SceneConfig {
+  public static interpolateScenes(
+    from: SceneConfig,
+    to: SceneConfig,
+    progress: number,
+  ): SceneConfig {
     // Standard cubic-bezier smoothstep easing
     const t = THREE.MathUtils.smoothstep(progress, 0, 1);
 
@@ -73,7 +82,11 @@ export class SceneTransition {
         fogColor: from.environment.fogColor,
         fogNear: THREE.MathUtils.lerp(from.environment.fogNear, to.environment.fogNear, t),
         fogFar: THREE.MathUtils.lerp(from.environment.fogFar, to.environment.fogFar, t),
-        bgGradientOpacity: THREE.MathUtils.lerp(from.environment.bgGradientOpacity, to.environment.bgGradientOpacity, t),
+        bgGradientOpacity: THREE.MathUtils.lerp(
+          from.environment.bgGradientOpacity,
+          to.environment.bgGradientOpacity,
+          t,
+        ),
       },
       particles: {
         count: Math.round(THREE.MathUtils.lerp(from.particles.count, to.particles.count, t)),
@@ -95,7 +108,9 @@ export class SceneTransition {
         visible: to.grid.visible || from.grid.visible,
         size: to.grid.size,
         divisions: to.grid.divisions,
-        opacity: to.grid.visible ? THREE.MathUtils.lerp(0, to.grid.opacity, t) : THREE.MathUtils.lerp(from.grid.opacity, 0, t),
+        opacity: to.grid.visible
+          ? THREE.MathUtils.lerp(0, to.grid.opacity, t)
+          : THREE.MathUtils.lerp(from.grid.opacity, 0, t),
         yOffset: THREE.MathUtils.lerp(from.grid.yOffset, to.grid.yOffset, t),
       },
     };

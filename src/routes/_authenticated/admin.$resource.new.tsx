@@ -3,7 +3,10 @@ import { ChevronLeft } from "lucide-react";
 import { AdminForm } from "@/components/admin/admin-form";
 import { getResource } from "@/lib/admin-config";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/$resource/new")({
+  beforeLoad: requireRole(["super_admin"]),
   component: NewResourcePage,
 });
 

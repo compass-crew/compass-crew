@@ -20,7 +20,9 @@ export class PerformanceController {
   public detectOptimalQuality(): QualityLevel {
     if (typeof window === "undefined") return "medium";
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(pointer: coarse)").matches;
+    const isMobile =
+      window.matchMedia("(max-width: 768px)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
     const cores = navigator.hardwareConcurrency || 4;
     const isLowPower = cores <= 4 || isMobile;
 

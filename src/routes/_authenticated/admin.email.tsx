@@ -9,8 +9,20 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Markdown } from "@/components/markdown";
 import {
@@ -25,7 +37,13 @@ import {
   type EmailTemplate,
 } from "@/lib/email-config";
 
+import { requireRole } from "@/lib/auth-guard";
+
 export const Route = createFileRoute("/_authenticated/admin/email")({
+  beforeLoad: requireRole(["super_admin"]),
+  head: () => ({
+    meta: [{ title: "Email Configuration — Admin" }, { name: "robots", content: "noindex" }],
+  }),
   component: EmailAdminPage,
 });
 
@@ -53,7 +71,9 @@ function EmailAdminPage() {
       <header>
         <h1 className="font-display text-3xl font-semibold">Email</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose your email provider and edit templates. Templates use <code className="rounded bg-muted px-1 py-0.5 text-xs">{"{{variable}}"}</code> placeholders.
+          Choose your email provider and edit templates. Templates use{" "}
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">{"{{variable}}"}</code>{" "}
+          placeholders.
         </p>
       </header>
 
@@ -67,22 +87,24 @@ function EmailAdminPage() {
           {provider ? (
             <ProviderForm initial={provider} onSaved={refresh} />
           ) : (
-            <div className="grid place-items-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+            <div className="grid place-items-center py-16">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
           )}
         </TabsContent>
 
         <TabsContent value="templates">
-          <TemplatesList
-            templates={templates}
-            onEdit={setEditing}
-          />
+          <TemplatesList templates={templates} onEdit={setEditing} />
         </TabsContent>
       </Tabs>
 
       <TemplateEditorDialog
         template={editing}
         onClose={() => setEditing(null)}
-        onSaved={() => { setEditing(null); void refresh(); }}
+        onSaved={() => {
+          setEditing(null);
+          void refresh();
+        }}
       />
     </div>
   );
@@ -90,7 +112,13 @@ function EmailAdminPage() {
 
 // ---------- Provider ----------
 
-function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; onSaved: () => void }) {
+function ProviderForm({
+  initial,
+  onSaved,
+}: {
+  initial: EmailProviderSettings;
+  onSaved: () => void;
+}) {
   const [s, setS] = useState<EmailProviderSettings>(initial);
   const [busy, setBusy] = useState(false);
 
@@ -122,18 +150,26 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
       <CardHeader>
         <CardTitle>Email Provider</CardTitle>
         <CardDescription>
-          Choose which service sends outbound email. Provider secrets are stored securely as environment variables.
+          Choose which service sends outbound email. Provider secrets are stored securely as
+          environment variables.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-2">
             <Label>Provider</Label>
-            <Select value={s.provider} onValueChange={(v) => setS({ ...s, provider: v as EmailProvider })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={s.provider}
+              onValueChange={(v) => setS({ ...s, provider: v as EmailProvider })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {PROVIDER_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -141,7 +177,9 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
             {option.requiresSecrets.length > 0 && (
               <div className="mt-1 flex flex-wrap gap-1">
                 {option.requiresSecrets.map((k) => (
-                  <Badge key={k} variant="outline" className="font-mono text-[10px]">{k}</Badge>
+                  <Badge key={k} variant="outline" className="font-mono text-[10px]">
+                    {k}
+                  </Badge>
                 ))}
               </div>
             )}
@@ -150,15 +188,27 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
           <div className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-2">
               <Label>From email</Label>
-              <Input type="email" placeholder="hello@yourdomain.com" value={s.from_email} onChange={(e) => setS({ ...s, from_email: e.target.value })} />
+              <Input
+                type="email"
+                placeholder="hello@yourdomain.com"
+                value={s.from_email}
+                onChange={(e) => setS({ ...s, from_email: e.target.value })}
+              />
             </div>
             <div className="grid gap-2">
               <Label>From name</Label>
-              <Input value={s.from_name} onChange={(e) => setS({ ...s, from_name: e.target.value })} />
+              <Input
+                value={s.from_name}
+                onChange={(e) => setS({ ...s, from_name: e.target.value })}
+              />
             </div>
             <div className="grid gap-2">
               <Label>Reply-to</Label>
-              <Input type="email" value={s.reply_to} onChange={(e) => setS({ ...s, reply_to: e.target.value })} />
+              <Input
+                type="email"
+                value={s.reply_to}
+                onChange={(e) => setS({ ...s, reply_to: e.target.value })}
+              />
             </div>
             <div className="flex items-center gap-3 pt-6">
               <Switch checked={s.is_active} onCheckedChange={(v) => setS({ ...s, is_active: v })} />
@@ -167,12 +217,17 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
           </div>
 
           <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-            Architecture is ready. To send with {option.label}, ensure the required environment variables are set in your deployment configuration.
+            Architecture is ready. To send with {option.label}, ensure the required environment
+            variables are set in your deployment configuration.
           </div>
 
           <div className="flex justify-end pt-2">
             <Button type="submit" disabled={busy}>
-              {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+              {busy ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
               Save provider
             </Button>
           </div>
@@ -184,9 +239,19 @@ function ProviderForm({ initial, onSaved }: { initial: EmailProviderSettings; on
 
 // ---------- Templates list ----------
 
-function TemplatesList({ templates, onEdit }: { templates: EmailTemplate[] | null; onEdit: (t: EmailTemplate) => void }) {
+function TemplatesList({
+  templates,
+  onEdit,
+}: {
+  templates: EmailTemplate[] | null;
+  onEdit: (t: EmailTemplate) => void;
+}) {
   if (templates === null) {
-    return <div className="grid place-items-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+    return (
+      <div className="grid place-items-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
   if (templates.length === 0) {
     return (
@@ -208,21 +273,32 @@ function TemplatesList({ templates, onEdit }: { templates: EmailTemplate[] | nul
                 <CardTitle className="text-base">{t.name}</CardTitle>
                 <p className="mt-1 font-mono text-[11px] text-muted-foreground">{t.key}</p>
               </div>
-              <Badge variant={t.is_active ? "default" : "outline"}>{t.is_active ? "Active" : "Inactive"}</Badge>
+              <Badge variant={t.is_active ? "default" : "outline"}>
+                {t.is_active ? "Active" : "Inactive"}
+              </Badge>
             </div>
             {t.description && <CardDescription className="mt-2">{t.description}</CardDescription>}
           </CardHeader>
           <CardContent className="mt-auto space-y-3">
-            <p className="line-clamp-1 text-sm"><span className="text-muted-foreground">Subject:</span> {t.subject || <em className="text-muted-foreground">empty</em>}</p>
+            <p className="line-clamp-1 text-sm">
+              <span className="text-muted-foreground">Subject:</span>{" "}
+              {t.subject || <em className="text-muted-foreground">empty</em>}
+            </p>
             {t.variables.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {t.variables.map((v) => (
-                  <Badge key={v} variant="outline" className="font-mono text-[10px]">{`{{${v}}}`}</Badge>
+                  <Badge
+                    key={v}
+                    variant="outline"
+                    className="font-mono text-[10px]"
+                  >{`{{${v}}}`}</Badge>
                 ))}
               </div>
             )}
             <div className="flex justify-end">
-              <Button size="sm" variant="outline" onClick={() => onEdit(t)}>Edit</Button>
+              <Button size="sm" variant="outline" onClick={() => onEdit(t)}>
+                Edit
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -233,7 +309,15 @@ function TemplatesList({ templates, onEdit }: { templates: EmailTemplate[] | nul
 
 // ---------- Template editor ----------
 
-function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailTemplate | null; onClose: () => void; onSaved: () => void }) {
+function TemplateEditorDialog({
+  template,
+  onClose,
+  onSaved,
+}: {
+  template: EmailTemplate | null;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [active, setActive] = useState(true);
@@ -290,7 +374,8 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
                 <Label htmlFor="active">Active</Label>
                 <div className="ml-auto flex items-center gap-2">
                   <Button size="sm" variant="outline" onClick={() => setShowPreview((v) => !v)}>
-                    <Eye className="mr-1 h-3.5 w-3.5" /> {showPreview ? "Hide preview" : "Show preview"}
+                    <Eye className="mr-1 h-3.5 w-3.5" />{" "}
+                    {showPreview ? "Hide preview" : "Show preview"}
                   </Button>
                 </div>
               </div>
@@ -302,18 +387,30 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
 
               <div className="grid gap-2">
                 <Label>Body (Markdown)</Label>
-                <Textarea rows={12} value={body} onChange={(e) => setBody(e.target.value)} className="font-mono text-sm" />
+                <Textarea
+                  rows={12}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  className="font-mono text-sm"
+                />
               </div>
 
               {template.variables.length > 0 && (
                 <div className="rounded-md border border-border p-3 space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Available variables</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Available variables
+                  </p>
                   <div className="flex flex-wrap gap-1">
                     {template.variables.map((v) => (
-                      <Badge key={v} variant="outline" className="cursor-pointer font-mono text-[10px]" onClick={() => {
-                        navigator.clipboard.writeText(`{{${v}}}`);
-                        toast.success(`Copied {{${v}}}`);
-                      }}>{`{{${v}}}`}</Badge>
+                      <Badge
+                        key={v}
+                        variant="outline"
+                        className="cursor-pointer font-mono text-[10px]"
+                        onClick={() => {
+                          navigator.clipboard.writeText(`{{${v}}}`);
+                          toast.success(`Copied {{${v}}}`);
+                        }}
+                      >{`{{${v}}}`}</Badge>
                     ))}
                   </div>
                 </div>
@@ -322,7 +419,9 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
               {showPreview && (
                 <div className="space-y-3 rounded-md border border-border bg-muted/20 p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Preview</p>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Preview
+                    </p>
                   </div>
                   {template.variables.length > 0 && (
                     <div className="grid gap-2 md:grid-cols-2">
@@ -331,7 +430,9 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
                           <Label className="text-xs">{`{{${v}}}`}</Label>
                           <Input
                             value={previewValues[v] ?? ""}
-                            onChange={(e) => setPreviewValues((p) => ({ ...p, [v]: e.target.value }))}
+                            onChange={(e) =>
+                              setPreviewValues((p) => ({ ...p, [v]: e.target.value }))
+                            }
                             placeholder={`Sample ${v}`}
                           />
                         </div>
@@ -350,9 +451,15 @@ function TemplateEditorDialog({ template, onClose, onSaved }: { template: EmailT
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={onClose}>Cancel</Button>
+              <Button variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
               <Button onClick={save} disabled={busy}>
-                {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {busy ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
                 Save template
               </Button>
             </DialogFooter>
