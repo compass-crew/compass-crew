@@ -67,9 +67,9 @@ export function ImmersiveFooter() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(124,92,255,0.06),transparent_70%)]"
       />
 
-      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-12 lg:px-20 xl:px-28 pt-16 pb-12">
+      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-12 lg:px-20 xl:px-28 pt-10 pb-8">
         {/* Main Grid: Brand Column + Navigation Columns */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-8">
           {/* Brand & Identity Area */}
           <div className="lg:col-span-4 flex flex-col space-y-4">
             <BrandLogo size="md" />
@@ -100,7 +100,7 @@ export function ImmersiveFooter() {
         </div>
 
         {/* Bottom Metadata Bar */}
-        <div className="mt-14 pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-cc-mono text-[#8C8882]">
+        <div className="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-cc-mono text-[#8C8882]">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span>© {currentYear} COMPASS CREW</span>
             <span className="text-[#3A3A40]">·</span>

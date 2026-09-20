@@ -113,7 +113,13 @@ export function HackathonCard({ h }: { h: Hackathon }) {
           {HACKATHON_STATUS_LABEL[h.status]}
         </span>
 
-        {h.is_featured && (
+        {h.status === "completed" && (
+          <span className="absolute right-4 top-4 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground backdrop-blur-md">
+            Registration Closed
+          </span>
+        )}
+
+        {h.is_featured && h.status !== "completed" && (
           <Badge className="absolute right-4 top-4 border-white/25 bg-white/15 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white shadow-elegant backdrop-blur-md">
             <Sparkles className="mr-1 h-3 w-3" /> Featured
           </Badge>
@@ -123,7 +129,13 @@ export function HackathonCard({ h }: { h: Hackathon }) {
       <CardContent className="flex flex-1 flex-col gap-5 p-6">
         <div>
           <h3 className="font-display text-[19px] font-semibold leading-snug tracking-tight">
-            {h.title}
+            <Link
+              to="/hackathons/$slug"
+              params={{ slug: h.slug }}
+              className="hover:text-primary transition-colors"
+            >
+              {h.title}
+            </Link>
           </h3>
           {h.tagline && (
             <p className="mt-1.5 line-clamp-2 text-[13.5px] leading-relaxed text-muted-foreground">
@@ -159,8 +171,13 @@ export function HackathonCard({ h }: { h: Hackathon }) {
           )}
         </ul>
 
-        {/* Urgency banner */}
-        {(closesIn !== null && closesIn >= 0) || (startsIn !== null && startsIn >= 0) ? (
+        {/* Urgency or past banner */}
+        {h.status === "completed" ? (
+          <div className="rounded-lg border border-border/70 bg-muted/40 px-3 py-2 text-[12.5px] font-medium text-muted-foreground flex items-center justify-between">
+            <span>Registration</span>
+            <span className="font-semibold text-foreground/85">Registration Closed</span>
+          </div>
+        ) : (closesIn !== null && closesIn >= 0) || (startsIn !== null && startsIn >= 0) ? (
           <div
             className={`rounded-lg border border-dashed px-3 py-2 text-[12.5px] font-medium ${
               closesIn !== null && closesIn <= 7
@@ -188,20 +205,32 @@ export function HackathonCard({ h }: { h: Hackathon }) {
           </div>
         ) : null}
 
-        {/* CTA — full-width block link for a bigger tap target and keyboard target */}
+        {/* CTA — full-width block link */}
         <div className="mt-auto pt-1">
-          <Link
-            to="/hackathons/$slug"
-            params={{ slug: h.slug }}
-            className={`inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
-              isLive
-                ? "btn-premium hover:btn-premium-hover text-white"
-                : "border border-border/70 bg-background text-foreground hover:border-primary/40 hover:bg-muted/40"
-            }`}
-          >
-            {isLive ? "Register now" : "View details"}
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
+          {h.external_url ? (
+            <a
+              href={h.external_url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border/70 bg-background px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-muted/40"
+            >
+              View Challenge
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
+          ) : (
+            <Link
+              to="/hackathons/$slug"
+              params={{ slug: h.slug }}
+              className={`inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
+                isLive
+                  ? "btn-premium hover:btn-premium-hover text-white"
+                  : "border border-border/70 bg-background text-foreground hover:border-primary/40 hover:bg-muted/40"
+              }`}
+            >
+              {isLive ? "Register now" : "View details"}
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          )}
         </div>
       </CardContent>
     </Card>

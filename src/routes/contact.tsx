@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { submitContactMessage, listHomepageSections, findSection } from "@/lib/public-cms";
-import { Turnstile } from "@/components/turnstile";
 import { FAQS } from "@/data/site";
 
 export const Route = createFileRoute("/contact")({
@@ -97,7 +96,6 @@ function ContactPage() {
   const faqItems: FaqItem[] = (faqCms?.data as { items?: FaqItem[] } | null)?.items ?? FAQS;
 
   const [submitting, setSubmitting] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -110,11 +108,10 @@ function ContactPage() {
         email: String(fd.get("email") ?? "").trim(),
         subject: String(fd.get("subject") ?? "").trim(),
         message: String(fd.get("msg") ?? "").trim(),
-        turnstileToken: captchaToken,
+        company_url: String(fd.get("company_url") ?? "").trim(),
       });
       toast.success("Message sent — we will get back to you within 2 business days.");
       form.reset();
-      setCaptchaToken(null);
     } catch (err) {
       toast.error(
         err instanceof Error
@@ -227,6 +224,21 @@ function ContactPage() {
               </div>
 
               <form className="grid gap-5" onSubmit={onSubmit}>
+                {/* Honeypot field for anti-spam (hidden from users, traps automated bots) */}
+                <div
+                  className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none select-none"
+                  aria-hidden="true"
+                >
+                  <label htmlFor="company_url">Leave this field blank</label>
+                  <input
+                    id="company_url"
+                    name="company_url"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div className="grid gap-2">
                     <Label htmlFor="name">Your Name</Label>
@@ -272,10 +284,6 @@ function ContactPage() {
                     placeholder="Tell us about your project, campus, team, or inquiry…"
                     className="bg-background/50 leading-relaxed"
                   />
-                </div>
-
-                <div className="pt-1">
-                  <Turnstile onToken={setCaptchaToken} />
                 </div>
 
                 <Button

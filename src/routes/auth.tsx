@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { redirectIfAuthenticated } from "@/lib/auth-guard";
 import { Turnstile } from "@/components/turnstile";
+import { useTheme } from "@/components/theme-provider";
 import "@/components/auth/auth-shell.css";
 
 /* ============================ Lazy 3D Compass ============================ */
@@ -296,6 +297,7 @@ function LoginForm({
 }) {
   const navigate = useNavigate();
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
 
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -421,7 +423,11 @@ function LoginForm({
 
         {/* Security verification */}
         <div style={{ marginBottom: "1rem" }}>
-          <Turnstile key={captchaKey} onToken={setCaptchaToken} theme="dark" />
+          <Turnstile
+            key={captchaKey}
+            onToken={setCaptchaToken}
+            theme={resolvedTheme === "dark" ? "dark" : "light"}
+          />
         </div>
 
         {/* Submit */}
@@ -462,8 +468,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
   const [submitting, setSubmitting] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaKey, setCaptchaKey] = useState(0);
   const navigate = useNavigate();
 
   const form = useForm<SignupValues>({
@@ -482,10 +486,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
   const strength = passwordStrength(password);
 
   async function onSubmit(values: SignupValues) {
-    if (!captchaToken) {
-      setFormError("Please complete the security check.");
-      return;
-    }
     setSubmitting(true);
     setFormError(null);
     if (redirect) {
@@ -501,7 +501,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
       password: values.password,
       options: {
         emailRedirectTo,
-        captchaToken,
         data: {
           full_name: values.full_name,
           newsletter_opt_in: values.newsletter,
@@ -511,8 +510,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
 
     if (error) {
       setSubmitting(false);
-      setCaptchaToken(null);
-      setCaptchaKey((k) => k + 1);
       setFormError(error.message);
       return;
     }
@@ -525,8 +522,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
 
     if (isRepeatedSignup) {
       setSubmitting(false);
-      setCaptchaToken(null);
-      setCaptchaKey((k) => k + 1);
       setFormError(
         "This email is already registered. Try signing in, or reset your password if you\u2019ve forgotten it.",
       );
@@ -691,11 +686,6 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
             />
             <span>Send me the Compass Crew newsletter (monthly).</span>
           </label>
-        </div>
-
-        {/* Security verification */}
-        <div style={{ marginBottom: "1rem" }}>
-          <Turnstile key={captchaKey} onToken={setCaptchaToken} theme="dark" />
         </div>
 
         {/* Submit */}

@@ -19,6 +19,7 @@ import { Route as MentorsRouteImport } from './routes/mentors'
 import { Route as JudgesRouteImport } from './routes/judges'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as FaqsRouteImport } from './routes/faqs'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -140,6 +141,11 @@ const HackathonsRoute = HackathonsRouteImport.update({
 const FaqsRoute = FaqsRouteImport.update({
   id: '/faqs',
   path: '/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -549,6 +555,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
+  '/faq': typeof FaqRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
@@ -632,6 +639,7 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
+  '/faq': typeof FaqRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
@@ -716,6 +724,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
+  '/faq': typeof FaqRoute
   '/faqs': typeof FaqsRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/judges': typeof JudgesRoute
@@ -801,6 +810,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/contact'
     | '/events'
+    | '/faq'
     | '/faqs'
     | '/hackathons'
     | '/judges'
@@ -884,6 +894,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/contact'
     | '/events'
+    | '/faq'
     | '/faqs'
     | '/hackathons'
     | '/judges'
@@ -967,6 +978,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/contact'
     | '/events'
+    | '/faq'
     | '/faqs'
     | '/hackathons'
     | '/judges'
@@ -1052,6 +1064,7 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRoute
   ContactRoute: typeof ContactRoute
   EventsRoute: typeof EventsRouteWithChildren
+  FaqRoute: typeof FaqRoute
   FaqsRoute: typeof FaqsRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   JudgesRoute: typeof JudgesRoute
@@ -1138,6 +1151,13 @@ declare module '@tanstack/react-router' {
       path: '/faqs'
       fullPath: '/faqs'
       preLoaderRoute: typeof FaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -1922,6 +1942,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRoute,
   ContactRoute: ContactRoute,
   EventsRoute: EventsRouteWithChildren,
+  FaqRoute: FaqRoute,
   FaqsRoute: FaqsRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   JudgesRoute: JudgesRoute,

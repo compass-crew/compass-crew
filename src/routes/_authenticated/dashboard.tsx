@@ -1,205 +1,114 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Trophy,
-  Rocket,
   Users,
-  ShieldCheck,
-  Sparkles,
+  Shield,
   Calendar,
-  Gavel,
-  Flag,
-  GraduationCap,
   ArrowRight,
   Award,
   Bell,
+  CheckCircle2,
+  Sparkles,
+  Inbox,
+  Globe,
+  Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useAuth, ROLE_LABEL, type AppRole, profileCompletion } from "@/hooks/use-auth";
+import { useAuth, ROLE_LABEL, profileCompletion } from "@/hooks/use-auth";
 import { Section, SectionHeading } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { useQuery } from "@tanstack/react-query";
-import { unreadCount } from "@/lib/notifications";
+import { unreadCount, listMyNotifications } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   ssr: false,
   head: () => ({
     meta: [
       { title: "Dashboard — Compass Crew" },
-      { name: "description", content: "Your Compass Crew dashboard." },
+      {
+        name: "description",
+        content: "Your Compass Crew home base for hackathons, teams, and achievements.",
+      },
     ],
   }),
   component: DashboardPage,
 });
 
-/* ============================ Role content ============================ */
+/* ============================ Core Modules ============================ */
 
-interface Widget {
+interface CoreModule {
+  id: string;
   icon: LucideIcon;
   title: string;
-  body: string;
-  cta: { label: string; to: string };
+  description: string;
+  cta: string;
+  to: string;
+  badge?: string;
 }
 
-const PARTICIPANT: Widget[] = [
+const CORE_MODULES: CoreModule[] = [
   {
+    id: "hackathons",
     icon: Trophy,
     title: "Hackathons",
-    body: "Browse upcoming Compass Crew hackathons and register for the ones that fit you.",
-    cta: { label: "Explore hackathons", to: "/hackathons" },
+    description:
+      "Discover upcoming student hackathons, register your participation, and track submissions.",
+    cta: "Explore hackathons",
+    to: "/hackathons",
   },
   {
+    id: "events",
+    icon: Calendar,
+    title: "Events & Workshops",
+    description: "Participate in live builder workshops, technical AMAs, and campus tech meetups.",
+    cta: "See all events",
+    to: "/events",
+  },
+  {
+    id: "teams",
     icon: Users,
-    title: "Your teams",
-    body: "Create, manage or leave teams for every hackathon you've entered.",
-    cta: { label: "Open teams", to: "/teams" },
+    title: "My Teams",
+    description: "Form squads, invite peers, and manage rosters for every hackathon you enter.",
+    cta: "Manage teams",
+    to: "/teams",
   },
   {
-    icon: Sparkles,
-    title: "Invitations",
-    body: "Accept team invitations from friends and organizers.",
-    cta: { label: "View invitations", to: "/invitations" },
-  },
-  {
+    id: "certificates",
     icon: Award,
     title: "Certificates",
-    body: "Download and share every certificate issued in your name.",
-    cta: { label: "Open certificates", to: "/certificates" },
+    description:
+      "Access and share verified cryptographic credentials and participation honors issued in your name.",
+    cta: "View certificates",
+    to: "/certificates",
   },
   {
+    id: "notifications",
     icon: Bell,
     title: "Notifications",
-    body: "Registrations, invitations, scores and certificates — all in one inbox.",
-    cta: { label: "Open notifications", to: "/notifications" },
+    description:
+      "Team invitations, score releases, and platform announcements gathered in one inbox.",
+    cta: "Open notifications",
+    to: "/notifications",
   },
   {
-    icon: Calendar,
-    title: "Events",
-    body: "Workshops, AMAs and campus meetups — announced weekly.",
-    cta: { label: "See events", to: "/events" },
+    id: "community",
+    icon: Globe,
+    title: "Community Hub",
+    description:
+      "Connect with campus chapters, builder cohorts, and fellow innovators across India.",
+    cta: "Visit community",
+    to: "/community",
   },
 ];
 
-const ORGANIZER: Widget[] = [
-  {
-    icon: Trophy,
-    title: "Your hackathons",
-    body: "Create, publish and manage the hackathons you run.",
-    cta: { label: "Open organizer console", to: "/organizer/hackathons" },
-  },
-  {
-    icon: Sparkles,
-    title: "New hackathon",
-    body: "Ship a hackathon in minutes. Add tracks, prizes and judges as you go.",
-    cta: { label: "Create hackathon", to: "/organizer/hackathons/new" },
-  },
-  {
-    icon: Award,
-    title: "Certificates & results",
-    body: "Publish leaderboards and issue certificates from the organizer console.",
-    cta: { label: "Open organizer console", to: "/organizer/hackathons" },
-  },
-  {
-    icon: Users,
-    title: "Community",
-    body: "Grow campus chapters and community programs.",
-    cta: { label: "Open community", to: "/community" },
-  },
-];
-
-const JUDGE: Widget[] = [
-  {
-    icon: Gavel,
-    title: "Judging queue",
-    body: "Review and score submissions assigned to you.",
-    cta: { label: "Open judge console", to: "/judge" },
-  },
-  {
-    icon: Trophy,
-    title: "Hackathons",
-    body: "Explore the full slate of Compass Crew hackathons.",
-    cta: { label: "Browse hackathons", to: "/hackathons" },
-  },
-  {
-    icon: Award,
-    title: "Certificates",
-    body: "Your judge certificates land here after events wrap up.",
-    cta: { label: "Open certificates", to: "/certificates" },
-  },
-];
-
-const MENTOR: Widget[] = [
-  {
-    icon: Sparkles,
-    title: "Mentorship sessions",
-    body: "Set your availability and take office hours with student teams.",
-    cta: { label: "Open community", to: "/community" },
-  },
-  {
-    icon: Rocket,
-    title: "Startup studio",
-    body: "Coach teams in the Compass startup studio cohort.",
-    cta: { label: "Explore", to: "/about" },
-  },
-];
-
-const CAMPUS_AMBASSADOR: Widget[] = [
-  {
-    icon: Flag,
-    title: "Your chapter",
-    body: "Run meetups, promote hackathons and grow your campus crew.",
-    cta: { label: "Chapter playbook", to: "/community" },
-  },
-  {
-    icon: Users,
-    title: "Ambassador community",
-    body: "Connect with ambassadors across India.",
-    cta: { label: "Open community", to: "/community" },
-  },
-];
-
-const SUPER_ADMIN: Widget[] = [
-  {
-    icon: ShieldCheck,
-    title: "Platform administration",
-    body: "Manage users, roles, hackathons, events and content.",
-    cta: { label: "Manage users", to: "/settings" },
-  },
-  {
-    icon: Users,
-    title: "User & role management",
-    body: "Grant Organizer, Judge, Mentor or Ambassador roles.",
-    cta: { label: "Open users", to: "/settings" },
-  },
-];
-
-const GUEST: Widget[] = [
-  {
-    icon: GraduationCap,
-    title: "Complete your profile",
-    body: "Fill in your college, degree and skills to unlock full access.",
-    cta: { label: "Edit profile", to: "/profile" },
-  },
-];
-
-const WIDGETS: Record<AppRole, Widget[]> = {
-  super_admin: SUPER_ADMIN,
-  organizer: ORGANIZER,
-  judge: JUDGE,
-  mentor: MENTOR,
-  campus_ambassador: CAMPUS_AMBASSADOR,
-  participant: PARTICIPANT,
-  guest: GUEST,
-};
-
-/* ============================ Page ============================ */
+/* ============================ Main Page ============================ */
 
 function DashboardPage() {
-  const { user, profile, roles, primaryRole, loading } = useAuth();
+  const { user, profile, roles, primaryRole, hasRole, loading } = useAuth();
 
   const { data: userUnreadCount = 0 } = useQuery({
     queryKey: ["notifications", "unread-count", user?.id],
@@ -208,58 +117,85 @@ function DashboardPage() {
     refetchInterval: 20000,
   });
 
+  const { data: recentNotifications = [], isLoading: loadingActivity } = useQuery({
+    queryKey: ["notifications", "recent-activity", user?.id],
+    queryFn: () => (user?.id ? listMyNotifications(user.id, { pageSize: 4 }) : []),
+    enabled: !!user?.id,
+  });
+
   if (loading) {
     return (
-      <Section>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+      <Section className="py-12">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-44 w-full rounded-2xl" />
           ))}
         </div>
       </Section>
     );
   }
 
-  const widgets = WIDGETS[primaryRole];
-  const completion = profileCompletion(profile);
+  const phoneValue = profile?.phone || (user?.user_metadata?.phone as string | undefined);
+  const completion = profileCompletion(profile, phoneValue);
   const firstName = (profile?.full_name ?? user?.email ?? "").split(" ")[0] || "there";
+  const isSuperAdmin = hasRole("super_admin");
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-[380px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-brand opacity-20 blur-3xl" />
-        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                {ROLE_LABEL[primaryRole]} dashboard
-              </p>
-              <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-muted/30 to-background">
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-[340px] w-[780px] -translate-x-1/2 rounded-full bg-gradient-brand opacity-15 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                  {ROLE_LABEL[primaryRole]} Dashboard
+                </span>
+                {isSuperAdmin && (
+                  <Badge variant="outline" className="text-[10px] border-primary/40 text-primary">
+                    Admin Privileges
+                  </Badge>
+                )}
+              </div>
+              <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl text-foreground">
                 Welcome back, <span className="text-gradient-brand">{firstName}</span>.
               </h1>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Everything the crew is building for you — hackathons, events, mentorship and
-                open-source.
+              <p className="max-w-2xl text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Everything the crew is building with you — hackathons, events, teams, and innovation
+                tracks.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 {roles.map((r) => (
-                  <Badge key={r} variant="secondary">
+                  <Badge key={r} variant="secondary" className="text-[11px] font-medium">
                     {ROLE_LABEL[r]}
                   </Badge>
                 ))}
               </div>
             </div>
-            <Card className="w-full sm:w-80">
-              <CardContent className="space-y-3 p-4">
+
+            {/* Profile Completion Card */}
+            <Card className="w-full shrink-0 border-border/60 shadow-sm sm:w-80 lg:w-88">
+              <CardContent className="space-y-3 p-5">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">Profile completion</p>
-                  <span className="text-sm font-semibold text-primary">{completion}%</span>
+                  <span className="text-xs font-medium text-foreground">Profile completion</span>
+                  <span className="text-xs font-semibold text-primary">{completion}%</span>
                 </div>
                 <Progress value={completion} className="h-2" />
-                <Button asChild size="sm" variant="outline" className="w-full">
-                  <Link to="/profile">Complete profile</Link>
+                <p className="text-[11px] text-muted-foreground">
+                  {completion === 100
+                    ? "Your profile is complete and verified for all events."
+                    : "Complete your profile to unlock team invitations and mentorship."}
+                </p>
+                <Button
+                  asChild
+                  size="sm"
+                  className="w-full bg-gradient-brand font-medium text-white shadow-sm hover:opacity-90 text-xs"
+                >
+                  <Link to="/profile">
+                    {completion === 100 ? "Edit profile" : "Complete profile"}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -267,39 +203,264 @@ function DashboardPage() {
         </div>
       </section>
 
-      <Section>
-        <SectionHeading eyebrow="Your dashboard" title="Where you go from here." />
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {widgets.map((w) => (
-            <Card
-              key={w.title}
-              className="group transition hover:-translate-y-0.5 hover:shadow-elegant"
-            >
-              <CardContent className="space-y-4 p-6">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-brand text-white shadow-elegant">
-                  <w.icon className="h-5 w-5" />
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-display text-lg font-semibold">{w.title}</h3>
-                    {w.title === "Notifications" && userUnreadCount > 0 && (
-                      <Badge className="bg-primary text-primary-foreground text-[10px] px-1.5 py-0 font-semibold">
-                        {userUnreadCount} new
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.body}</p>
+      {/* Main Content Area */}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+        {/* Admin Console Entry Banner for Super Admins */}
+        {isSuperAdmin && (
+          <Card className="overflow-hidden border-primary/30 bg-gradient-to-r from-card via-card to-primary/[0.06] shadow-sm">
+            <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3.5">
+                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Shield className="h-5 w-5" />
                 </div>
-                <Button asChild variant="ghost" className="px-0 text-primary">
-                  <Link to={w.cta.to}>
-                    {w.cta.label} <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground sm:text-base">
+                    Platform Administration
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Manage users, RBAC roles, hackathon submissions, platform settings, and view
+                    security audit logs.
+                  </p>
+                </div>
+              </div>
+              <Button
+                asChild
+                size="sm"
+                className="shrink-0 bg-gradient-brand text-white hover:opacity-90"
+              >
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold"
+                >
+                  <span>Open Admin Console</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Next Actions Section */}
+        <section aria-labelledby="next-actions-heading" className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2
+              id="next-actions-heading"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              Recommended Next Steps
+            </h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {completion < 100 && (
+              <NextActionCard
+                title="Complete your builder profile"
+                description="Add your college, skills, photo, and mobile number to unlock hackathons."
+                to="/profile"
+                cta="Go to profile"
+              />
+            )}
+            {userUnreadCount > 0 ? (
+              <NextActionCard
+                title={`You have ${userUnreadCount} unread notification${userUnreadCount > 1 ? "s" : ""}`}
+                description="Review new team invitations, announcements, and results in your inbox."
+                to="/notifications"
+                cta="View inbox"
+                badge={`${userUnreadCount} new`}
+              />
+            ) : (
+              <NextActionCard
+                title="Assemble or join a team"
+                description="Find fellow hackers, invite collaborators, and build your hackathon team."
+                to="/teams"
+                cta="Open team manager"
+              />
+            )}
+            <NextActionCard
+              title="Explore active hackathons"
+              description="Browse student challenges, solve real-world problems, and compete for prizes."
+              to="/hackathons"
+              cta="Browse competitions"
+            />
+          </div>
+        </section>
+
+        {/* Core Modules Grid */}
+        <section aria-labelledby="core-modules-heading" className="space-y-4">
+          <div className="space-y-1">
+            <h2
+              id="core-modules-heading"
+              className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl"
+            >
+              Platform Destinations
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Quick access to your innovation workspace, competitions, and credentials.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {CORE_MODULES.map((module) => {
+              const hasUnread = module.id === "notifications" && userUnreadCount > 0;
+              return (
+                <Card
+                  key={module.id}
+                  className="group relative flex flex-col justify-between border-border/60 bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-sm"
+                >
+                  <CardContent className="space-y-4 p-5 sm:p-6">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-brand text-white shadow-xs">
+                        <module.icon className="h-5 w-5" />
+                      </div>
+                      {hasUnread && (
+                        <Badge className="bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                          {userUnreadCount} unread
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="font-display text-base font-semibold text-foreground">
+                        {module.title}
+                      </h3>
+                      <p className="text-xs leading-relaxed text-muted-foreground">
+                        {module.description}
+                      </p>
+                    </div>
+                    <div className="pt-2">
+                      <Link
+                        to={module.to}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:text-primary/80"
+                      >
+                        <span>{module.cta}</span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Recent Activity Section */}
+        <section aria-labelledby="activity-heading" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2
+                id="activity-heading"
+                className="font-display text-lg font-bold tracking-tight text-foreground sm:text-xl"
+              >
+                Recent Activity
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Your live participation log, invitations, and milestone notifications.
+              </p>
+            </div>
+            {recentNotifications.length > 0 && (
+              <Button asChild variant="ghost" size="sm" className="text-xs text-primary">
+                <Link to="/notifications" className="inline-flex items-center gap-1">
+                  <span>View all</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            )}
+          </div>
+
+          {loadingActivity ? (
+            <div className="space-y-2">
+              {[0, 1].map((i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : recentNotifications.length === 0 ? (
+            <Card className="border-dashed border-border/70 bg-muted/15">
+              <CardContent className="flex flex-col items-center justify-center p-5 text-center sm:p-6">
+                <div className="grid h-8 w-8 place-items-center rounded-lg bg-muted text-muted-foreground">
+                  <Inbox className="h-4 w-4" />
+                </div>
+                <h3 className="mt-2 text-xs font-semibold text-foreground sm:text-sm">
+                  No recent activity yet.
+                </h3>
+                <p className="mt-0.5 max-w-sm text-[11px] text-muted-foreground leading-relaxed">
+                  Join a hackathon, accept a team invite, or earn a certificate to see updates here.
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-3 h-7.5 px-3 text-xs">
+                  <Link to="/hackathons">Browse Hackathons</Link>
                 </Button>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      </Section>
+          ) : (
+            <div className="divide-y divide-border/60 rounded-xl border border-border/60 bg-card overflow-hidden">
+              {recentNotifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  className="flex items-center justify-between gap-4 p-4 transition hover:bg-muted/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                      <Bell className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground sm:text-sm">
+                        {notif.title}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1">{notif.body}</p>
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <span className="text-[11px] text-muted-foreground">
+                      {new Date(notif.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </>
+  );
+}
+
+/* ============================ Helper Components ============================ */
+
+function NextActionCard({
+  title,
+  description,
+  to,
+  cta,
+  badge,
+}: {
+  title: string;
+  description: string;
+  to: string;
+  cta: string;
+  badge?: string;
+}) {
+  return (
+    <Card className="group border-border/60 bg-card transition hover:border-primary/40 hover:shadow-xs">
+      <CardContent className="flex flex-col justify-between p-4 space-y-2.5">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-xs font-semibold text-foreground">{title}</h4>
+            {badge && (
+              <Badge className="bg-primary/15 text-primary border-primary/20 text-[9px] px-1.5 py-0">
+                {badge}
+              </Badge>
+            )}
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">{description}</p>
+        </div>
+        <Link
+          to={to}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-primary transition-colors hover:underline"
+        >
+          <span>{cta}</span>
+          <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </CardContent>
+    </Card>
   );
 }

@@ -33,7 +33,7 @@ export function PageHeader({
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-background"
       />
 
-      <div className="relative mx-auto max-w-5xl px-5 pt-16 pb-14 text-center sm:px-6 sm:pt-24 sm:pb-20 lg:px-8">
+      <div className="relative mx-auto max-w-5xl px-5 pt-10 pb-8 text-center sm:px-6 sm:pt-14 sm:pb-12 lg:px-8">
         {eyebrow && (
           <div className="flex justify-center animate-fade-up">
             <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground shadow-elegant backdrop-blur">
@@ -44,7 +44,7 @@ export function PageHeader({
         )}
 
         <h1
-          className="mx-auto mt-6 max-w-4xl font-display font-bold tracking-[-0.04em] text-[2.25rem] leading-[1.02] sm:text-[3.5rem] lg:text-[4.5rem] animate-fade-up"
+          className="mx-auto mt-4 max-w-4xl font-display font-bold tracking-[-0.03em] text-[1.85rem] leading-[1.1] sm:text-[2.6rem] lg:text-[3.25rem] animate-fade-up"
           style={{ animationDelay: "60ms" }}
         >
           {title}
@@ -52,7 +52,7 @@ export function PageHeader({
 
         {description && (
           <p
-            className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground sm:text-[17px] animate-fade-up"
+            className="mx-auto mt-3.5 max-w-2xl text-[14px] leading-relaxed text-muted-foreground sm:text-[16px] animate-fade-up"
             style={{ animationDelay: "120ms" }}
           >
             {description}
@@ -61,7 +61,7 @@ export function PageHeader({
 
         {children && (
           <div
-            className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-up"
+            className="mt-6 flex flex-wrap items-center justify-center gap-3 animate-fade-up"
             style={{ animationDelay: "180ms" }}
           >
             {children}

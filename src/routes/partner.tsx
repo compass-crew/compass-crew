@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { submitPartnerApplication } from "@/lib/public-cms";
-import { Turnstile } from "@/components/turnstile";
 
 export const Route = createFileRoute("/partner")({
   head: () => ({
@@ -37,7 +36,6 @@ export const Route = createFileRoute("/partner")({
 function PartnerPage() {
   const [submitting, setSubmitting] = useState(false);
   const [interest, setInterest] = useState<string>("");
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,12 +50,10 @@ function PartnerPage() {
         website: (fd.get("website") ? String(fd.get("website")) : null) || null,
         partnership_type: interest || null,
         message: String(fd.get("message") ?? "").trim(),
-        turnstileToken: captchaToken,
       });
       toast.success("Thanks! We'll reach out within 2 business days.");
       form.reset();
       setInterest("");
-      setCaptchaToken(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not submit. Please try again.");
     } finally {
@@ -128,7 +124,6 @@ function PartnerPage() {
                   placeholder="What are you hoping to build with Compass Crew?"
                 />
               </div>
-              <Turnstile onToken={setCaptchaToken} />
               <Button
                 type="submit"
                 disabled={submitting}

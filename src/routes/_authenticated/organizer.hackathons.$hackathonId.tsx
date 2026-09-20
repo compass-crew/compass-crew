@@ -1043,7 +1043,6 @@ function CertificatesTab({ hackathonId }: { hackathonId: string }) {
     | "judge"
     | "mentor"
     | "organizer"
-    | "campus_ambassador"
     | "volunteer"
   >("participation");
   const [achievement, setAchievement] = useState("");
@@ -1193,7 +1192,6 @@ function CertificatesTab({ hackathonId }: { hackathonId: string }) {
                     "judge",
                     "mentor",
                     "organizer",
-                    "campus_ambassador",
                     "volunteer",
                   ].map((t) => (
                     <SelectItem key={t} value={t}>

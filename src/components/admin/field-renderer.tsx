@@ -37,11 +37,14 @@ export function FieldRenderer({ field, value, values, onChange }: Props) {
       : "",
   );
 
+  const serializedValue =
+    field.type === "json" ? JSON.stringify(value ?? (field.name === "data" ? {} : [])) : "";
+
   useEffect(() => {
     if (field.type === "json") {
       setJsonText(JSON.stringify(value ?? (field.name === "data" ? {} : []), null, 2));
     }
-  }, [value !== undefined ? JSON.stringify(value) : ""]);
+  }, [field.type, field.name, value, serializedValue]);
 
   const commonId = `f-${field.name}`;
 

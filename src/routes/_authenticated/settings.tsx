@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,9 @@ import {
   ShieldCheck,
   Github,
   User as UserIcon,
+  Phone,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -95,6 +98,7 @@ function SettingsPage() {
             </CardContent>
           </Card>
 
+          <MobileNumberCard />
           <PasswordCard />
           <ConnectedAccountsCard />
           <NotificationsCard onSaved={() => void refresh()} />
@@ -132,10 +136,88 @@ function SettingsPage() {
   );
 }
 
+/* ============================ Mobile Number ============================ */
+
+function MobileNumberCard() {
+  const { user, profile, refresh } = useAuth();
+  const [phone, setPhone] = useState(
+    profile?.phone || (user?.user_metadata?.phone as string | undefined) || "",
+  );
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setPhone(profile?.phone || (user?.user_metadata?.phone as string | undefined) || "");
+  }, [profile, user]);
+
+  async function handleSavePhone(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    const cleanDigits = phone.replace(/[\s\-()+]/g, "");
+    if (phone.trim() && (cleanDigits.length < 10 || cleanDigits.length > 15)) {
+      toast.error("Please enter a valid mobile number (10 to 15 digits).");
+      return;
+    }
+    setSaving(true);
+    try {
+      await supabase
+        .from("profiles")
+        .update({ phone: phone.trim() || null })
+        .eq("id", user.id);
+      await supabase.auth.updateUser({ data: { phone: phone.trim() || null } });
+      toast.success("Mobile number updated.");
+      await refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update mobile number.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardContent className="space-y-4 p-6">
+        <div className="flex items-center gap-3">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Phone className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-semibold">Mobile number</p>
+            <p className="text-xs text-muted-foreground">
+              Used for hackathon coordination. Kept private.
+            </p>
+          </div>
+        </div>
+        <form
+          onSubmit={handleSavePhone}
+          className="flex flex-col gap-3 sm:flex-row sm:items-center"
+        >
+          <div className="relative flex-1">
+            <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Button type="submit" disabled={saving} className="shrink-0">
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Save number
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
 /* ============================ Password ============================ */
 
 function PasswordCard() {
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const form = useForm<PasswordValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: { password: "", confirm: "" },
@@ -173,12 +255,23 @@ function PasswordCard() {
             <Label htmlFor="new-pw" className="text-xs">
               New password
             </Label>
-            <Input
-              id="new-pw"
-              type="password"
-              autoComplete="new-password"
-              {...form.register("password")}
-            />
+            <div className="relative">
+              <Input
+                id="new-pw"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                className="pr-9"
+                {...form.register("password")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             {form.formState.errors.password && (
               <p className="text-xs text-destructive">{form.formState.errors.password.message}</p>
             )}
@@ -187,12 +280,23 @@ function PasswordCard() {
             <Label htmlFor="confirm-pw" className="text-xs">
               Confirm
             </Label>
-            <Input
-              id="confirm-pw"
-              type="password"
-              autoComplete="new-password"
-              {...form.register("confirm")}
-            />
+            <div className="relative">
+              <Input
+                id="confirm-pw"
+                type={showConfirm ? "text" : "password"}
+                autoComplete="new-password"
+                className="pr-9"
+                {...form.register("confirm")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showConfirm ? "Hide password" : "Show password"}
+              >
+                {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             {form.formState.errors.confirm && (
               <p className="text-xs text-destructive">{form.formState.errors.confirm.message}</p>
             )}

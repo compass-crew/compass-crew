@@ -152,9 +152,9 @@ function PartnersPage() {
           size="lg"
           className="bg-gradient-brand text-white hover:opacity-90 shadow-elegant"
         >
-          <a href="mailto:compasscrewnetwork.team@gmail.com">
-            <Mail className="mr-2 h-4 w-4" /> Partner with Compass Crew
-          </a>
+          <Link to="/partner">
+            <Handshake className="mr-2 h-4 w-4" /> Apply to Partner
+          </Link>
         </Button>
         <Button asChild size="lg" variant="outline">
           <Link to="/contact">Send an Inquiry</Link>
@@ -324,9 +324,9 @@ function PartnersPage() {
                 size="lg"
                 className="bg-gradient-brand text-white hover:opacity-90 shadow-elegant"
               >
-                <a href="mailto:compasscrewnetwork.team@gmail.com">
-                  <Mail className="mr-2 h-4 w-4" /> Email Partnership Team
-                </a>
+                <Link to="/partner">
+                  <Handshake className="mr-2 h-4 w-4" /> Submit Partner Application
+                </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link to="/contact">Use Contact Form</Link>

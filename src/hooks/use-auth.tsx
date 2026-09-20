@@ -50,6 +50,7 @@ export interface Profile {
   github_url: string | null;
   linkedin_url: string | null;
   portfolio_url: string | null;
+  phone?: string | null;
   newsletter_opt_in: boolean;
   is_public: boolean;
 }
@@ -268,7 +269,7 @@ export function useAuth(): AuthContextValue {
   return ctx;
 }
 
-export function profileCompletion(p: Profile | null): number {
+export function profileCompletion(p: Profile | null, userPhone?: string | null): number {
   if (!p) return 0;
   const fields: (keyof Profile)[] = [
     "full_name",
@@ -290,7 +291,9 @@ export function profileCompletion(p: Profile | null): number {
     const v = p[f];
     if (typeof v === "string" && v.trim().length > 0) filled += 1;
   }
+  const phoneVal = (p.phone ?? userPhone ?? "").trim();
+  if (phoneVal.length > 0) filled += 1;
   if (p.skills && p.skills.length > 0) filled += 1;
-  const total = fields.length + 1;
+  const total = fields.length + 2;
   return Math.round((filled / total) * 100);
 }

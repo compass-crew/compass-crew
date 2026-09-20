@@ -660,6 +660,7 @@ export type Database = {
           description: string | null;
           eligibility: string | null;
           ends_at: string | null;
+          external_url: string | null;
           faqs: Json;
           id: string;
           is_featured: boolean;
@@ -692,6 +693,7 @@ export type Database = {
           description?: string | null;
           eligibility?: string | null;
           ends_at?: string | null;
+          external_url?: string | null;
           faqs?: Json;
           id?: string;
           is_featured?: boolean;
@@ -724,6 +726,7 @@ export type Database = {
           description?: string | null;
           eligibility?: string | null;
           ends_at?: string | null;
+          external_url?: string | null;
           faqs?: Json;
           id?: string;
           is_featured?: boolean;
@@ -1100,6 +1103,7 @@ export type Database = {
           linkedin_url: string | null;
           newsletter_opt_in: boolean;
           portfolio_url: string | null;
+          phone: string | null;
           skills: string[];
           state: string | null;
           suspended_at: string | null;
@@ -1123,6 +1127,7 @@ export type Database = {
           linkedin_url?: string | null;
           newsletter_opt_in?: boolean;
           portfolio_url?: string | null;
+          phone?: string | null;
           skills?: string[];
           state?: string | null;
           suspended_at?: string | null;
@@ -1146,6 +1151,7 @@ export type Database = {
           linkedin_url?: string | null;
           newsletter_opt_in?: boolean;
           portfolio_url?: string | null;
+          phone?: string | null;
           skills?: string[];
           state?: string | null;
           suspended_at?: string | null;

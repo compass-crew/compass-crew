@@ -72,7 +72,7 @@ function HackathonsPage() {
   const [sort, setSort] = useState<SortOrder>("soonest");
   const [query, setQuery] = useState("");
 
-  const all = hackathons ?? [];
+  const all = useMemo(() => hackathons ?? [], [hackathons]);
 
   // Counts per bucket for the segmented control
   const counts = useMemo(() => {
@@ -355,13 +355,17 @@ function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-2xl rounded-3xl border border-dashed border-border bg-card/60 p-12 text-center backdrop-blur">
-      <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
-        <Compass className="h-5 w-5" />
+    <div className="mx-auto max-w-lg rounded-2xl border border-dashed border-border bg-card/60 p-7 text-center backdrop-blur sm:p-8">
+      <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary">
+        <Compass className="h-4 w-4" />
       </span>
-      <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">{title}</h3>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">{body}</p>
-      {action && <div className="mt-6 flex justify-center">{action}</div>}
+      <h3 className="mt-3.5 font-display text-lg font-semibold tracking-tight sm:text-xl">
+        {title}
+      </h3>
+      <p className="mx-auto mt-2 max-w-sm text-[13.5px] leading-relaxed text-muted-foreground">
+        {body}
+      </p>
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 }

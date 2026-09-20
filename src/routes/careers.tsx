@@ -27,7 +27,7 @@ export const Route = createFileRoute("/careers")({
       {
         name: "description",
         content:
-          "Build with Compass Crew. Explore student contributor tracks, campus ambassador roles, and opportunities across our entrepreneurship and innovation ecosystem.",
+          "Build with Compass Crew. Explore student contributor tracks, chapter lead opportunities, and collaborative initiatives across our tech ecosystem.",
       },
       { property: "og:title", content: "Work With Compass Crew" },
       {
@@ -81,7 +81,7 @@ const CONTRIBUTION_AREAS = [
     icon: Sparkles,
     title: "Growth & Student Engagement",
     description:
-      "Help expand Compass Crew to more campuses across India through social storytelling, AMAs, and campus ambassador networks.",
+      "Help expand Compass Crew to more campuses across India through social storytelling, AMAs, and student community networks.",
   },
 ] as const;
 

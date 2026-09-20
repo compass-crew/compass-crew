@@ -361,6 +361,7 @@ export async function submitContactMessage(input: {
   email: string;
   subject: string;
   message: string;
+  company_url?: string | null;
   turnstileToken?: string | null;
 }) {
   await submitContactMessageFn({ data: input });

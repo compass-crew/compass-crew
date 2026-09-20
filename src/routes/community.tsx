@@ -201,7 +201,7 @@ function CommunityPage() {
                   <Link to="/hackathons">Competitions</Link>
                 </Button>
                 <Button asChild size="sm" className="bg-gradient-brand text-white text-xs">
-                  <Link to="/contact">Campus Ambassador</Link>
+                  <Link to="/events">Explore Events</Link>
                 </Button>
               </div>
             </div>
@@ -423,36 +423,6 @@ function CommunityPage() {
             </div>
           ))}
         </div>
-      </Section>
-
-      {/* Campus Ambassador Feature */}
-      <Section>
-        <Card className="overflow-hidden border-primary/40 bg-gradient-to-br from-card via-card to-primary/5">
-          <CardContent className="grid gap-8 p-8 sm:p-12 md:grid-cols-[1fr_auto] md:items-center">
-            <div className="space-y-3 max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                <GraduationCap className="h-4 w-4" /> Campus Leadership
-              </span>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Become a Compass Crew Campus Ambassador
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Lead innovation at your college. Host campus meetups, coordinate hackathon squads,
-                and connect your peers with national tech mentorship, internship pipelines, and
-                prizes.
-              </p>
-            </div>
-            <div>
-              <Button
-                asChild
-                size="lg"
-                className="bg-gradient-brand text-white hover:opacity-90 shadow-elegant"
-              >
-                <Link to="/contact">Apply for Campus Chapter</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </Section>
 
       {/* Socials & Connect Channels */}

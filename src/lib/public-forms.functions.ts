@@ -19,6 +19,7 @@ const contactSchema = z.object({
   email: z.string().trim().email().max(255),
   subject: z.string().trim().min(2).max(200),
   message: z.string().trim().min(5).max(4000),
+  company_url: z.string().max(200).nullable().optional(),
   turnstileToken: z.string().min(1).max(4096).nullable().optional(),
 });
 
@@ -44,7 +45,7 @@ const newsletterSchema = z.object({
 
 type FormKind = "contact" | "partner" | "newsletter";
 
-async function guard(kind: FormKind, token: string | null | undefined) {
+async function guard(kind: FormKind, token?: string | null | undefined) {
   const ip = resolveClientIp();
 
   // Rate limit: 10 submissions per IP per form per hour
@@ -56,10 +57,14 @@ async function guard(kind: FormKind, token: string | null | undefined) {
     errorMessage: "Too many submissions from this network. Please try again later.",
   });
 
-  const { verifyTurnstile } = await import("./turnstile.server");
-  const verify = await verifyTurnstile(token ?? null, ip);
-  if (!verify.ok) {
-    throw new Error("Security check failed. Please refresh and try again.");
+  // Turnstile is scoped exclusively to the /auth login flow.
+  // If a public form optionally provides a token, verify it, but do not block when absent.
+  if (token) {
+    const { verifyTurnstile } = await import("./turnstile.server");
+    const verify = await verifyTurnstile(token, ip);
+    if (!verify.ok) {
+      throw new Error("Security check failed. Please refresh and try again.");
+    }
   }
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -70,7 +75,13 @@ export const submitContactMessageFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => contactSchema.parse(data))
   .handler(async ({ data }) => {
     try {
-      const { turnstileToken, ...row } = data;
+      const { turnstileToken, company_url, ...row } = data;
+
+      // Anti-spam honeypot: if populated, discard silently to neutralize automated scrapers/bots
+      if (company_url && company_url.trim().length > 0) {
+        return { ok: true as const };
+      }
+
       const { supabaseAdmin } = await guard("contact", turnstileToken);
       const { error } = await supabaseAdmin.from("contact_messages").insert(row);
       if (error) {

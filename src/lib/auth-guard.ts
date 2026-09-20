@@ -157,34 +157,8 @@ export function requireRole(allowedRoles: AppRole[], options: RequireRoleOptions
       .select("role")
       .eq("user_id", user.id);
 
-    let userRoles = (rolesRows ?? []).map((r) => r.role as AppRole);
-    let isAuthorized = userRoles.some((r) => allowedRoles.includes(r) || r === "super_admin");
-
-    // Seamless initial provisioning for the two designated platform admin accounts
-    if (!isAuthorized && user.email) {
-      const email = user.email.toLowerCase().trim();
-      if (
-        email === "solankikamal55143@gmail.com" ||
-        email === "compasscrewnetwork.team@gmail.com"
-      ) {
-        try {
-          const { ensureAdminAccountRole } = await import("./auth/admin-provision.functions");
-          const provRes = await ensureAdminAccountRole({
-            data: { userId: user.id, userEmail: user.email },
-          });
-          if (provRes.provisioned) {
-            const { data: updatedRoles } = await supabase
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", user.id);
-            userRoles = (updatedRoles ?? []).map((r) => r.role as AppRole);
-            isAuthorized = userRoles.some((r) => allowedRoles.includes(r) || r === "super_admin");
-          }
-        } catch (provErr) {
-          console.error("[Auth Guard] Admin provisioning error:", provErr);
-        }
-      }
-    }
+    const userRoles = (rolesRows ?? []).map((r) => r.role as AppRole);
+    const isAuthorized = userRoles.some((r) => allowedRoles.includes(r) || r === "super_admin");
 
     if (!isAuthorized) {
       if (allowForbiddenState) {

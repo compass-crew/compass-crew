@@ -482,6 +482,21 @@ function DetailLoaded({
               {HACKATHON_MODE_LABEL[h.mode]}
               {h.location ? ` · ${h.location}` : ""}
             </span>
+            {h.status === "completed" && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-card/80 px-2.5 py-1 text-[11px] font-medium text-foreground/85 backdrop-blur">
+                Registration Closed
+              </span>
+            )}
+            {h.external_url && (
+              <a
+                href={h.external_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary backdrop-blur transition-colors hover:bg-primary/20"
+              >
+                <ExternalLink className="h-3 w-3" /> Hosted on Unstop
+              </a>
+            )}
             {h.theme && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-2.5 py-1 text-[11px] font-medium text-foreground/80 backdrop-blur">
                 <Sparkles className="h-3 w-3 text-primary" /> {h.theme}
@@ -567,6 +582,8 @@ function DetailLoaded({
               router={router}
               slug={slug}
               hackathonId={h.id}
+              externalUrl={h.external_url}
+              status={h.status}
             />
           </div>
         </div>
@@ -931,6 +948,8 @@ function DetailLoaded({
                   router={router}
                   slug={slug}
                   hackathonId={h.id}
+                  externalUrl={h.external_url}
+                  status={h.status}
                 />
 
                 <div className="flex items-center gap-2 border-t border-border/70 pt-4">
@@ -1068,6 +1087,8 @@ function PrimaryCTA({
   router,
   slug,
   hackathonId,
+  externalUrl,
+  status,
 }: {
   registered: boolean;
   canRegister: boolean;
@@ -1076,7 +1097,21 @@ function PrimaryCTA({
   router: ReturnType<typeof useRouter>;
   slug: string;
   hackathonId: string;
+  externalUrl?: string | null;
+  status?: string;
 }) {
+  if (externalUrl) {
+    return (
+      <Button
+        asChild
+        className="h-11 w-full rounded-lg text-sm font-semibold btn-premium hover:btn-premium-hover text-white shadow-elegant"
+      >
+        <a href={externalUrl} target="_blank" rel="noopener noreferrer">
+          View on Unstop <ExternalLink className="ml-2 h-4 w-4" />
+        </a>
+      </Button>
+    );
+  }
   if (registered) {
     return (
       <div className="space-y-2">
@@ -1092,6 +1127,16 @@ function PrimaryCTA({
           </Link>
         </Button>
       </div>
+    );
+  }
+  if (status === "completed") {
+    return (
+      <Button
+        className="h-11 w-full rounded-lg text-sm font-semibold border border-border/70 bg-muted/50 text-muted-foreground"
+        disabled
+      >
+        Registration Closed
+      </Button>
     );
   }
   if (!user) {

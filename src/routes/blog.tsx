@@ -91,7 +91,7 @@ function BlogPage() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string | null>(null);
 
-  const posts = data ?? [];
+  const posts = useMemo(() => data ?? [], [data]);
   const categories = useMemo(
     () => Array.from(new Set(posts.map((p) => p.category).filter((c): c is string => !!c))),
     [posts],

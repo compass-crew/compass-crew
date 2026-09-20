@@ -183,8 +183,8 @@ export const BENEFITS = [
   },
   {
     icon: Flag,
-    title: "Campus Ambassador",
-    body: "Represent Compass Crew on your campus, run local events and grow into a community leader.",
+    title: "Campus Chapter Lead",
+    body: "Lead student innovation on your campus, run build sprints and grow into a community leader.",
   },
 ];
 

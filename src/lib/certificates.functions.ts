@@ -241,6 +241,12 @@ export const generateCertificate = createServerFn({ method: "POST" })
 
     await verifyOrganizer(supabase, callerId, data.hackathonId ?? null);
 
+    if ((data.type as string) === "campus_ambassador") {
+      throw new Error(
+        "The Campus Ambassador program has been retired. This certificate type can no longer be issued.",
+      );
+    }
+
     try {
       // Load hackathon + recipient profile + caller profile
       const [{ data: hack }, { data: recipient }, { data: caller }] = await Promise.all([

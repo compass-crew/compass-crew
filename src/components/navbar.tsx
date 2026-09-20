@@ -37,16 +37,24 @@ export type NavLinkItem = {
   disabled?: boolean;
 };
 
-export const NAV_LINKS: readonly NavLinkItem[] = [
-  { to: "/", label: "Home" },
+export const AUTH_NAV_LINKS: readonly NavLinkItem[] = [
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/hackathons", label: "Hackathons" },
   { to: "/events", label: "Events" },
-  { to: "/community", label: "Community" },
   { to: "/resources", label: "Resources" },
-  { to: "/sponsors", label: "Sponsors" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
+
+export const PUBLIC_NAV_LINKS: readonly NavLinkItem[] = [
+  { to: "/hackathons", label: "Hackathons" },
+  { to: "/events", label: "Events" },
+  { to: "/resources", label: "Resources" },
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+export const NAV_LINKS = PUBLIC_NAV_LINKS;
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -75,6 +83,8 @@ export function Navbar() {
     navigate({ to: "/" });
   }
 
+  const navLinks = user ? AUTH_NAV_LINKS : PUBLIC_NAV_LINKS;
+
   return (
     <header
       className={`sticky top-0 z-40 w-full transition-all duration-300 ${
@@ -92,7 +102,7 @@ export function Navbar() {
           <Logo />
 
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-            {NAV_LINKS.slice(1).map((l) => {
+            {navLinks.map((l) => {
               if (l.disabled || !l.to) {
                 return (
                   <span
@@ -258,7 +268,7 @@ export function Navbar() {
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-1 px-4 py-6" aria-label="Mobile">
-                  {NAV_LINKS.map((l) => {
+                  {navLinks.map((l) => {
                     if (l.disabled || !l.to) {
                       return (
                         <span
@@ -292,7 +302,7 @@ export function Navbar() {
                     {user ? (
                       <>
                         <Button asChild variant="outline" onClick={() => setOpen(false)}>
-                          <Link to="/dashboard">Dashboard</Link>
+                          <Link to="/profile">My profile</Link>
                         </Button>
                         <Button asChild variant="ghost" onClick={() => setOpen(false)}>
                           <Link to="/notifications">Notifications</Link>
