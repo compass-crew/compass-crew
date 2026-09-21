@@ -104,7 +104,6 @@ const PARTNER_KIND = [
 
 const CAREER_CATEGORY = [
   { value: "volunteer", label: "Volunteer" },
-  { value: "ambassador", label: "Ambassador" },
   { value: "organizer", label: "Organizer" },
   { value: "internship", label: "Internship" },
   { value: "full_time", label: "Full time" },
@@ -117,7 +116,6 @@ const ANNOUNCEMENT_AUDIENCE = [
   { value: "organizers", label: "Organizers" },
   { value: "judges", label: "Judges" },
   { value: "mentors", label: "Mentors" },
-  { value: "ambassadors", label: "Ambassadors" },
 ] as const;
 
 const BLOG_CATEGORIES = [
@@ -456,43 +454,6 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "event_label", label: "Event", type: "text" },
       { name: "sort_order", label: "Sort order", type: "number" },
       { name: "status", label: "Status", type: "select", options: CONTENT_STATUS, required: true },
-    ],
-  },
-  {
-    key: "ambassador-applications",
-    table: "ambassador_applications",
-    singular: "Ambassador Application",
-    plural: "Ambassador Applications",
-    icon: "GraduationCap",
-    softDelete: true,
-    defaultOrder: { column: "created_at", ascending: false },
-    searchColumns: ["full_name", "email", "college"],
-    filterField: { name: "status", label: "Status", options: APPLICATION_STATUS },
-    listColumns: [
-      { key: "full_name", label: "Name" },
-      { key: "college", label: "College" },
-      { key: "email", label: "Email" },
-      { key: "status", label: "Status", type: "status" },
-      { key: "created_at", label: "Received", type: "date" },
-    ],
-    fields: [
-      { name: "full_name", label: "Full name", type: "text", required: true },
-      { name: "email", label: "Email", type: "email", required: true },
-      { name: "phone", label: "Phone", type: "text" },
-      { name: "college", label: "College", type: "text", required: true },
-      { name: "branch", label: "Branch", type: "text" },
-      { name: "year_of_study", label: "Year of study", type: "text" },
-      { name: "linkedin_url", label: "LinkedIn", type: "url" },
-      { name: "why_you", label: "Why you", type: "textarea", rows: 4, required: true },
-      { name: "prior_experience", label: "Prior experience", type: "textarea", rows: 3 },
-      {
-        name: "status",
-        label: "Status",
-        type: "select",
-        options: APPLICATION_STATUS,
-        required: true,
-      },
-      { name: "admin_notes", label: "Admin notes", type: "textarea", rows: 3 },
     ],
   },
   {

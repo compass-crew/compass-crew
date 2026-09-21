@@ -10,7 +10,6 @@ export const APP_ROLES = [
   "organizer",
   "judge",
   "mentor",
-  "campus_ambassador",
   "participant",
   "guest",
 ] as const;
@@ -26,7 +25,6 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   organizer: "Organizer",
   judge: "Judge",
   mentor: "Mentor",
-  campus_ambassador: "Campus Ambassador",
   participant: "Participant",
   guest: "Guest",
 };
@@ -36,7 +34,6 @@ export const ROLE_DESCRIPTIONS: Record<AppRole, string> = {
   organizer: "Manage hackathons, assign judges, review submissions, and view registrations",
   judge: "Score and evaluate assigned submissions during active hackathon rounds",
   mentor: "Guide and support registered teams and review mentorship requests",
-  campus_ambassador: "Lead outreach, student community growth, and campus engagement",
   participant: "Form teams, register for hackathons, submit projects, and earn certificates",
   guest: "Public visitor with limited read access",
 };
@@ -62,11 +59,6 @@ export const ROLE_BADGE_VARIANTS: Record<AppRole, { bg: string; text: string; bo
     text: "text-cyan-400",
     border: "border-cyan-500/30",
   },
-  campus_ambassador: {
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-400",
-    border: "border-emerald-500/30",
-  },
   participant: {
     bg: "bg-blue-500/10",
     text: "text-blue-400",
@@ -87,7 +79,6 @@ export const ROLE_PRIORITY: readonly AppRole[] = [
   "organizer",
   "judge",
   "mentor",
-  "campus_ambassador",
   "participant",
   "guest",
 ] as const;
@@ -120,7 +111,7 @@ export const PERMISSIONS = [
   "submissions:read",
   "submissions:score",
 
-  // Applications (Partners, Mentors, Ambassadors)
+  // Applications (Partners, Mentors)
   "applications:read",
   "applications:review",
 
@@ -180,7 +171,6 @@ export const ROLE_PERMISSIONS: Record<AppRole, readonly Permission[]> = {
   ],
   judge: ["hackathons:read", "teams:read", "submissions:read", "submissions:score"],
   mentor: ["hackathons:read", "teams:read", "submissions:read"],
-  campus_ambassador: ["events:read", "hackathons:read"],
   participant: ["hackathons:read", "events:read", "teams:read"],
   guest: ["hackathons:read", "events:read"],
 };

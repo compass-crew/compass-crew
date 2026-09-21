@@ -12,10 +12,8 @@ export type SearchKind =
   | "partner"
   | "mentor"
   | "judge"
-  | "ambassador"
   | "partner_application"
   | "mentor_application"
-  | "ambassador_application"
   | "contact_message"
   | "announcement";
 
@@ -38,10 +36,8 @@ export const KIND_LABEL: Record<SearchKind, string> = {
   partner: "Partner",
   mentor: "Mentor",
   judge: "Judge",
-  ambassador: "Ambassador",
   partner_application: "Partner Application",
   mentor_application: "Mentor Application",
-  ambassador_application: "Ambassador Application",
   contact_message: "Contact Message",
   announcement: "Announcement",
 };
@@ -67,14 +63,10 @@ export function hitHref(hit: SearchHit): string {
       return `/admin/mentors/${hit.id}`;
     case "judge":
       return `/admin/public-judges/${hit.id}`;
-    case "ambassador":
-      return `/admin/ambassadors/${hit.id}`;
     case "partner_application":
       return `/admin/partner-applications/${hit.id}`;
     case "mentor_application":
       return `/admin/mentor-applications/${hit.id}`;
-    case "ambassador_application":
-      return `/admin/ambassador-applications/${hit.id}`;
     case "contact_message":
       return `/admin/contact-messages/${hit.id}`;
     case "announcement":

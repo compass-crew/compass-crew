@@ -245,14 +245,16 @@ function AuthVisual() {
 
       {/* Content */}
       <div className="auth-visual__content">
-        <div>
+        <div className="auth-visual__brand-lockup flex flex-col items-center justify-center w-full mx-auto text-center">
           <img
             src="/images/logo/compass-crew-logo.png"
             alt="Compass Crew"
-            className="auth-visual__logo"
+            className="auth-visual__logo block mx-auto shrink-0"
             loading="eager"
+            width={56}
+            height={56}
           />
-          <p className="auth-visual__brand-name">
+          <p className="auth-visual__brand-name text-center w-full">
             Compass<span>Crew</span>
           </p>
         </div>

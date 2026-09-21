@@ -188,8 +188,21 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 2rem;
+  gap: 1.75rem;
   max-width: 400px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.auth-visual__brand-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  margin-inline: auto;
+  text-align: center;
 }
 
 .auth-visual__logo {
@@ -200,6 +213,11 @@
   background: rgba(255, 255, 255, 0.95);
   padding: 4px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  display: block;
+  margin-inline: auto;
+  margin-left: auto;
+  margin-right: auto;
+  flex-shrink: 0;
 }
 
 .auth-visual__brand-name {
@@ -208,7 +226,10 @@
   font-weight: 600;
   letter-spacing: -0.02em;
   color: #f5f2ea;
-  margin-top: 0.5rem;
+  margin-top: 0.625rem;
+  margin-inline: auto;
+  text-align: center;
+  width: 100%;
 }
 
 .auth-visual__brand-name span {
@@ -225,6 +246,9 @@
   letter-spacing: -0.04em;
   line-height: 1.1;
   color: #f5f2ea;
+  text-align: center;
+  width: 100%;
+  margin-inline: auto;
 }
 
 .auth-visual__statement-accent {
@@ -240,14 +264,21 @@
   color: #b8b4b0;
   line-height: 1.5;
   max-width: 320px;
+  width: 100%;
+  margin-inline: auto;
+  text-align: center;
 }
 
-/* 3D Compass container */
+/* 3D Compass container - independent decorative layer */
 .auth-visual__compass {
   position: relative;
   width: 220px;
   height: 220px;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Static fallback when WebGL is unavailable */
@@ -296,9 +327,13 @@
 /* Mobile compact visual header */
 .auth-panel__mobile-brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.625rem;
-  margin-bottom: 0.75rem;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
 }
 
 @media (min-width: 960px) {
@@ -308,20 +343,26 @@
 }
 
 .auth-panel__mobile-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.95);
   padding: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  display: block;
+  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .auth-panel__mobile-name {
   font-family: "Space Grotesk", "Geist", sans-serif;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: #f5f2ea;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 
 .auth-panel__mobile-name span {

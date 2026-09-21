@@ -15,7 +15,6 @@ const CERT_TYPES = [
   "judge",
   "mentor",
   "organizer",
-  "campus_ambassador",
   "volunteer",
 ] as const;
 
@@ -27,7 +26,6 @@ const TITLE_BY_TYPE: Record<CertificateType, string> = {
   judge: "Certificate of Appreciation",
   mentor: "Certificate of Appreciation",
   organizer: "Certificate of Appreciation",
-  campus_ambassador: "Certificate of Appreciation",
   volunteer: "Certificate of Appreciation",
 };
 
@@ -39,7 +37,6 @@ const SUBTITLE_BY_TYPE: Record<CertificateType, string> = {
   judge: "for judging at",
   mentor: "for mentoring at",
   organizer: "for organising",
-  campus_ambassador: "for championing Compass Crew as Campus Ambassador at",
   volunteer: "for volunteering at",
 };
 
@@ -241,12 +238,6 @@ export const generateCertificate = createServerFn({ method: "POST" })
 
     await verifyOrganizer(supabase, callerId, data.hackathonId ?? null);
 
-    if ((data.type as string) === "campus_ambassador") {
-      throw new Error(
-        "The Campus Ambassador program has been retired. This certificate type can no longer be issued.",
-      );
-    }
-
     try {
       // Load hackathon + recipient profile + caller profile
       const [{ data: hack }, { data: recipient }, { data: caller }] = await Promise.all([
@@ -305,7 +296,6 @@ export const generateCertificate = createServerFn({ method: "POST" })
           judge: "Judge",
           mentor: "Mentor",
           organizer: "Organizer",
-          campus_ambassador: "Campus Ambassador",
           volunteer: "Volunteer",
         }[data.type];
 

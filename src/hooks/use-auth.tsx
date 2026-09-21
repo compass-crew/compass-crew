@@ -17,7 +17,6 @@ export const ROLES = [
   "organizer",
   "judge",
   "mentor",
-  "campus_ambassador",
   "participant",
   "guest",
 ] as const;
@@ -29,7 +28,6 @@ export const ROLE_LABEL: Record<AppRole, string> = {
   organizer: "Organizer",
   judge: "Judge",
   mentor: "Mentor",
-  campus_ambassador: "Campus Ambassador",
   participant: "Participant",
   guest: "Guest",
 };
@@ -76,7 +74,6 @@ const ROLE_PRIORITY: AppRole[] = [
   "organizer",
   "judge",
   "mentor",
-  "campus_ambassador",
   "participant",
   "guest",
 ];

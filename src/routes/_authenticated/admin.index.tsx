@@ -59,7 +59,6 @@ interface DashboardMetrics {
 interface PendingAttentionMetrics {
   pendingMentors: number;
   pendingPartners: number;
-  pendingAmbassadors: number;
 }
 
 type MetricKey =
@@ -98,7 +97,6 @@ function AdminOverviewDashboard() {
         resourcesRes,
         pendingMentorsRes,
         pendingPartnersRes,
-        pendingAmbassadorsRes,
         auditRes,
       ] = await Promise.all([
         supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -123,10 +121,6 @@ function AdminOverviewDashboard() {
           .eq("status", "pending"),
         supabase
           .from("partner_applications")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "pending"),
-        supabase
-          .from("ambassador_applications")
           .select("id", { count: "exact", head: true })
           .eq("status", "pending"),
         listAuditLogs({ pageSize: 8 }),
@@ -159,7 +153,6 @@ function AdminOverviewDashboard() {
       setPending({
         pendingMentors: pendingMentorsRes.count ?? 0,
         pendingPartners: pendingPartnersRes.count ?? 0,
-        pendingAmbassadors: pendingAmbassadorsRes.count ?? 0,
       });
 
       setRecentAudit(auditRes.rows ?? []);
@@ -179,10 +172,7 @@ function AdminOverviewDashboard() {
     void loadData();
   }, [loadData]);
 
-  const totalPendingAttention =
-    (pending?.pendingMentors ?? 0) +
-    (pending?.pendingPartners ?? 0) +
-    (pending?.pendingAmbassadors ?? 0);
+  const totalPendingAttention = (pending?.pendingMentors ?? 0) + (pending?.pendingPartners ?? 0);
 
   const kpis: {
     key: MetricKey;
@@ -394,21 +384,6 @@ function AdminOverviewDashboard() {
                   </div>
                   <Badge className="bg-amber-500 text-white font-mono">
                     {pending.pendingPartners}
-                  </Badge>
-                </Link>
-              ) : null}
-
-              {pending?.pendingAmbassadors ? (
-                <Link
-                  to="/admin/community"
-                  className="flex items-center justify-between rounded-lg border border-border/60 bg-card/80 p-3.5 transition hover:border-amber-500/40 hover:bg-card"
-                >
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium text-foreground">Campus Ambassadors</p>
-                    <p className="text-[11px] text-muted-foreground">Pending student submissions</p>
-                  </div>
-                  <Badge className="bg-amber-500 text-white font-mono">
-                    {pending.pendingAmbassadors}
                   </Badge>
                 </Link>
               ) : null}

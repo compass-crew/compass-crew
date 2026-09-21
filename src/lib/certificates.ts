@@ -12,7 +12,6 @@ export const CERT_TYPE_LABEL: Record<CertificateType, string> = {
   judge: "Certificate of Appreciation — Judge",
   mentor: "Certificate of Appreciation — Mentor",
   organizer: "Certificate of Appreciation — Organizer",
-  campus_ambassador: "Certificate of Appreciation — Campus Ambassador",
   volunteer: "Certificate of Appreciation — Volunteer",
 };
 

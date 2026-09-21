@@ -1977,14 +1977,7 @@ export type Database = {
     };
     Enums: {
       announcement_audience: "all" | "participants" | "teams" | "judges" | "mentors";
-      app_role:
-        | "super_admin"
-        | "organizer"
-        | "judge"
-        | "mentor"
-        | "campus_ambassador"
-        | "participant"
-        | "guest";
+      app_role: "super_admin" | "organizer" | "judge" | "mentor" | "participant" | "guest";
       application_status: "pending" | "reviewing" | "approved" | "rejected" | "withdrawn";
       career_category:
         "volunteer" | "ambassador" | "organizer" | "internship" | "full_time" | "future";
@@ -1995,7 +1988,6 @@ export type Database = {
         | "mentor"
         | "judge"
         | "organizer"
-        | "campus_ambassador"
         | "special_mention"
         | "volunteer";
       content_status: "draft" | "scheduled" | "published" | "archived";
@@ -2152,15 +2144,7 @@ export const Constants = {
   public: {
     Enums: {
       announcement_audience: ["all", "participants", "teams", "judges", "mentors"],
-      app_role: [
-        "super_admin",
-        "organizer",
-        "judge",
-        "mentor",
-        "campus_ambassador",
-        "participant",
-        "guest",
-      ],
+      app_role: ["super_admin", "organizer", "judge", "mentor", "participant", "guest"],
       application_status: ["pending", "reviewing", "approved", "rejected", "withdrawn"],
       career_category: [
         "volunteer",
@@ -2177,7 +2161,6 @@ export const Constants = {
         "mentor",
         "judge",
         "organizer",
-        "campus_ambassador",
         "special_mention",
         "volunteer",
       ],

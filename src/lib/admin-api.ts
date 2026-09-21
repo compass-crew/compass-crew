@@ -143,8 +143,6 @@ export async function getAdminCounts(): Promise<Record<string, number>> {
     "public_judges",
     "mentors",
     "mentor_applications",
-    "ambassador_applications",
-    "ambassadors",
     "careers",
     "contact_messages",
     "newsletter_subscribers",

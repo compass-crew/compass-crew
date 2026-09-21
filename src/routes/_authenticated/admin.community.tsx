@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Users2,
-  GraduationCap,
   Mail,
   Search,
   Filter,
@@ -68,9 +67,6 @@ import { requireRole } from "@/lib/auth-guard";
 import { logAdminAction } from "@/lib/audit-logger";
 import type { Database } from "@/integrations/supabase/types";
 
-type ApplicationStatus = Database["public"]["Enums"]["application_status"];
-type AmbassadorRow = Database["public"]["Tables"]["ambassadors"]["Row"];
-type AmbassadorAppRow = Database["public"]["Tables"]["ambassador_applications"]["Row"];
 type NewsletterRow = Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
 type AnnouncementRow = Database["public"]["Tables"]["site_announcements"]["Row"];
 type ContentStatus = Database["public"]["Enums"]["content_status"];
@@ -97,7 +93,7 @@ export const Route = createFileRoute("/_authenticated/admin/community")({
 });
 
 function AdminCommunityPage() {
-  const [activeTab, setActiveTab] = useState("ambassadors");
+  const [activeTab, setActiveTab] = useState("announcements");
 
   return (
     <div className="space-y-6">
@@ -106,26 +102,16 @@ function AdminCommunityPage() {
           Community Governance
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Campus ambassadors, applications queue, team directories, and subscriber channels.
+          Site announcements, team directories, and subscriber channels.
         </p>
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-muted/60">
-          <TabsTrigger value="ambassadors">Campus Ambassadors</TabsTrigger>
-          <TabsTrigger value="applications">Ambassador Applications</TabsTrigger>
           <TabsTrigger value="announcements">Site Announcements</TabsTrigger>
           <TabsTrigger value="teams">Teams Directory</TabsTrigger>
           <TabsTrigger value="newsletter">Newsletter Subscribers</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="ambassadors">
-          <AmbassadorsTab />
-        </TabsContent>
-
-        <TabsContent value="applications">
-          <AmbassadorApplicationsTab />
-        </TabsContent>
 
         <TabsContent value="announcements">
           <AnnouncementsTab />
@@ -139,364 +125,6 @@ function AdminCommunityPage() {
           <NewsletterTab />
         </TabsContent>
       </Tabs>
-    </div>
-  );
-}
-
-// ----------------------------------------------------------------------------
-// Ambassadors Tab
-// ----------------------------------------------------------------------------
-function AmbassadorsTab() {
-  const [ambassadors, setAmbassadors] = useState<AmbassadorRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        let q = supabase.from("ambassadors").select("*").order("created_at", { ascending: false });
-        if (search.trim()) {
-          q = q.or(
-            `full_name.ilike.%${search.trim()}%,college.ilike.%${search.trim()}%,referral_code.ilike.%${search.trim()}%`,
-          );
-        }
-        const { data, error } = await q.limit(50);
-        if (error) throw error;
-        setAmbassadors(data ?? []);
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Failed to load ambassadors");
-      } finally {
-        setLoading(false);
-      }
-    };
-    const t = setTimeout(load, 200);
-    return () => clearTimeout(t);
-  }, [search]);
-
-  return (
-    <div className="space-y-4">
-      <Card className="border-border/60 bg-card/60">
-        <CardContent className="p-4">
-          <div className="relative max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search ambassadors by name or college…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 text-xs"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/60 bg-card/60">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex h-48 items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : ambassadors.length === 0 ? (
-            <div className="p-8 text-center text-xs text-muted-foreground">
-              No active campus ambassadors enrolled.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-border/60 bg-muted/30 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3">Ambassador</th>
-                    <th className="px-4 py-3">College & Chapter</th>
-                    <th className="px-4 py-3">Referral Code</th>
-                    <th className="px-4 py-3">Points</th>
-                    <th className="px-4 py-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {ambassadors.map((a) => (
-                    <tr key={a.id} className="transition hover:bg-muted/30">
-                      <td className="px-4 py-3 font-medium text-foreground">{a.full_name}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{a.college ?? "—"}</td>
-                      <td className="px-4 py-3 text-muted-foreground font-mono">
-                        {a.referral_code}
-                      </td>
-                      <td className="px-4 py-3 font-semibold text-foreground">
-                        {a.points ?? 0} pts
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge variant="outline" className="text-[10px] text-emerald-500">
-                          {a.status ?? "active"}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-// ----------------------------------------------------------------------------
-// Ambassador Applications Tab
-// ----------------------------------------------------------------------------
-function AmbassadorApplicationsTab() {
-  const [apps, setApps] = useState<AmbassadorAppRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedApp, setSelectedApp] = useState<AmbassadorAppRow | null>(null);
-  const [reviewNotes, setReviewNotes] = useState("");
-  const [updating, setUpdating] = useState(false);
-
-  const loadApps = useCallback(async () => {
-    setLoading(true);
-    try {
-      let q = supabase
-        .from("ambassador_applications")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (statusFilter !== "all") {
-        q = q.eq("status", statusFilter as ApplicationStatus);
-      }
-
-      const { data, error } = await q.limit(50);
-      if (error) throw error;
-      setApps(data ?? []);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load applications");
-    } finally {
-      setLoading(false);
-    }
-  }, [statusFilter]);
-
-  useEffect(() => {
-    void loadApps();
-  }, [loadApps]);
-
-  const updateAppStatus = async (appId: string, nextStatus: ApplicationStatus) => {
-    setUpdating(true);
-    try {
-      const { error } = await supabase
-        .from("ambassador_applications")
-        .update({
-          status: nextStatus,
-          admin_notes: reviewNotes.trim() || null,
-        })
-        .eq("id", appId);
-
-      if (error) throw error;
-
-      await logAdminAction({
-        action: `ambassador_application.${nextStatus}`,
-        resourceType: "ambassador_applications",
-        resourceId: appId,
-        meta: { status: nextStatus, notes: reviewNotes },
-      });
-
-      toast.success(`Application marked as ${nextStatus}.`);
-      setSelectedApp(null);
-      setReviewNotes("");
-      void loadApps();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update application");
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <Card className="border-border/60 bg-card/60">
-        <CardContent className="flex items-center justify-between p-4">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 text-xs">
-              <SelectValue placeholder="All Statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Applications</SelectItem>
-              <SelectItem value="pending">Pending Review</SelectItem>
-              <SelectItem value="reviewing">Under Review</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/60 bg-card/60">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex h-48 items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : apps.length === 0 ? (
-            <div className="p-8 text-center text-xs text-muted-foreground">
-              No applications matching current filter.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-border/60 bg-muted/30 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3">Applicant</th>
-                    <th className="px-4 py-3">College</th>
-                    <th className="px-4 py-3">Applied On</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3 text-right">Review</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {apps.map((app) => (
-                    <tr key={app.id} className="transition hover:bg-muted/30">
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-foreground">{app.full_name}</div>
-                        <div className="text-[10px] text-muted-foreground">{app.email}</div>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {app.college}
-                        {app.branch && ` · ${app.branch}`}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {new Date(app.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge
-                          variant="outline"
-                          className={`text-[10px] capitalize ${
-                            app.status === "approved"
-                              ? "text-emerald-500 border-emerald-500/20"
-                              : app.status === "rejected"
-                                ? "text-rose-500 border-rose-500/20"
-                                : "text-amber-500 border-amber-500/20"
-                          }`}
-                        >
-                          {app.status}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedApp(app);
-                            setReviewNotes(app.admin_notes ?? "");
-                          }}
-                          className="h-7 text-xs"
-                        >
-                          Evaluate →
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Review Dialog */}
-      <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Evaluate Campus Ambassador</DialogTitle>
-            <DialogDescription>
-              Review application details submitted by {selectedApp?.full_name}.
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedApp && (
-            <div className="space-y-4 py-2 text-xs">
-              <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1.5">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Applicant:</span>
-                  <span className="font-semibold text-foreground">{selectedApp.full_name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Email:</span>
-                  <span className="font-mono text-foreground">{selectedApp.email}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">College:</span>
-                  <span className="text-foreground">{selectedApp.college}</span>
-                </div>
-                {selectedApp.phone && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Phone:</span>
-                    <span className="text-foreground">{selectedApp.phone}</span>
-                  </div>
-                )}
-                {selectedApp.linkedin_url && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">LinkedIn:</span>
-                    <a
-                      href={selectedApp.linkedin_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline inline-flex items-center gap-1"
-                    >
-                      Profile <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold">Why they want to join:</Label>
-                <div className="rounded-md border border-border/40 bg-card p-3 text-foreground whitespace-pre-wrap">
-                  {selectedApp.why_you}
-                </div>
-              </div>
-
-              {selectedApp.prior_experience && (
-                <div className="space-y-1">
-                  <Label className="text-xs font-semibold">Prior Experience:</Label>
-                  <div className="rounded-md border border-border/40 bg-card p-3 text-foreground whitespace-pre-wrap">
-                    {selectedApp.prior_experience}
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-1">
-                <Label htmlFor="review-notes" className="text-xs">
-                  Administrative Notes
-                </Label>
-                <Textarea
-                  id="review-notes"
-                  value={reviewNotes}
-                  onChange={(e) => setReviewNotes(e.target.value)}
-                  placeholder="Record internal evaluation reasoning..."
-                  rows={2}
-                />
-              </div>
-
-              <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-end pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => updateAppStatus(selectedApp.id, "rejected")}
-                  disabled={updating}
-                  className="text-rose-500 border-rose-500/20 hover:bg-rose-500/10"
-                >
-                  <XCircle className="mr-1.5 h-3.5 w-3.5" /> Reject
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => updateAppStatus(selectedApp.id, "approved")}
-                  disabled={updating}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                >
-                  <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" /> Approve Ambassador
-                </Button>
-              </DialogFooter>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
