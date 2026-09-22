@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { redirectIfAuthenticated } from "@/lib/auth-guard";
 import { Turnstile } from "@/components/turnstile";
 import { useTheme } from "@/components/theme-provider";
+import { signUpWithEmailFn } from "@/lib/auth/signup.functions";
 import "@/components/auth/auth-shell.css";
 
 /* ============================ Lazy 3D Compass ============================ */
@@ -498,31 +499,23 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
       }
     }
     const emailRedirectTo = `${window.location.origin}/auth/callback`;
-    const { data, error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        emailRedirectTo,
-        data: {
-          full_name: values.full_name,
-          newsletter_opt_in: values.newsletter,
-        },
+    const result = await signUpWithEmailFn({
+      data: {
+        email: values.email,
+        password: values.password,
+        full_name: values.full_name,
+        newsletter: values.newsletter,
+        redirectTo: emailRedirectTo,
       },
     });
 
-    if (error) {
+    if (!result.ok || result.error) {
       setSubmitting(false);
-      setFormError(error.message);
+      setFormError(result.error || "Unable to create account. Please try again.");
       return;
     }
 
-    // Supabase returns 200 with an empty `identities` array when the email is
-    // already registered (user-enumeration protection).
-    const identities = (data.user as { identities?: unknown[] } | null)?.identities;
-    const isRepeatedSignup =
-      !!data.user && !data.session && Array.isArray(identities) && identities.length === 0;
-
-    if (isRepeatedSignup) {
+    if (result.isRepeatedSignup) {
       setSubmitting(false);
       setFormError(
         "This email is already registered. Try signing in, or reset your password if you\u2019ve forgotten it.",
@@ -530,22 +523,15 @@ function SignupForm({ redirect, onDone }: { redirect?: string; onDone: () => voi
       return;
     }
 
-    // Sync newsletter preference if session is established immediately
-    if (data.session && data.user) {
-      const { error: profileErr } = await supabase
-        .from("profiles")
-        .update({
-          full_name: values.full_name,
-          newsletter_opt_in: values.newsletter,
-        })
-        .eq("id", data.user.id);
-      if (profileErr) {
-        console.warn("[signup] profile update note:", profileErr.message);
-      }
+    if (result.session) {
+      await supabase.auth.setSession({
+        access_token: result.session.access_token,
+        refresh_token: result.session.refresh_token,
+      });
     }
 
     setSubmitting(false);
-    if (data.session) {
+    if (result.hasSession) {
       toast.success("Account created!");
       navigate({ to: "/auth/onboarding" });
     } else {
